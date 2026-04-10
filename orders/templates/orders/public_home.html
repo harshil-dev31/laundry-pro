@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dhobi Kaka | Premium Laundry & Dry Cleaning</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%230ea5e9' offset='0'/%3E%3Cstop stop-color='%232563eb' offset='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='28'%3E%F0%9F%91%95%3C/text%3E%3C/svg%3E">
+    <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%230ea5e9' offset='0'/%3E%3Cstop stop-color='%232563eb' offset='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='28'%3E%F0%9F%91%95%3C/text%3E%3C/svg%3E">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #0ea5e9;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --card-border: #e5eefc;
+            --card-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            overflow-x: hidden; 
+            background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 60%, #f8fbff 100%);
+            color: #334155;
+        }
+
+        body.page-foam {
+            background: linear-gradient(180deg, #f0f8ff 0%, #ffffff 62%, #f8f9ff 100%);
+        }
+
+        body.page-foam::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(180, 230, 255, 0.06), rgba(100, 180, 255, 0.03));
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes pageWaveDrift {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-30%); }
+        }
+
+        @keyframes pageWaveBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes pageBubbleFloat {
+            0% { transform: translateY(0) scale(0.9); opacity: 0; }
+            14% { opacity: 0.7; }
+            100% { transform: translateY(-140vh) scale(1.08); opacity: 0; }
+        }
+
+        @keyframes pageFoamSlide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-45%); }
+        }
+
+        @keyframes causticDrift {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            50% { transform: translateX(-8%) translateY(-2%) scale(1.03); }
+            100% { transform: translateX(-16%) translateY(0) scale(1); }
+        }
+
+        .global-water-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            mix-blend-mode: lighten;
+            opacity: 0.35;
+        }
+
+        .wave-layer {
+            position: absolute;
+            left: -70%;
+            width: 240%;
+            border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%;
+            background: linear-gradient(180deg, rgba(34, 165, 244, 0.7), rgba(13, 148, 226, 0.58));
+            filter: blur(1.2px);
+            animation: pageWaveDrift 22s linear infinite, pageWaveBob 8s ease-in-out infinite;
+        }
+
+        .wave-a {
+            top: -12%;
+            height: 36%;
+            opacity: 0.28;
+        }
+
+        .wave-b {
+            top: 30%;
+            height: 30%;
+            opacity: 0.22;
+            animation-duration: 28s, 10s;
+            animation-direction: reverse, normal;
+        }
+
+        .wave-c {
+            top: 68%;
+            height: 36%;
+            opacity: 0.24;
+            animation-duration: 20s, 9s;
+        }
+
+        .water-caustics {
+            position: absolute;
+            inset: -20% -10%;
+            background:
+                repeating-linear-gradient(115deg,
+                    rgba(255,255,255,0) 0 18px,
+                    rgba(255,255,255,0.18) 18px 23px,
+                    rgba(13, 148, 226, 0.08) 23px 34px),
+                radial-gradient(circle at 30% 35%, rgba(52, 168, 224, 0.15), transparent 52%),
+                radial-gradient(circle at 70% 65%, rgba(13, 148, 226, 0.12), transparent 50%);
+            opacity: 0.28;
+            animation: causticDrift 14s linear infinite;
+        }
+
+        .caustic-two {
+            animation-duration: 18s;
+            animation-direction: reverse;
+            opacity: 0.18;
+        }
+
+        .water-bubble-field span {
+            position: absolute;
+            bottom: -110px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.85), rgba(52, 168, 224, 0.28));
+            border: 1px solid rgba(255,255,255,0.65);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 0 0 12px rgba(13, 148, 226, 0.25);
+            animation: pageBubbleFloat linear infinite;
+        }
+
+        .water-bubble-field span:nth-child(1) { left: 4%; width: 16px; height: 16px; animation-duration: 12s; animation-delay: 0s; }
+        .water-bubble-field span:nth-child(2) { left: 12%; width: 20px; height: 20px; animation-duration: 15s; animation-delay: 1.8s; }
+        .water-bubble-field span:nth-child(3) { left: 19%; width: 12px; height: 12px; animation-duration: 11s; animation-delay: 3.2s; }
+        .water-bubble-field span:nth-child(4) { left: 28%; width: 18px; height: 18px; animation-duration: 14s; animation-delay: 2.3s; }
+        .water-bubble-field span:nth-child(5) { left: 37%; width: 15px; height: 15px; animation-duration: 13s; animation-delay: 0.9s; }
+        .water-bubble-field span:nth-child(6) { left: 48%; width: 22px; height: 22px; animation-duration: 16s; animation-delay: 2.9s; }
+        .water-bubble-field span:nth-child(7) { left: 59%; width: 13px; height: 13px; animation-duration: 12.5s; animation-delay: 1.2s; }
+        .water-bubble-field span:nth-child(8) { left: 68%; width: 18px; height: 18px; animation-duration: 15.5s; animation-delay: 4.1s; }
+        .water-bubble-field span:nth-child(9) { left: 77%; width: 16px; height: 16px; animation-duration: 14.2s; animation-delay: 0.6s; }
+        .water-bubble-field span:nth-child(10) { left: 86%; width: 12px; height: 12px; animation-duration: 11.8s; animation-delay: 2.1s; }
+        .water-bubble-field span:nth-child(11) { left: 92%; width: 20px; height: 20px; animation-duration: 16.4s; animation-delay: 3.7s; }
+        .water-bubble-field span:nth-child(12) { left: 96%; width: 14px; height: 14px; animation-duration: 13.4s; animation-delay: 1.4s; }
+
+        .foam-ribbon {
+            position: absolute;
+            left: -30%;
+            width: 170%;
+            height: 68px;
+            background:
+                radial-gradient(circle at 10% 50%, rgba(255,255,255,0.72) 0 12px, transparent 13px),
+                radial-gradient(circle at 24% 45%, rgba(255,255,255,0.68) 0 14px, transparent 15px),
+                radial-gradient(circle at 38% 55%, rgba(255,255,255,0.75) 0 13px, transparent 14px),
+                radial-gradient(circle at 53% 48%, rgba(255,255,255,0.7) 0 15px, transparent 16px),
+                radial-gradient(circle at 69% 54%, rgba(255,255,255,0.72) 0 14px, transparent 15px),
+                radial-gradient(circle at 83% 46%, rgba(255,255,255,0.66) 0 13px, transparent 14px);
+            opacity: 0.32;
+            animation: pageFoamSlide 22s linear infinite;
+        }
+
+        .foam-top { top: 60px; }
+        .foam-bottom {
+            bottom: 0px;
+            opacity: 0.24;
+            animation-duration: 26s;
+            animation-direction: reverse;
+        }
+
+        nav, section, .laundry-divider, footer {
+            position: relative;
+            z-index: 5;
+        }
+
+        /* --- Glassmorphism Navbar --- */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+        }
+
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: #eff6ff;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .hero-checks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 999px;
+            font-weight: 600;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+            white-space: nowrap;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+            padding: 28px;
+            height: 100%;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 1.35rem;
+            margin-bottom: 18px;
+        }
+
+        .branch-card {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+            height: 100%;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .branch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 44px rgba(15, 23, 42, 0.11);
+        }
+
+        .branch-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .branch-service {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .branch-service:last-child {
+            border-bottom: 0;
+        }
+
+        .price-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #ecfeff;
+            color: #0f766e;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .summary-strip {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: 28px;
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.18);
+        }
+
+        .summary-item {
+            padding: 10px 16px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* --- Typography Tricks --- */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            padding: 150px 0 90px;
+            background: radial-gradient(circle at top right, #e0f2fe 0%, #ffffff 52%, #f8fbff 100%);
+            position: relative;
+        }
+
+        .hero-copy {
+            max-width: 650px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.7rem, 4.4vw, 4.2rem);
+            line-height: 1.04;
+            letter-spacing: -0.05em;
+            text-wrap: balance;
+        }
+
+        .hero-copy p {
+            max-width: 560px;
+        }
+
+        /* Floating Animation for Hero Graphic */
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes orbitSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseDrum {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 18px 36px rgba(37, 99, 235, 0.25);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                box-shadow: 0 24px 42px rgba(14, 165, 233, 0.3);
+            }
+        }
+
+        @keyframes bubbleLift {
+            0% { transform: translateY(0) scale(1); opacity: 0.45; }
+            50% { transform: translateY(-16px) scale(1.08); opacity: 0.8; }
+            100% { transform: translateY(0) scale(1); opacity: 0.45; }
+        }
+
+        @keyframes drumSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fabricTumble {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.9; }
+            50% { transform: translateY(-8px) rotate(18deg) scale(1.08); opacity: 1; }
+        }
+
+        @keyframes detergentPour {
+            0%, 20% { opacity: 0; transform: scaleY(0.2) translateY(0); }
+            35%, 65% { opacity: 1; transform: scaleY(1) translateY(0); }
+            80%, 100% { opacity: 0; transform: scaleY(0.25) translateY(10px); }
+        }
+
+        @keyframes sudsRise {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .laundry-orbit {
+            width: min(460px, 100%);
+            aspect-ratio: 1 / 1;
+            height: auto;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 32% 68% 64% 36% / 38% 34% 66% 62%;
+            background: radial-gradient(circle at 35% 30%, #f0f9ff 0%, #dbeafe 45%, #bfdbfe 100%);
+            border: 1px solid rgba(37, 99, 235, 0.14);
+            box-shadow: 0 28px 55px rgba(37, 99, 235, 0.18);
+            overflow: hidden;
+        }
+
+        .washer-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: linear-gradient(150deg, #2563eb, #0ea5e9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            animation: pulseDrum 3.2s ease-in-out infinite;
+            z-index: 4;
+            border: 7px solid rgba(255,255,255,0.28);
+        }
+
+        .washer-window {
+            width: 106px;
+            height: 106px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #e0f2fe 0%, #93c5fd 60%, #60a5fa 100%);
+            border: 4px solid rgba(255,255,255,0.55);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 24px rgba(14, 165, 233, 0.45);
+        }
+
+        .washer-water {
+            position: absolute;
+            left: -10%;
+            right: -10%;
+            bottom: 10%;
+            height: 48%;
+            border-radius: 50%;
+            background: linear-gradient(180deg, rgba(224,242,254,0.62), rgba(14,165,233,0.55));
+            animation: sudsRise 2.8s ease-in-out infinite;
+        }
+
+        .fabric-spin {
+            position: absolute;
+            inset: 10px;
+            border-radius: 50%;
+            animation: drumSpin 6.4s linear infinite;
+        }
+
+        .fabric-piece {
+            position: absolute;
+            width: 22px;
+            height: 14px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+            animation: fabricTumble 2.4s ease-in-out infinite;
+        }
+
+        .fabric-a { top: 8px; left: 30px; background: #dbeafe; }
+        .fabric-b { top: 30px; right: 8px; background: #bfdbfe; animation-delay: 0.6s; }
+        .fabric-c { bottom: 10px; left: 16px; background: #e0f2fe; animation-delay: 1.1s; }
+
+        .detergent-bottle {
+            position: absolute;
+            top: 12%;
+            left: 8%;
+            width: 64px;
+            height: 84px;
+            border-radius: 18px 18px 22px 22px;
+            background: linear-gradient(180deg, #2563eb, #1d4ed8);
+            box-shadow: 0 14px 20px rgba(37, 99, 235, 0.34);
+            z-index: 6;
+            transform: rotate(-10deg);
+        }
+
+        .detergent-bottle::before {
+            content: "";
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            width: 24px;
+            height: 16px;
+            border-radius: 8px 8px 4px 4px;
+            background: #1e40af;
+        }
+
+        .detergent-bottle::after {
+            content: "";
+            position: absolute;
+            top: 36px;
+            right: -8px;
+            width: 14px;
+            height: 10px;
+            border-radius: 8px;
+            background: #1e40af;
+        }
+
+        .detergent-stream {
+            position: absolute;
+            top: 78px;
+            left: 68px;
+            width: 12px;
+            height: 96px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(224,242,254,0.95), rgba(14,165,233,0.62));
+            transform-origin: top center;
+            animation: detergentPour 4.6s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 1px dashed rgba(37, 99, 235, 0.25);
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-one { width: 250px; height: 250px; }
+        .ring-two { width: 350px; height: 350px; border-color: rgba(14, 165, 233, 0.26); }
+
+        .orbit-track {
+            position: absolute;
+            inset: 0;
+            animation: orbitSpin 18s linear infinite;
+            z-index: 3;
+        }
+
+        .track-two {
+            animation-duration: 24s;
+            animation-direction: reverse;
+        }
+
+        .orbital-item {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1d4ed8;
+            background: #ffffff;
+            border: 1px solid #dbeafe;
+            box-shadow: 0 12px 20px rgba(15, 23, 42, 0.12);
+            font-size: 20px;
+        }
+
+        .orbit-shirt { transform: translate(-50%, -50%) translateY(-125px); }
+        .orbit-iron { transform: translate(-50%, -50%) translateY(125px); }
+        .orbit-soap { transform: translate(-50%, -50%) translateY(-175px); }
+        .orbit-socks { transform: translate(-50%, -50%) translateY(175px); }
+
+        .orbit-badge {
+            position: absolute;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 10px 14px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+            z-index: 5;
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 0.9rem;
+            max-width: 46%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge-fast { top: 16%; right: 6%; }
+        .badge-fresh { bottom: 14%; left: 6%; }
+
+        .orbit-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.95) 0%, rgba(186, 230, 253, 0.55) 100%);
+            border: 1px solid rgba(255,255,255,0.65);
+            animation: bubbleLift 4.8s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        .bubble-1 { width: 18px; height: 18px; left: 20%; top: 22%; animation-delay: 0.2s; }
+        .bubble-2 { width: 24px; height: 24px; right: 24%; top: 30%; animation-delay: 0.9s; }
+        .bubble-3 { width: 14px; height: 14px; left: 30%; bottom: 24%; animation-delay: 1.4s; }
+        .bubble-4 { width: 20px; height: 20px; right: 19%; bottom: 20%; animation-delay: 2.1s; }
+        .bubble-5 { width: 16px; height: 16px; left: 48%; top: 18%; animation-delay: 0.4s; }
+        .bubble-6 { width: 12px; height: 12px; right: 34%; bottom: 30%; animation-delay: 1.9s; }
+
+        /* --- Custom Cards --- */
+        .premium-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            padding: 40px 30px;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .premium-card::after {
+            content: "";
+            border-radius: 24px;
+            position: absolute;
+            z-index: -1;
+            top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.08);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .premium-card:hover { transform: translateY(-10px); }
+        .premium-card:hover::after { opacity: 1; }
+
+        .icon-wrapper {
+            width: 80px; height: 80px;
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+        /* --- Stats Banner --- */
+        .stats-banner {
+            background: var(--dark);
+            color: white;
+            border-radius: 30px;
+            transform: translateY(-50%);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* --- Steps --- */
+        .step-circle {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: 700;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-brand {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-brand:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            color: white;
+        }
+        
+        /* --- Pricing Section --- */
+        .pricing-menu {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            padding: 40px;
+            position: relative;
+        }
+
+        .pricing-menu .text-center {
+            margin-bottom: 28px;
+        }
+
+        .pricing-menu h4 {
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .pricing-menu .text-muted {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        @keyframes waterSlosh {
+            0%, 100% { transform: translateY(0) skewX(0deg); }
+            25% { transform: translateY(-4px) skewX(1.6deg); }
+            50% { transform: translateY(2px) skewX(-1.6deg); }
+            75% { transform: translateY(-3px) skewX(1deg); }
+        }
+
+        @keyframes waterFall {
+            0%, 100% { transform: scaleY(0.94) translateY(0); opacity: 0.78; }
+            50% { transform: scaleY(1.08) translateY(2px); opacity: 0.98; }
+        }
+
+        @keyframes dropletDrop {
+            0% { transform: translateY(0) scale(0.95); opacity: 0; }
+            20% { opacity: 0.95; }
+            100% { transform: translateY(120px) scale(1.08); opacity: 0; }
+        }
+
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.28; }
+            50% { transform: scale(1.08); opacity: 0.55; }
+        }
+
+        @keyframes doorReplay {
+            0% { transform: perspective(1200px) rotateY(-102deg); opacity: 0.76; }
+            50% { transform: perspective(1200px) rotateY(-112deg); opacity: 0.66; }
+            100% { transform: perspective(1200px) rotateY(-108deg); opacity: 0.72; }
+        }
+
+        .pricing-machine {
+            position: relative;
+            border-radius: 34px;
+            padding: 26px;
+            background: linear-gradient(145deg, #dbeafe 0%, #bfdbfe 45%, #93c5fd 100%);
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            box-shadow: 0 30px 56px rgba(37, 99, 235, 0.22);
+            overflow: hidden;
+        }
+
+        .pricing-machine::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56%;
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.4);
+        }
+
+        .pricing-machine-header {
+            height: 44px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.55);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .machine-lights {
+            display: flex;
+            gap: 8px;
+        }
+
+        .machine-lights span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2563eb;
+            opacity: 0.7;
+        }
+
+        .machine-lights span:nth-child(2) { background: #0ea5e9; }
+        .machine-lights span:nth-child(3) { background: #14b8a6; }
+
+        .pricing-machine-window {
+            position: relative;
+            border-radius: 28px;
+            background: radial-gradient(circle at 30% 25%, rgba(224,242,254,0.8), rgba(147,197,253,0.5));
+            border: 2px solid rgba(255,255,255,0.55);
+            padding: 18px;
+            min-height: 520px;
+            overflow: hidden;
+        }
+
+        .pricing-machine-inlet {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 112px;
+            height: 20px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .pricing-machine-inlet::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -7px;
+            width: 26px;
+            height: 10px;
+            transform: translateX(-50%);
+            border-radius: 0 0 12px 12px;
+            background: #64748b;
+        }
+
+        .pricing-water-stream {
+            position: absolute;
+            top: 28px;
+            left: 50%;
+            width: 26px;
+            height: 180px;
+            transform: translateX(-50%);
+            border-radius: 0 0 14px 14px;
+            background: linear-gradient(180deg, rgba(186, 230, 253, 0.95) 0%, rgba(56, 189, 248, 0.85) 100%);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+            animation: waterFall 1.25s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pricing-water-stream span {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(224, 242, 254, 0.95);
+            transform: translateX(-50%);
+            animation: dropletDrop 1.55s ease-in infinite;
+        }
+
+        .pricing-water-stream span:nth-child(2) {
+            left: 32%;
+            width: 6px;
+            height: 6px;
+            animation-delay: 0.35s;
+        }
+
+        .pricing-water-stream span:nth-child(3) {
+            left: 68%;
+            width: 7px;
+            height: 7px;
+            animation-delay: 0.75s;
+        }
+
+        .pricing-water-splash {
+            position: absolute;
+            left: 50%;
+            bottom: 36%;
+            width: 72px;
+            height: 16px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(224, 242, 254, 0.72), rgba(56, 189, 248, 0.12));
+            animation: splashPulse 1.15s ease-in-out infinite;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .pricing-machine-water {
+            position: absolute;
+            left: 26px;
+            right: 26px;
+            bottom: 18px;
+            height: 42%;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(224,242,254,0.72), rgba(14,165,233,0.45));
+            animation: waterSlosh 4.3s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .pricing-machine-door {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            right: 18px;
+            bottom: 18px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.42), rgba(219,234,254,0.36));
+            border: 1px solid rgba(37, 99, 235, 0.25);
+            box-shadow: inset 0 0 18px rgba(147, 197, 253, 0.3), 0 14px 26px rgba(37, 99, 235, 0.14);
+            transform-origin: left center;
+            transform: perspective(1200px) rotateY(-108deg);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease;
+            z-index: 4;
+            pointer-events: none;
+            backdrop-filter: blur(1.2px);
+        }
+
+        .pricing-machine-door::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            width: 16px;
+            height: 56px;
+            border-radius: 10px;
+            background: #60a5fa;
+            transform: translateY(-50%);
+            box-shadow: 0 4px 10px rgba(37,99,235,0.32);
+        }
+
+        .pricing-machine.replay .pricing-machine-door {
+            animation: doorReplay 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .pricing-machine-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 767px) {
+            .hero-section {
+                padding: 118px 0 72px;
+            }
+
+            .hero-copy {
+                max-width: 100%;
+            }
+
+            .hero-copy h1 {
+                font-size: clamp(2.2rem, 10vw, 3.1rem);
+                line-height: 1.06;
+                letter-spacing: -0.04em;
+            }
+
+            .hero-copy p {
+                max-width: 100%;
+                font-size: 1rem !important;
+            }
+
+            .hero-checks {
+                gap: 8px;
+            }
+
+            .hero-check {
+                width: 100%;
+                justify-content: flex-start;
+                white-space: normal;
+                text-align: left;
+                padding: 9px 12px;
+            }
+
+            .hero-copy .d-flex.flex-column.flex-sm-row {
+                gap: 10px !important;
+            }
+
+            .hero-copy .btn {
+                width: 100%;
+                padding: 14px 18px !important;
+                font-size: 1rem !important;
+            }
+
+            .pricing-machine-inlet { display: none; }
+            .pricing-water-stream { display: none; }
+            .pricing-water-splash { display: none; }
+            .pricing-machine-door { display: none; }
+            .pricing-machine-water { display: none; }
+            .pricing-machine-header { display: none; }
+            
+            .pricing-machine {
+                background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+                border: 2px solid #dbeafe;
+                border-radius: 20px;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+            }
+            
+            .pricing-machine-window {
+                border: none;
+                background: transparent;
+                border-radius: 0;
+                padding: 0;
+                min-height: auto;
+                overflow: visible;
+            }
+            
+            .pricing-machine-content > div:first-child {
+                text-align: center;
+                margin-bottom: 24px;
+                padding-bottom: 16px;
+                border-bottom: 2px solid #e0f7ff;
+            }
+            
+            .branch-tag {
+                background: #eff6ff;
+                border: 1px solid #93c5fd;
+                color: #1e40af;
+                font-size: 0.75rem;
+                padding: 6px 12px;
+                margin-bottom: 8px;
+                display: inline-block;
+            }
+            
+            .pricing-menu h4 {
+                font-size: 1.3rem;
+                margin-bottom: 6px;
+                color: #0f172a;
+            }
+            
+            .pricing-menu .text-muted {
+                font-size: 0.85rem;
+                margin-bottom: 0;
+            }
+            
+            .price-item {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 12px;
+                align-items: center;
+                padding: 14px 0;
+                border-bottom: 1px solid #f0f7ff;
+            }
+            
+            .price-item:last-child { border-bottom: none; }
+            .price-item:hover { transform: none; }
+            
+            .price-item > div:first-child {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                min-width: 0;
+            }
+            
+            .price-item .d-flex {
+                gap: 8px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            
+            .price-item i.fa-check-circle {
+                font-size: 1rem;
+                flex-shrink: 0;
+                color: #2563eb;
+            }
+            
+            .price-item .fw-bold.fs-5:first-of-type {
+                font-size: 0.95rem !important;
+                color: #0f172a;
+                font-weight: 600 !important;
+            }
+            
+            .price-item .badge {
+                font-size: 0.65rem !important;
+                padding: 3px 8px !important;
+                background: #e0f2fe !important;
+                color: #0369a1 !important;
+                border: none !important;
+                font-weight: 500;
+            }
+            
+            .price-item .fw-bold.text-dark {
+                font-size: 1rem !important;
+                color: #2563eb !important;
+                font-weight: 700 !important;
+                text-align: right;
+                white-space: nowrap;
+            }
+            
+            .price-item .small {
+                font-size: 0.75rem !important;
+                color: #64748b !important;
+                display: block;
+                text-align: right;
+            }
+            
+            .pricing-menu {
+                padding: 0;
+            }
+            
+            .pricing-menu .text-center.mt-5 {
+                margin-top: 20px !important;
+                padding-top: 20px;
+                border-top: 2px solid #e0f7ff;
+            }
+            
+            .pricing-menu .btn {
+                font-size: 0.9rem;
+                padding: 8px 20px !important;
+            }
+
+            .laundry-orbit {
+                width: min(360px, 92vw);
+                max-width: 100%;
+            }
+
+            .orbit-badge {
+                max-width: 44%;
+                padding: 8px 10px;
+                font-size: 0.78rem;
+                border-radius: 12px;
+            }
+
+            .badge-fast { top: 14%; right: 5%; }
+            .badge-fresh { bottom: 13%; left: 5%; }
+
+            .orbit-shirt { transform: translate(-50%, -50%) translateY(-102px); }
+            .orbit-iron { transform: translate(-50%, -50%) translateY(102px); }
+            .orbit-soap { transform: translate(-50%, -50%) translateY(-144px); }
+            .orbit-socks { transform: translate(-50%, -50%) translateY(144px); }
+        }
+        .price-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .price-item:last-child { border-bottom: none; }
+        .price-item:hover { transform: translateX(4px); }
+        
+        .price-item > div:first-child {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .price-item i {
+            font-size: 1.1rem;
+            color: #2563eb;
+            flex-shrink: 0;
+            opacity: 0.8;
+        }
+        
+        .price-item .d-flex {
+            flex-direction: column !important;
+            gap: 4px !important;
+            align-items: flex-start !important;
+            flex-wrap: nowrap !important;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .price-item .fw-bold.fs-5 {
+            font-size: 0.95rem !important;
+            color: #0f172a;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        
+        .price-item .badge {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            white-space: nowrap;
+        }
+        
+        .price-item > .fw-bold.text-dark {
+            font-size: 0.95rem !important;
+            color: #2563eb !important;
+            font-weight: 700;
+            text-align: right;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .price-item > .small {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: right;
+        }
+        
+        .price-dots {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .hero-section {
+                padding: 128px 0 78px;
+            }
+
+            .min-vh-75 {
+                min-height: auto !important;
+            }
+
+            .hero-copy h1 {
+                font-size: clamp(2.35rem, 7vw, 3.4rem);
+                line-height: 1.07;
+            }
+
+            .laundry-orbit {
+                width: min(390px, 94vw);
+            }
+
+            .orbit-badge {
+                max-width: 45%;
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+
+            .pricing-menu {
+                padding: 22px 16px;
+            }
+
+            .pricing-machine-window {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 575px) {
+            .container {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .glass-nav {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+            }
+
+            .navbar-brand {
+                font-size: 1.85rem !important;
+            }
+
+            .navbar-nav {
+                background: rgba(255, 255, 255, 0.96);
+                border: 1px solid #e2e8f0;
+                border-radius: 14px;
+                padding: 10px 8px;
+                margin-top: 8px;
+            }
+
+            .hero-copy h1 {
+                font-size: clamp(2rem, 10vw, 2.85rem);
+            }
+
+            .hero-copy p {
+                font-size: 0.95rem !important;
+            }
+
+            .hero-check {
+                width: 100%;
+                white-space: normal;
+            }
+
+            .pricing-machine {
+                padding: 14px;
+                border-radius: 16px;
+            }
+
+            .pricing-menu {
+                padding: 0;
+            }
+
+            .price-item {
+                grid-template-columns: 1fr auto;
+                gap: 10px;
+            }
+
+            .price-item .fw-bold.fs-5,
+            .price-item > .fw-bold.text-dark {
+                font-size: 0.9rem !important;
+            }
+        }
+
+        /* Ultra-final mobile polish for pricing screen */
+        @media (max-width: 767px) {
+            #pricing {
+                padding-top: 7.2rem !important;
+                margin-top: -1rem;
+            }
+
+            #pricing .container.py-5 {
+                padding-top: 0.75rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+
+            #pricing .text-center.mb-5 {
+                margin-bottom: 0.75rem !important;
+            }
+
+            #pricing h2.display-5 {
+                font-size: 1.45rem !important;
+                line-height: 1.2;
+                margin-bottom: 0.45rem !important;
+            }
+
+            #pricing .text-muted.max-w-50 {
+                font-size: 0.84rem;
+                max-width: 100%;
+                padding: 0 4px;
+            }
+
+            #pricing .custom-pills {
+                margin-bottom: 0.75rem !important;
+                padding-bottom: 2px;
+            }
+
+            #pricing .custom-pills .nav-link {
+                font-size: 0.8rem !important;
+                padding: 8px 12px !important;
+            }
+
+            #pricing .pricing-machine {
+                padding: 10px !important;
+                border-radius: 14px !important;
+            }
+
+            #pricing .pricing-menu {
+                padding: 14px 12px !important;
+                border-radius: 12px !important;
+            }
+
+            #pricing .branch-tag {
+                font-size: 0.7rem !important;
+                padding: 5px 10px !important;
+                margin-bottom: 6px !important;
+            }
+
+            #pricing .pricing-menu h4 {
+                font-size: 1.2rem !important;
+                margin-bottom: 4px !important;
+            }
+
+            #pricing .pricing-menu .text-muted.mb-0 {
+                font-size: 0.78rem !important;
+            }
+
+            #pricing .price-item {
+                padding: 10px 0 !important;
+                gap: 10px !important;
+            }
+
+            #pricing .price-item i.fa-check-circle {
+                font-size: 0.9rem !important;
+                margin-right: 6px !important;
+            }
+
+            #pricing .price-item .fw-bold.fs-5,
+            #pricing .price-item .fw-bold.fs-5:first-of-type {
+                font-size: 0.92rem !important;
+                line-height: 1.25 !important;
+            }
+
+            #pricing .price-item .badge {
+                font-size: 0.58rem !important;
+                padding: 2px 6px !important;
+            }
+
+            #pricing .price-item > .fw-bold.text-dark {
+                font-size: 1rem !important;
+                min-width: 62px;
+            }
+
+            #pricing .price-item > .fw-bold.text-dark .small {
+                font-size: 0.7rem !important;
+            }
+
+            #pricing .pricing-menu .text-center.mt-5 {
+                margin-top: 8px !important;
+                padding-top: 10px !important;
+            }
+
+            #pricing .pricing-menu .text-center.mt-5 .btn {
+                max-width: 150px !important;
+                font-size: 0.72rem !important;
+                padding: 7px 10px !important;
+            }
+        }
+        
+        /* City Toggle Pills */
+        .nav-pills.custom-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .nav-pills.custom-pills .nav-link {
+            color: var(--dark);
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #f1f5f9;
+            margin: 0;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .nav-pills.custom-pills .nav-link:hover:not(.active) {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        
+        .nav-pills.custom-pills .nav-link:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .nav-pills.custom-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
+            border-color: transparent;
+        }
+        
+        .nav-pills.custom-pills .nav-link.active:hover {
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .nav-pills.custom-pills .nav-link.active:focus {
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28), 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .branch-finder-shell {
+            max-width: 720px;
+            margin: 0 auto 22px;
+            position: relative;
+        }
+
+        .branch-finder-launch {
+            min-height: 46px;
+            border-radius: 999px;
+            font-weight: 800;
+            padding: 10px 20px;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .branch-finder-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.28);
+        }
+
+        .branch-finder-panel {
+            margin-top: 12px;
+            transform-origin: top center;
+            opacity: 0;
+            pointer-events: none;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .branch-finder-panel::before,
+        .branch-finder-panel::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(186, 230, 253, 0.65));
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .branch-finder-panel::before {
+            left: 26%;
+        }
+
+        .branch-finder-panel::after {
+            right: 26%;
+            width: 10px;
+            height: 10px;
+        }
+
+        .branch-finder-shell.is-open .branch-finder-panel,
+        .branch-finder-panel.replay {
+            opacity: 1;
+            pointer-events: auto;
+            max-height: 640px;
+            animation: finderLaundryPop 0.76s cubic-bezier(0.2, 0.98, 0.3, 1) both;
+        }
+
+        .branch-finder-shell.is-closing .branch-finder-panel {
+            opacity: 1;
+            pointer-events: none;
+            max-height: 640px;
+            animation: finderLaundryPack 0.55s cubic-bezier(0.55, 0.05, 0.72, 0.19) both;
+        }
+
+        .branch-finder-shell.is-open .branch-finder-panel::before,
+        .branch-finder-shell.is-open .branch-finder-panel::after,
+        .branch-finder-panel.replay::before,
+        .branch-finder-panel.replay::after {
+            animation: finderBubbleRise 0.82s ease-out both;
+        }
+
+        .branch-finder-shell.is-open .branch-finder-launch i {
+            animation: finderDrumSpin 0.72s ease;
+        }
+
+        .branch-finder-shell.is-closing .branch-finder-launch i {
+            animation: finderDrumSpinReverse 0.5s ease;
+        }
+
+        @keyframes finderLaundryPop {
+            0% {
+                opacity: 0;
+                transform: translateY(-22px) scale(0.58) rotate(0deg);
+                filter: blur(1.5px);
+            }
+
+            54% {
+                opacity: 1;
+                transform: translateY(6px) scale(1.04) rotate(-2.2deg);
+                filter: blur(0);
+            }
+
+            78% {
+                transform: translateY(-2px) scale(0.995) rotate(1.2deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes finderDrumSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            58% { transform: rotate(320deg) scale(1.18); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes finderDrumSpinReverse {
+            0% { transform: rotate(0deg) scale(1); }
+            60% { transform: rotate(-210deg) scale(1.08); }
+            100% { transform: rotate(-360deg) scale(1); }
+        }
+
+        @keyframes finderLaundryPack {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+                filter: blur(0);
+            }
+            40% {
+                opacity: 0.98;
+                transform: translateY(-4px) scale(0.96) rotate(-1.4deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-16px) scale(0.48) rotate(0deg);
+                filter: blur(1.2px);
+            }
+        }
+
+        @keyframes finderBubbleRise {
+            0% {
+                opacity: 0;
+                transform: translateY(8px) scale(0.65);
+            }
+            35% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) scale(1.15);
+            }
+        }
+
+        .branch-finder {
+            max-width: 720px;
+            margin: 0;
+            background: #ffffff;
+            border: 1px solid #dbeafe;
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .branch-finder .finder-wrap {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .branch-finder input {
+            width: 100%;
+            min-height: 42px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .branch-finder input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .branch-finder .btn-find {
+            min-height: 42px;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 8px 14px;
+            white-space: nowrap;
+        }
+
+        .finder-feedback {
+            min-height: 20px;
+            font-size: 0.82rem;
+            margin-top: 8px;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .finder-results {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .finder-result-item {
+            background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+            animation: revealUp 0.35s ease;
+        }
+
+        .finder-result-item:hover,
+        .finder-result-item.active-result {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.14);
+            border-color: #93c5fd;
+        }
+
+        .finder-result-main {
+            min-width: 0;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .finder-result-copy {
+            min-width: 0;
+        }
+
+        .finder-result-name {
+            display: block;
+            font-size: 0.9rem;
+            line-height: 1.2;
+            color: #0f172a;
+            font-weight: 800;
+        }
+
+        .finder-result-address {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.75rem;
+            line-height: 1.25;
+            color: #475569;
+        }
+
+        .finder-result-score {
+            flex: 0 0 auto;
+            font-size: 0.69rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-radius: 999px;
+            padding: 3px 8px;
+            white-space: nowrap;
+        }
+
+        .finder-no-result {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 6px;
+        }
+        
+        @media (max-width: 767px) {
+            .nav-pills.custom-pills {
+                gap: 8px;
+                margin-bottom: 24px !important;
+            }
+            
+            .nav-pills.custom-pills .nav-link {
+                padding: 9px 18px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                border-radius: 24px;
+            }
+            
+            .nav-pills.custom-pills .nav-link:hover:not(.active) {
+                background: #d4dce5;
+                transform: translateY(-1px);
+            }
+            
+            .nav-pills.custom-pills .nav-link.active {
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            }
+            
+            .nav-pills.custom-pills .nav-link.active:hover {
+                box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+                transform: translateY(-1px);
+            }
+        }
+
+        @keyframes chipDrift {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes sudsFloat {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.9; }
+            50% { transform: translateY(-6px) scale(1.06); opacity: 1; }
+        }
+
+        @keyframes hangerSwing {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        @keyframes spinSoft {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes cardLiftBreathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes tabGlow {
+            0%, 100% { box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25); }
+            50% { box-shadow: 0 14px 30px rgba(14, 165, 233, 0.35); }
+        }
+
+        @keyframes ctaShimmer {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(120%); }
+        }
+
+        .hero-check {
+            animation: chipDrift 4.8s ease-in-out infinite;
+        }
+
+        .hero-check:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+
+        .hero-check:nth-child(3) {
+            animation-delay: 1.3s;
+        }
+
+        .summary-strip {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-strip::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            right: -70px;
+            top: -80px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: spinSoft 18s linear infinite;
+        }
+
+        .feature-icon i {
+            display: inline-block;
+            transform-origin: top center;
+            animation: hangerSwing 2.8s ease-in-out infinite;
+        }
+
+        #services .premium-card .icon-wrapper i {
+            animation: sudsFloat 3.2s ease-in-out infinite;
+        }
+
+        #services .premium-card:nth-child(2) .icon-wrapper i,
+        #services .col-md-6:nth-child(2) .icon-wrapper i {
+            animation-delay: 0.5s;
+        }
+
+        #services .premium-card:nth-child(3) .icon-wrapper i,
+        #services .col-md-6:nth-child(3) .icon-wrapper i {
+            animation-delay: 1s;
+        }
+
+        #how-it-works .step-circle {
+            animation: sudsFloat 3.3s ease-in-out infinite;
+        }
+
+        #how-it-works .d-flex:nth-child(2) .step-circle {
+            animation-delay: 0.8s;
+        }
+
+        #how-it-works .d-flex:nth-child(3) .step-circle {
+            animation-delay: 1.4s;
+        }
+
+        #reviews .premium-card {
+            animation: cardLiftBreathe 6s ease-in-out infinite;
+        }
+
+        #reviews .col-md-4:nth-child(2) .premium-card {
+            animation-delay: 0.9s;
+        }
+
+        #reviews .col-md-4:nth-child(3) .premium-card {
+            animation-delay: 1.8s;
+        }
+
+        #pricing .nav-pills.custom-pills .nav-link.active {
+            animation: tabGlow 2.8s ease-in-out infinite;
+        }
+
+        .price-item i.fa-check-circle {
+            animation: sudsFloat 2.4s ease-in-out infinite;
+        }
+
+        .btn-cta-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cta-glow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.36), rgba(255,255,255,0));
+            transform: translateX(-120%);
+            animation: ctaShimmer 3.8s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-check,
+            .feature-icon i,
+            #services .premium-card .icon-wrapper i,
+            #how-it-works .step-circle,
+            #reviews .premium-card,
+            #pricing .nav-pills.custom-pills .nav-link.active,
+            .price-item i.fa-check-circle,
+            .btn-cta-glow::after,
+            .summary-strip::after {
+                animation: none !important;
+            }
+        }
+
+        /* Full-page motion system */
+        @keyframes revealUp {
+            from {
+                opacity: 0;
+                transform: translateY(34px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes foamShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes lineSway {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(1.2deg); }
+        }
+
+        @keyframes pegBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .page-foam {
+            position: relative;
+        }
+
+        .page-foam::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at 15% 12%, rgba(186, 230, 253, 0.45) 0%, transparent 36%),
+                        radial-gradient(circle at 84% 28%, rgba(191, 219, 254, 0.42) 0%, transparent 38%),
+                        radial-gradient(circle at 30% 80%, rgba(224, 242, 254, 0.55) 0%, transparent 40%),
+                        #ffffff;
+            background-size: 180% 180%;
+            animation: foamShift 28s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .anim-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            will-change: opacity, transform;
+        }
+
+        .anim-section.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .anim-stagger {
+            opacity: 0;
+            transform: translateY(22px);
+        }
+
+        .anim-section.in-view .anim-stagger {
+            animation: revealUp 0.8s ease forwards;
+        }
+
+        .anim-section.in-view .anim-stagger:nth-child(1) { animation-delay: 0.08s; }
+        .anim-section.in-view .anim-stagger:nth-child(2) { animation-delay: 0.16s; }
+        .anim-section.in-view .anim-stagger:nth-child(3) { animation-delay: 0.24s; }
+        .anim-section.in-view .anim-stagger:nth-child(4) { animation-delay: 0.32s; }
+
+        .laundry-divider {
+            width: min(880px, 92%);
+            margin: 14px auto 24px;
+            position: relative;
+            height: 34px;
+            z-index: 3;
+        }
+
+        .laundry-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 16px;
+            height: 2px;
+            background: linear-gradient(90deg, #93c5fd, #2563eb, #0ea5e9, #93c5fd);
+            transform-origin: center;
+            animation: lineSway 4.6s ease-in-out infinite;
+        }
+
+        .peg {
+            position: absolute;
+            top: 6px;
+            width: 10px;
+            height: 14px;
+            border-radius: 4px;
+            background: #0ea5e9;
+            animation: pegBounce 2.4s ease-in-out infinite;
+        }
+
+        .peg.p1 { left: 16%; }
+        .peg.p2 { left: 50%; animation-delay: 0.6s; }
+        .peg.p3 { right: 16%; animation-delay: 1.1s; }
+
+        #services .premium-card:hover .icon-wrapper i {
+            transform: rotate(10deg) scale(1.1);
+            transition: transform 0.25s ease;
+        }
+
+        #reviews .premium-card:hover {
+            transform: translateY(-9px) scale(1.01);
+        }
+
+        #pricing .price-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #pricing .price-item::after {
+            content: "";
+            position: absolute;
+            left: -40%;
+            top: 0;
+            width: 28%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(186,230,253,0.45), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        #pricing .price-item:hover::after {
+            opacity: 1;
+            animation: ctaShimmer 1.1s ease;
+        }
+
+        /* Final responsive lock for pricing section */
+        #pricing {
+            scroll-margin-top: 92px;
+        }
+
+        #pricing .price-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eaf1ff;
+        }
+
+        #pricing .price-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        #pricing .price-main i {
+            flex: 0 0 auto;
+            margin-top: 2px;
+            font-size: 0.9rem;
+        }
+
+        #pricing .price-copy {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        #pricing .service-name {
+            font-size: 0.93rem;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #0f172a;
+            overflow-wrap: anywhere;
+        }
+
+        #pricing .service-category {
+            align-self: flex-start;
+            font-size: 0.62rem;
+            line-height: 1;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            white-space: nowrap;
+        }
+
+        #pricing .price-value {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            text-align: right;
+            line-height: 1.05;
+            white-space: nowrap;
+            min-width: 64px;
+        }
+
+        #pricing .price-value .amount {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #2563eb;
+            letter-spacing: -0.01em;
+        }
+
+        #pricing .price-value .unit {
+            font-size: 0.72rem;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 1px;
+        }
+
+        @media (max-width: 991px) {
+            #pricing .container.py-5 {
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
+            }
+
+            #pricing .custom-pills {
+                justify-content: flex-start !important;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 8px;
+                padding-bottom: 4px;
+                margin-bottom: 1rem !important;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #pricing .custom-pills .nav-item {
+                flex: 0 0 auto;
+            }
+
+            #pricing .custom-pills .nav-link {
+                white-space: nowrap;
+                padding: 8px 14px;
+                font-size: 0.78rem;
+            }
+
+            #pricing .row.justify-content-center {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            #pricing .col-lg-8 {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            #pricing .pricing-machine {
+                padding: 12px;
+                border-radius: 16px;
+                box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+            }
+
+            #pricing .pricing-machine-header,
+            #pricing .pricing-machine-inlet,
+            #pricing .pricing-water-stream,
+            #pricing .pricing-water-splash,
+            #pricing .pricing-machine-water,
+            #pricing .pricing-machine-door {
+                display: none;
+            }
+
+            #pricing .pricing-machine-window {
+                border: none;
+                background: transparent;
+                border-radius: 0;
+                min-height: auto;
+                padding: 0;
+                overflow: visible;
+            }
+
+            #pricing .pricing-menu {
+                padding: 14px 10px;
+                border-radius: 12px;
+                box-shadow: none;
+            }
+
+            #pricing .pricing-menu h4 {
+                font-size: 1.2rem;
+                margin-bottom: 4px;
+            }
+
+            #pricing .pricing-menu .text-muted {
+                font-size: 0.8rem;
+            }
+
+            #pricing .pricing-menu .text-center.mt-5 {
+                margin-top: 12px !important;
+                padding-top: 12px;
+            }
+
+            #pricing .pricing-menu .text-center.mt-5 .btn {
+                width: 100%;
+                max-width: 170px;
+            }
+
+            .branch-finder-shell {
+                margin-bottom: 12px;
+            }
+
+            .branch-finder-launch {
+                width: 100%;
+            }
+
+            .branch-finder {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+
+            .branch-finder .finder-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .branch-finder .btn-find {
+                width: 100%;
+            }
+
+            .finder-results {
+                max-height: 220px;
+            }
+
+            .finder-result-item {
+                padding: 9px 10px;
+            }
+
+            .finder-result-name {
+                font-size: 0.84rem;
+            }
+
+            .finder-result-address {
+                font-size: 0.72rem;
+            }
+        }
+    </style>
+</head>
+<body class="page-foam">
+
+    <div class="global-water-overlay" aria-hidden="true">
+        <div class="wave-layer wave-a"></div>
+        <div class="wave-layer wave-b"></div>
+        <div class="wave-layer wave-c"></div>
+        <div class="water-caustics caustic-one"></div>
+        <div class="water-caustics caustic-two"></div>
+        <div class="water-bubble-field">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="foam-ribbon foam-top"></div>
+        <div class="foam-ribbon foam-bottom"></div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg glass-nav fixed-top py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3 d-flex align-items-center gap-2" href="#home">
+                <span class="brand-mark"><i class="fa-solid fa-shirt"></i></span>
+                <span><span class="text-dark">Dhobi</span><span class="text-primary">Kaka</span></span>
+            </a>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fa-solid fa-bars fs-2 text-dark"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center fw-medium">
+                    <li class="nav-item"><a class="nav-link text-dark px-3" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark px-3 hover-text-primary" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark px-3" href="#how-it-works">How it Works</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark px-3" href="#reviews">Reviews</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark px-3" href="#pricing">Price</a></li>
+                    {% comment %} <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
+                        <a href="{% url 'login' %}" class="btn btn-outline-dark px-4 py-2 rounded-pill me-2 fw-semibold">Sign In</a>
+                    </li> {% endcomment %}
+                    <li class="nav-item mt-2 mt-lg-0">
+                        <a href="{% url 'login' %}" class="btn btn-brand px-4 py-2 rounded-pill fw-bold">Schedule Pickup</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-section anim-section">
+        <div class="container">
+            <div class="row align-items-center g-5 min-vh-75">
+                <div class="col-lg-6 text-center text-lg-start hero-copy" data-aos="fade-right" data-aos-duration="1000">
+                    <div class="section-kicker mb-4">
+                        <i class="fa-solid fa-star"></i> Trusted laundry made simple
+                    </div>
+                    <h1 class="fw-bold mb-4">
+                        Laundry pickup,
+                        <span class="text-gradient">made clear</span> for every customer.
+                    </h1>
+                    <p class="lead text-muted mb-4 pe-lg-5" style="font-size: 1.08rem;">
+                        See your branch, review prices, and schedule pickup without confusion. Everything is organized for a fast customer journey.
+                    </p>
+                    <div class="hero-checks mb-4 justify-content-center justify-content-lg-start">
+                        <span class="hero-check"><i class="fa-solid fa-store text-primary"></i> Branch-aware booking</span>
+                        <span class="hero-check"><i class="fa-solid fa-location-dot text-danger"></i> Easy address visibility</span>
+                        <span class="hero-check"><i class="fa-solid fa-bolt text-warning"></i> Quick pickup flow</span>
+                    </div>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
+                        <a href="{% url 'login' %}" class="btn btn-brand btn-lg px-5 py-3 rounded-pill fw-bold fs-5">Book Now <i class="fa-solid fa-arrow-right ms-2"></i></a>
+                        <a href="#pricing" class="btn btn-outline-primary btn-lg px-5 py-3 rounded-pill fw-bold fs-5">See Prices</a>
+                    </div>
+                    <div class="mt-4 text-muted small fw-medium">
+                        <i class="fa-solid fa-truck-fast text-success me-1"></i> Free pickup & delivery on orders over ₹500
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mt-5 mt-lg-0 d-none d-md-block" data-aos="fade-left" data-aos-duration="1200">
+                    <div class="position-relative floating-element text-center">
+                        <div class="laundry-orbit">
+                            <div class="orbit-ring ring-one"></div>
+                            <div class="orbit-ring ring-two"></div>
+
+                            <div class="detergent-bottle"></div>
+                            <div class="detergent-stream"></div>
+
+                            <div class="orbit-track track-one">
+                                <span class="orbital-item orbit-shirt"><i class="fa-solid fa-shirt"></i></span>
+                                <span class="orbital-item orbit-iron"><i class="fa-solid fa-fire-flame-curved"></i></span>
+                            </div>
+
+                            <div class="orbit-track track-two">
+                                <span class="orbital-item orbit-soap"><i class="fa-solid fa-jug-detergent"></i></span>
+                                <span class="orbital-item orbit-socks"><i class="fa-solid fa-socks"></i></span>
+                            </div>
+
+                            <div class="washer-core">
+                                <div class="washer-window">
+                                    <div class="fabric-spin">
+                                        <span class="fabric-piece fabric-a"></span>
+                                        <span class="fabric-piece fabric-b"></span>
+                                        <span class="fabric-piece fabric-c"></span>
+                                    </div>
+                                    <div class="washer-water"></div>
+                                </div>
+                            </div>
+
+                            <div class="orbit-badge badge-fast"><i class="fa-solid fa-bolt text-warning me-1"></i>Fast Turnaround</div>
+                            <div class="orbit-badge badge-fresh"><i class="fa-solid fa-leaf text-success me-1"></i>Fresh Finish</div>
+
+                            <span class="orbit-bubble bubble-1"></span>
+                            <span class="orbit-bubble bubble-2"></span>
+                            <span class="orbit-bubble bubble-3"></span>
+                            <span class="orbit-bubble bubble-4"></span>
+                            <span class="orbit-bubble bubble-5"></span>
+                            <span class="orbit-bubble bubble-6"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container position-relative" style="z-index: 10;">
+        <div class="summary-strip p-4 p-md-5" data-aos="zoom-in" data-aos-offset="-50">
+            <div class="row text-center g-4">
+                <div class="col-md-4 border-end border-secondary border-opacity-25">
+                    <h2 class="display-5 fw-bold text-white mb-0">
+                        <span class="counter-value" data-target="50">0</span>k+
+                    </h2>
+                    <p class="text-white-50 mb-0 fw-medium">Happy Customers</p>
+                </div>
+                <div class="col-md-4 border-end border-secondary border-opacity-25">
+                    <h2 class="display-5 fw-bold text-white mb-0">
+                        <span class="counter-value" data-target="1000" data-final="1M+">0</span>
+                    </h2>
+                    <p class="text-white-50 mb-0 fw-medium">Garments Washed</p>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="display-5 fw-bold text-white mb-0">
+                        <span class="counter-value" data-target="4.9" data-float="true">0.0</span><span class="fs-4">/5</span>
+                    </h2>
+                    <p class="text-white-50 mb-0 fw-medium">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-5 anim-section" style="background: #ffffff;">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="section-kicker mb-3"><i class="fa-solid fa-compass"></i> Customer friendly</div>
+                <h2 class="display-5 fw-bold text-dark mb-3">Choose a branch and see what’s available</h2>
+                <p class="text-muted max-w-50 mx-auto">Each branch shows its own live services and prices so customers can understand where their order will go.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4 anim-stagger" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon mx-auto"><i class="fa-solid fa-store"></i></div>
+                        <h4 class="fw-bold mb-3">Branch clarity</h4>
+                        <p class="text-muted mb-0">Customers can see the branch context first, so they know exactly where the order is going.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 anim-stagger" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon mx-auto"><i class="fa-solid fa-location-dot"></i></div>
+                        <h4 class="fw-bold mb-3">Address visible</h4>
+                        <p class="text-muted mb-0">Pickup and branch address details stay visible in one simple layout to avoid confusion.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 anim-stagger" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon mx-auto"><i class="fa-solid fa-sack-dollar"></i></div>
+                        <h4 class="fw-bold mb-3">Simple pricing</h4>
+                        <p class="text-muted mb-0">Users can quickly scan the main services and prices for each branch before logging in.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="250">
+                <a href="#pricing" class="btn btn-outline-primary rounded-pill fw-bold px-4 py-2">
+                    Explore Branch Pricing <i class="fa-solid fa-arrow-down ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="laundry-divider anim-section" aria-hidden="true">
+        <div class="laundry-line"></div>
+        <span class="peg p1"></span>
+        <span class="peg p2"></span>
+        <span class="peg p3"></span>
+    </div>
+
+    <section id="services" class="py-5 bg-light anim-section" style="margin-top: 0; padding-top: 90px !important;">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h6 class="text-primary fw-bold text-uppercase tracking-wide">Our Expertise</h6>
+                <h2 class="display-5 fw-bold text-dark mb-3">Premium Fabric Care</h2>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 anim-stagger" data-aos="fade-up" data-aos-delay="100">
+                    <div class="premium-card h-100 text-center">
+                        <div class="icon-wrapper bg-primary bg-opacity-10 text-primary mx-auto">
+                            <i class="fa-solid fa-shirt"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Wash & Fold</h4>
+                        <p class="text-muted">Everyday laundry, perfectly washed, nicely dried, and neatly folded. Ready to go back in your closet.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 anim-stagger" data-aos="fade-up" data-aos-delay="200">
+                    <div class="premium-card h-100 text-center">
+                        <div class="icon-wrapper bg-info bg-opacity-10 text-info mx-auto">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Dry Cleaning</h4>
+                        <p class="text-muted">Specialized care for suits, dresses, and delicate fabrics. We remove tough stains while protecting the material.</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 anim-stagger" data-aos="fade-up" data-aos-delay="300">
+                    <div class="premium-card h-100 text-center">
+                        <div class="icon-wrapper bg-success bg-opacity-10 text-success mx-auto">
+                            <i class="fa-solid fa-temperature-arrow-up"></i>
+                        </div>
+                        <h4 class="fw-bold mb-3">Steam Ironing</h4>
+                        <p class="text-muted">Get crisp, wrinkle-free clothes with our professional steam ironing service. Delivered smoothly on hangers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-5 anim-section" style="background: white;">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-5 mb-lg-0" data-aos="fade-right">
+                    <h6 class="text-primary fw-bold text-uppercase tracking-wide">The Process</h6>
+                    <h2 class="display-5 fw-bold text-dark mb-4">Clean clothes in 3 simple steps</h2>
+                    <p class="text-muted fs-5 mb-4">We've designed our service to fit seamlessly into your busy lifestyle. No more laundry days.</p>
+                    <a href="{% url 'public_register' %}" class="btn btn-outline-primary btn-lg rounded-pill fw-bold px-4">Start Now</a>
+                </div>
+                
+                <div class="col-lg-6 offset-lg-1">
+                    <div class="d-flex mb-4 anim-stagger" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex-shrink-0">
+                            <div class="step-circle">1</div>
+                        </div>
+                        <div class="ms-4 mt-2">
+                            <h4 class="fw-bold">Schedule a Pickup</h4>
+                            <p class="text-muted">Book via our app. Choose a time slot that works best for you, and we'll be there.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex mb-4 anim-stagger" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex-shrink-0">
+                            <div class="step-circle" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8);">2</div>
+                        </div>
+                        <div class="ms-4 mt-2">
+                            <h4 class="fw-bold">Expert Processing</h4>
+                            <p class="text-muted">Your garments are inspected, treated for stains, and cleaned according to fabric requirements.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex anim-stagger" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex-shrink-0">
+                            <div class="step-circle" style="background: linear-gradient(135deg, #10b981, #34d399);">3</div>
+                        </div>
+                        <div class="ms-4 mt-2">
+                            <h4 class="fw-bold">Fast Delivery</h4>
+                            <p class="text-muted">Fresh, folded, and smelling great. We deliver your clothes back to your door within 48 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% if approved_reviews %}
+    <section id="reviews" class="py-5 bg-light anim-section">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h6 class="text-primary fw-bold text-uppercase tracking-wide">Testimonials</h6>
+                <h2 class="display-5 fw-bold text-dark mb-3">Loved by our customers</h2>
+                <p class="text-muted max-w-50 mx-auto">Don't just take our word for it. See what our customers have to say about Dhobi Kaka.</p>
+            </div>
+            
+            <div class="row g-4 justify-content-center">
+                {% for review in approved_reviews %}
+                <div class="col-md-4 anim-stagger" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card premium-card h-100 p-4 text-start">
+                        <div class="d-flex text-warning mb-3 fs-5">
+                            {% for i in review.filled_stars %}<i class="fa-solid fa-star me-1"></i>{% endfor %}
+                            {% for i in review.empty_stars %}<i class="fa-regular fa-star text-muted opacity-25 me-1"></i>{% endfor %}
+                        </div>
+                        <p class="text-muted fst-italic mb-4 lh-lg fs-6">"{{ review.review }}"</p>
+                        <div class="mt-auto d-flex align-items-center">
+                            <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center fw-bold me-3 fs-5" style="width: 50px; height: 50px;">
+                                {{ review.customer.name|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">{{ review.customer.name }}</h6>
+                                <small class="text-muted"><i class="fa-solid fa-location-dot me-1 text-primary opacity-50"></i> {{ review.business.address }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+    <section class="py-5 position-relative overflow-hidden anim-section" style="background: var(--dark); border-radius: 40px; margin: 0 20px 60px;">
+        <div style="position:absolute; width: 300px; height: 300px; background: rgba(37, 99, 235, 0.3); border-radius: 50%; filter: blur(50px); top: -100px; left: -100px;"></div>
+        <div style="position:absolute; width: 300px; height: 300px; background: rgba(14, 165, 233, 0.3); border-radius: 50%; filter: blur(50px); bottom: -100px; right: -100px;"></div>
+        
+        <div class="container py-5 text-center position-relative" style="z-index: 5;" data-aos="zoom-in">
+            <h2 class="display-4 fw-bold text-white mb-4">Ready to book your first pickup?</h2>
+            <p class="lead text-white-50 mb-5 max-w-75 mx-auto">Start with your branch, check prices, and let Dhobi Kaka handle the rest.</p>
+            <a href="{% url 'login' %}" class="btn btn-brand btn-lg px-5 py-3 rounded-pill fw-bold fs-4 shadow-lg btn-cta-glow">
+                Schedule Pickup
+            </a>
+        </div>
+    </section>
+
+    <section id="pricing" class="py-5 anim-section" style="background: radial-gradient(circle at bottom left, #f8fafc 0%, #ffffff 100%);">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="section-kicker mb-3"><i class="fa-solid fa-tags"></i> Branch pricing</div>
+                <h2 class="display-5 fw-bold text-dark mb-3">Simple prices by branch</h2>
+                <p class="text-muted max-w-50 mx-auto">Select a branch to see the main services customers use most often there.</p>
+            </div>
+
+            {% if branches_data %}
+            <div class="branch-finder-shell" data-aos="fade-up" data-aos-delay="80" id="branchFinderShell">
+                <div class="text-center">
+                    <button type="button" class="btn btn-brand branch-finder-launch" id="branchFinderLaunchBtn" aria-expanded="false" aria-controls="branchFinderPanel">
+                        <i class="fa-solid fa-location-crosshairs me-1"></i> Find Nearest Branch
+                    </button>
+                </div>
+
+                <div class="branch-finder-panel" id="branchFinderPanel">
+                    <div class="branch-finder">
+                        <div class="finder-wrap">
+                            <input type="text" id="branchFinderInput" placeholder="Enter your area or location (e.g. Alkapuri, Atladara)">
+                            <button type="button" class="btn btn-brand btn-find" id="branchFinderSearchBtn">
+                                <i class="fa-solid fa-magnifying-glass me-1"></i> Search Branch
+                            </button>
+                        </div>
+                        <div class="finder-feedback" id="branchFinderFeedback" aria-live="polite"></div>
+                        <ul class="finder-results" id="branchFinderResults" aria-label="Matching branches"></ul>
+                        <div class="finder-no-result" id="branchFinderNoResult" hidden>Type a location to see related branches.</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <ul class="nav nav-pills custom-pills justify-content-center mb-5" id="pricing-tab" role="tablist" data-aos="zoom-in" data-aos-delay="100">
+                {% for branch in branches_data %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ forloop.counter }}" data-bs-toggle="pill" data-bs-target="#pane-{{ forloop.counter }}" type="button" role="tab" data-branch-name="{{ branch.name|escape }}" data-branch-address="{{ branch.address|default:''|escape }}">{{ branch.name }}</button>
+                </li>
+                {% empty %}
+                <li class="nav-item">
+                    <button class="nav-link active">Coming Soon!</button>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content" id="pricing-tabContent">
+                {% for branch in branches_data %}
+                <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="pane-{{ forloop.counter }}" role="tabpanel" tabindex="0">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+                            <div class="pricing-machine">
+                                <div class="pricing-machine-header">
+                                    <div class="machine-lights"><span></span><span></span><span></span></div>
+                                    <small class="fw-bold text-primary">Dhobi Kaka Smart Washer</small>
+                                </div>
+                                <div class="pricing-machine-window">
+                                    <div class="pricing-machine-inlet"></div>
+                                    <div class="pricing-water-stream"><span></span><span></span><span></span></div>
+                                    <div class="pricing-water-splash"></div>
+                                    <div class="pricing-machine-water"></div>
+                                    <div class="pricing-machine-door"></div>
+                                    <div class="pricing-menu pricing-machine-content">
+                                        <div class="text-center mb-4">
+                                            <div class="branch-tag mb-3"><i class="fa-solid fa-location-dot text-primary"></i> {{ branch.name }}</div>
+                                            <h4 class="fw-bold mb-2 text-primary">Top services at this branch</h4>
+                                            <p class="text-muted mb-0">{{ branch.address }}</p>
+                                        </div>
+                                        
+                                    {% for item in branch.services %}
+                                        <div class="price-item">
+                                            <div class="price-main">
+                                                <i class="fa-solid fa-check-circle text-primary opacity-75"></i>
+                                                <div class="price-copy">
+                                                    <span class="service-name">{{ item.name }}</span>
+                                                    <span class="service-category">{{ item.category }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="price-dots"></div>
+                                            <div class="price-value">
+                                                <span class="amount">₹{{ item.price }}</span>
+                                                <span class="unit">/{{ item.unit }}</span>
+                                            </div>
+                                        </div>
+                                        {% empty %}
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fa-solid fa-tags fs-1 mb-3 text-light"></i>
+                                            <p>Prices are currently being updated for this location.</p>
+                                        </div>
+                                    {% endfor %}
+                                        <div class="text-center mt-5">
+                                            <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill fw-bold px-4">See Full Price List</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-white py-4 border-top">
+        <div class="container mt-2">
+            <div class="row g-4">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shirt text-primary me-2"></i>Dhobi Kaka</h4>
+                    <p class="text-muted mb-4 pe-lg-4">The smart, modern way to handle your laundry and dry cleaning needs.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="btn btn-light rounded-circle text-primary" style="width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-light rounded-circle text-info" style="width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="btn btn-light rounded-circle text-danger" style="width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 offset-lg-2">
+                    <h6 class="fw-bold text-dark mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-text-primary">About Us</a></li>
+                        <li class="mb-2"><a href="#services" class="text-muted text-decoration-none hover-text-primary">Services</a></li>
+                        <li class="mb-2"><a href="#pricing" class="text-muted text-decoration-none hover-text-primary">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold text-dark mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-text-primary">Help Center</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-text-primary">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-text-primary">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 mt-4 mt-lg-0">
+                    <h6 class="fw-bold text-dark mb-3">Get the App</h6>
+                    <a href="#" class="btn btn-dark w-100 mb-2 rounded-3 text-start"><i class="fa-brands fa-apple me-2 fs-5"></i> <small>App Store</small></a>
+                    <a href="#" class="btn btn-outline-dark w-100 rounded-3 text-start"><i class="fa-brands fa-google-play me-2 fs-5"></i> <small>Google Play</small></a>
+                </div>
+            </div>
+            <hr class="mt-4 mb-3 text-muted opacity-25">
+            <div class="text-center text-muted small">
+                <span class="d-block fw-semibold text-primary" style="margin-top: 2px; line-height: 1.2;">
+                    <i class="fa-solid fa-code me-1"></i> Developed by <a href="https://www.technoadviser.com" target="_blank" rel="noopener noreferrer" class="text-dark text-decoration-none">Technoadviser</a>
+                </span>
+                <span class="d-block mt-1">&copy; 2026 Dhobi Kaka Technologies. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize Scroll Animations
+        AOS.init({
+            once: true, 
+            offset: 50, 
+            duration: 800, 
+        });
+
+        // 🔥 NUMBER COUNTER ANIMATION 🔥
+        const statsSection = document.querySelector('.summary-strip');
+        let hasCounted = false;
+
+        const countObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasCounted) {
+                    hasCounted = true; 
+                    const counters = document.querySelectorAll('.counter-value');
+                    
+                    counters.forEach(counter => {
+                        const target = parseFloat(counter.getAttribute('data-target'));
+                        const isFloat = counter.hasAttribute('data-float');
+                        const finalString = counter.getAttribute('data-final');
+                        const duration = 2000; 
+                        const frameRate = 1000 / 60; 
+                        const totalFrames = Math.round(duration / frameRate);
+                        let currentFrame = 0;
+
+                        const counterInterval = setInterval(() => {
+                            currentFrame++;
+                            const progress = currentFrame / totalFrames;
+                            
+                            const currentCount = target * (1 - Math.pow(1 - progress, 3));
+
+                            if (currentFrame >= totalFrames) {
+                                clearInterval(counterInterval);
+                                counter.innerText = finalString ? finalString : (isFloat ? target.toFixed(1) : target);
+                            } else {
+                                counter.innerText = isFloat ? currentCount.toFixed(1) : Math.floor(currentCount);
+                            }
+                        }, frameRate);
+                    });
+                }
+            });
+        }, { threshold: 0.5 }); 
+
+        if (statsSection) countObserver.observe(statsSection);
+
+        // Full-page section choreography
+        const animatedSections = document.querySelectorAll('.anim-section');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
+
+        animatedSections.forEach((section) => sectionObserver.observe(section));
+
+        // Pricing washer door: always auto-animates, and quick replay on branch switch
+        document.querySelectorAll('#pricing-tab [data-bs-toggle="pill"]').forEach((tabBtn) => {
+            tabBtn.addEventListener('shown.bs.tab', () => {
+                const activePane = document.querySelector('#pricing-tabContent .tab-pane.show.active');
+                const machine = activePane ? activePane.querySelector('.pricing-machine') : null;
+                if (!machine) return;
+
+                machine.classList.remove('replay');
+                void machine.offsetWidth;
+                machine.classList.add('replay');
+
+                window.setTimeout(() => {
+                    machine.classList.remove('replay');
+                }, 1150);
+            });
+        });
+
+        // Interactive parallax for hero laundry orbit
+        const laundryOrbit = document.querySelector('.laundry-orbit');
+        if (laundryOrbit) {
+            laundryOrbit.addEventListener('mousemove', (event) => {
+                const rect = laundryOrbit.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width - 0.5) * 10;
+                const y = ((event.clientY - rect.top) / rect.height - 0.5) * 10;
+                laundryOrbit.style.transform = 'rotateX(' + (-y * 0.6) + 'deg) rotateY(' + (x * 0.6) + 'deg)';
+            });
+
+            laundryOrbit.addEventListener('mouseleave', () => {
+                laundryOrbit.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        }
+
+        // Branch finder: suggest best branch from name + address text match
+        const finderShell = document.getElementById('branchFinderShell');
+        const finderLaunchBtn = document.getElementById('branchFinderLaunchBtn');
+        const finderPanel = document.getElementById('branchFinderPanel');
+        const finderInput = document.getElementById('branchFinderInput');
+        const finderBtn = document.getElementById('branchFinderSearchBtn');
+        const finderFeedback = document.getElementById('branchFinderFeedback');
+        const finderResults = document.getElementById('branchFinderResults');
+        const finderNoResult = document.getElementById('branchFinderNoResult');
+        const branchTabs = Array.from(document.querySelectorAll('#pricing-tab .nav-link[data-branch-name]'));
+        let finderCloseTimer = null;
+
+        function openFinderPanel() {
+            if (!finderShell || !finderPanel) return;
+            if (finderCloseTimer) {
+                window.clearTimeout(finderCloseTimer);
+                finderCloseTimer = null;
+            }
+
+            finderShell.classList.remove('is-closing');
+            finderShell.classList.add('is-open');
+
+            if (finderLaunchBtn) finderLaunchBtn.setAttribute('aria-expanded', 'true');
+
+            finderPanel.classList.remove('replay');
+            void finderPanel.offsetWidth;
+            finderPanel.classList.add('replay');
+
+            window.setTimeout(() => {
+                finderPanel.classList.remove('replay');
+                if (finderInput) finderInput.focus();
+            }, 740);
+        }
+
+        function closeFinderPanel() {
+            if (!finderShell || !finderPanel || !finderShell.classList.contains('is-open')) return;
+
+            finderShell.classList.add('is-closing');
+            if (finderLaunchBtn) finderLaunchBtn.setAttribute('aria-expanded', 'false');
+
+            finderPanel.classList.remove('replay');
+            finderCloseTimer = window.setTimeout(() => {
+                finderShell.classList.remove('is-open');
+                finderShell.classList.remove('is-closing');
+                finderCloseTimer = null;
+            }, 560);
+        }
+
+        function normalizeText(value) {
+            return (value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function similarityScore(query, candidate) {
+            if (!query || !candidate) return 0;
+            const q = normalizeText(query);
+            const c = normalizeText(candidate);
+            if (!q || !c) return 0;
+
+            let score = 0;
+            if (c.includes(q)) score += 70;
+
+            const qTokens = q.split(' ').filter((token) => token.length > 1);
+            qTokens.forEach((token) => {
+                if (c.includes(token)) score += 12;
+            });
+
+            const cTokens = c.split(' ').filter((token) => token.length > 1);
+            const qSet = new Set(qTokens);
+            const overlap = cTokens.filter((token) => qSet.has(token)).length;
+            if (qTokens.length > 0) {
+                score += Math.round((overlap / qTokens.length) * 25);
+            }
+
+            return score;
+        }
+
+        function getRankedBranchMatches(query) {
+            const ranked = branchTabs.map((tab) => {
+                const name = tab.getAttribute('data-branch-name') || '';
+                const address = tab.getAttribute('data-branch-address') || '';
+                const score = similarityScore(query, name + ' ' + address);
+                return { tab, name, address, score };
+            });
+
+            ranked.sort((a, b) => b.score - a.score);
+            return ranked;
+        }
+
+        function activateBranchTab(tabButton) {
+            const tabInstance = new bootstrap.Tab(tabButton);
+            tabInstance.show();
+
+            const targetId = tabButton.getAttribute('data-bs-target');
+            const targetPane = targetId ? document.querySelector(targetId) : null;
+            if (targetPane) {
+                targetPane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function clearFinderResults() {
+            if (finderResults) finderResults.innerHTML = '';
+        }
+
+        function renderBranchResults(matches, query) {
+            if (!finderResults || !finderNoResult) return;
+
+            clearFinderResults();
+
+            if (!query) {
+                finderNoResult.hidden = false;
+                finderNoResult.textContent = 'Type a location to see related branches.';
+                return;
+            }
+
+            const related = matches.filter((match) => match.score >= 20).slice(0, 5);
+            if (!related.length) {
+                finderNoResult.hidden = false;
+                finderNoResult.textContent = 'No related branches found for this location.';
+                return;
+            }
+
+            finderNoResult.hidden = true;
+
+            related.forEach((match, index) => {
+                const item = document.createElement('li');
+                item.className = 'finder-result-item' + (index === 0 ? ' active-result' : '');
+                item.setAttribute('role', 'button');
+                item.setAttribute('tabindex', '0');
+                item.setAttribute('aria-label', 'Open ' + match.name + ' branch');
+
+                item.innerHTML =
+                    '<div class="finder-result-main">' +
+                        '<i class="fa-solid fa-location-dot text-primary mt-1"></i>' +
+                        '<div class="finder-result-copy">' +
+                            '<span class="finder-result-name">' + match.name + '</span>' +
+                            '<span class="finder-result-address">' + (match.address || 'Address not listed') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<span class="finder-result-score">Match ' + Math.min(99, match.score) + '%</span>';
+
+                const openBranch = () => {
+                    finderInput.value = match.address || match.name;
+                    activateBranchTab(match.tab);
+                    finderFeedback.textContent = 'Showing branch: ' + match.name;
+                    finderFeedback.style.color = '#166534';
+                };
+
+                item.addEventListener('click', openBranch);
+                item.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openBranch();
+                    }
+                });
+
+                finderResults.appendChild(item);
+            });
+        }
+
+        function runBranchFinder() {
+            if (!finderInput || !finderFeedback || branchTabs.length === 0) return;
+
+            const query = finderInput.value.trim();
+            if (!query) {
+                finderFeedback.textContent = 'Enter a location to find your nearest branch.';
+                finderFeedback.style.color = '#64748b';
+                renderBranchResults([], '');
+                return;
+            }
+
+            const rankedMatches = getRankedBranchMatches(query);
+            renderBranchResults(rankedMatches, query);
+            const nearest = rankedMatches[0];
+            if (!nearest || nearest.score < 20) {
+                finderFeedback.textContent = 'No close branch match found. Try a nearby area or landmark.';
+                finderFeedback.style.color = '#b91c1c';
+                return;
+            }
+
+            activateBranchTab(nearest.tab);
+            finderFeedback.textContent = 'Nearest match: ' + nearest.name + (nearest.address ? ' - ' + nearest.address : '');
+            finderFeedback.style.color = '#166534';
+        }
+
+        if (finderBtn) {
+            finderBtn.addEventListener('click', runBranchFinder);
+        }
+
+        if (finderLaunchBtn) {
+            finderLaunchBtn.addEventListener('click', () => {
+                if (finderShell && finderShell.classList.contains('is-open') && !finderShell.classList.contains('is-closing')) {
+                    closeFinderPanel();
+                } else {
+                    openFinderPanel();
+                }
+            });
+        }
+
+        if (finderInput) {
+            finderInput.addEventListener('input', () => {
+                const query = finderInput.value.trim();
+                const rankedMatches = getRankedBranchMatches(query);
+                renderBranchResults(rankedMatches, query);
+
+                if (!query) {
+                    finderFeedback.textContent = '';
+                    return;
+                }
+
+                if (rankedMatches[0] && rankedMatches[0].score >= 20) {
+                    finderFeedback.textContent = 'Top suggestion: ' + rankedMatches[0].name;
+                    finderFeedback.style.color = '#1e40af';
+                } else {
+                    finderFeedback.textContent = 'No close branch yet. Keep typing area name.';
+                    finderFeedback.style.color = '#64748b';
+                }
+            });
+
+            finderInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    runBranchFinder();
+                }
+            });
+        }
+
+        if (finderNoResult && branchTabs.length > 0) {
+            finderNoResult.hidden = false;
+            finderNoResult.textContent = 'Type a location to see related branches.';
+        }
+    </script>
+</body>
+</html>

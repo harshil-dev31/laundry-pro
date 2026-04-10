@@ -1,0 +1,240 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    .complaints-page {
+        max-width: 920px;
+        margin: 0 auto;
+    }
+
+    .complaints-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .complaints-head h2 {
+        margin: 0;
+        font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .btn-raise-complaint {
+        border-radius: 10px;
+        font-weight: 600;
+        min-height: 42px;
+        padding: 8px 14px;
+    }
+
+    .complaints-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .complaints-table th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        border-bottom: 1px solid #edf2f7;
+    }
+
+    .complaints-table td {
+        vertical-align: middle;
+        border-color: #edf2f7;
+    }
+
+    .status-pill {
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .admin-reply {
+        margin-top: 8px;
+        padding: 8px 10px;
+        border: 1px solid #dcfce7;
+        border-radius: 10px;
+        background: #f0fdf4;
+        color: #166534;
+        font-size: 0.83rem;
+        line-height: 1.35;
+    }
+
+    .complaint-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .complaint-item-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .complaint-subject {
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.3;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .complaint-meta {
+        font-size: 0.78rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .back-dashboard {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    @media (max-width: 576px) {
+        .complaints-page {
+            padding: 0 4px;
+        }
+
+        .complaints-head {
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 12px;
+        }
+
+        .complaints-head h2 {
+            font-size: 1.05rem;
+            line-height: 1.25;
+        }
+
+        .btn-raise-complaint {
+            width: 100%;
+            min-height: 40px;
+            font-size: 0.85rem;
+        }
+
+        .complaints-card {
+            border-radius: 12px;
+        }
+
+        .empty-state {
+            padding: 28px 12px !important;
+            font-size: 0.88rem;
+        }
+    }
+</style>
+
+<div class="container py-3 py-md-4 complaints-page">
+    <div class="complaints-head">
+        <h2><i class="fas fa-history me-2"></i>My Complaints History</h2>
+        <a href="{% url 'customer_raise_complaint' %}" class="btn btn-danger btn-raise-complaint">
+            <i class="fas fa-plus me-1"></i> Raise New Complaint
+        </a>
+    </div>
+
+    <div class="complaints-card d-none d-md-block">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 complaints-table">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Date</th>
+                        <th>Subject</th>
+                        <th>Related Order</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in complaints %}
+                    <tr>
+                        <td class="ps-4 text-muted">{{ c.created_at|date:"M d, Y" }}</td>
+                        <td class="fw-bold">{{ c.subject }}</td>
+                        <td>
+                            {% if c.order %}
+                                <span class="badge bg-light text-dark border">Order #{{ c.order.id }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if c.status == 'Resolved' %}
+                                <span class="badge bg-success status-pill">Resolved</span>
+                                {% if c.resolution_note %}
+                                    <div class="admin-reply">
+                                        <strong><i class="fas fa-reply me-1"></i>Admin Reply:</strong><br>
+                                        {{ c.resolution_note }}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-warning text-dark status-pill">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted empty-state">
+                            <i class="fas fa-smile fa-3x mb-3 text-secondary"></i>
+                            <p class="mb-0">No complaints found. That's a good thing!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-md-none">
+        {% for c in complaints %}
+        <div class="complaint-item">
+            <div class="complaint-item-head">
+                <h3 class="complaint-subject">{{ c.subject }}</h3>
+                {% if c.status == 'Resolved' %}
+                    <span class="badge bg-success status-pill">Resolved</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark status-pill">Pending</span>
+                {% endif %}
+            </div>
+            <p class="complaint-meta mb-1"><strong>Date:</strong> {{ c.created_at|date:"M d, Y" }}</p>
+            <p class="complaint-meta mb-0">
+                <strong>Related Order:</strong>
+                {% if c.order %}
+                    #{{ c.order.id }}
+                {% else %}
+                    -
+                {% endif %}
+            </p>
+            {% if c.status == 'Resolved' and c.resolution_note %}
+            <div class="admin-reply">
+                <strong><i class="fas fa-reply me-1"></i>Admin Reply:</strong><br>
+                {{ c.resolution_note }}
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div class="complaint-item text-center text-muted empty-state">
+            <i class="fas fa-smile fa-2x mb-2 text-secondary"></i>
+            <p class="mb-0">No complaints found. That's a good thing!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'customer_dashboard' %}" class="back-dashboard text-primary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

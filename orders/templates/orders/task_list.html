@@ -1,0 +1,80 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📅 Daily Tasks</h5>
+                <span class="badge bg-light text-primary">{{ tasks.count }} Tasks</span>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for task in tasks %}
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center {% if task.is_completed %}bg-light text-muted{% endif %}">
+                        <div>
+                            {% if task.is_completed %}
+                            <i class="fa-solid fa-check-circle text-success me-2"></i>
+                            {% else %}
+                            <i class="fa-regular fa-circle text-secondary me-2"></i>
+                            {% endif %}
+
+                            <span class="fw-bold {% if task.is_completed %}text-decoration-line-through{% endif %}">
+                                {{ task.title }}
+                            </span>
+
+                            {% if task.assigned_to %}
+                            <small class="badge bg-info text-dark ms-2">
+                                <i class="fa-solid fa-user"></i> {{ task.assigned_to.username }}
+                            </small>
+                            {% else %}
+                            <small class="badge bg-secondary ms-2">All Staff</small>
+                            {% endif %}
+                        </div>
+
+                        {% if not task.is_completed %}
+                        <a href="{% url 'complete_task' task.id %}" class="btn btn-sm btn-outline-success">
+                            <i class="fa-solid fa-check"></i> Mark Done
+                        </a>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center py-4 text-muted">
+                        No tasks for today. Good job! 🎉
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if is_manager %}
+    <div class="col-md-4">
+        <div class="card shadow border-primary">
+            <div class="card-header bg-white text-primary fw-bold">
+                + Assign New Task
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_task" value="true">
+
+                    <div class="mb-3">
+                        <label>Task Title</label>
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Assign To (Optional)</label>
+                        {{ form.assigned_to }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Create Task</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

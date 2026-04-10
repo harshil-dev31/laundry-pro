@@ -1,0 +1,34 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm" style="max_width: 500px; margin: auto;">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Edit Staff Member</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Username</label>
+                    {{ form.username }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Email Address</label>
+                    <input type="email" name="email" class="form-control bg-light" value="{{ staff_member.email }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Role</label>
+                    {{ form.role }}
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'manage_staff' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

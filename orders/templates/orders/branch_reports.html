@@ -1,0 +1,77 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fa-solid fa-chart-line"></i> Performance Reports</h2>
+        <p class="text-muted">Financial overview for {{ business_name }}</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success shadow h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fa-solid fa-indian-rupee-sign"></i> Today's Revenue</h5>
+                <h2 class="display-6 fw-bold">₹{{ today_revenue }}</h2>
+                <p class="card-text">Sales made today</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-primary shadow h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fa-solid fa-calendar-check"></i> Monthly Revenue</h5>
+                <h2 class="display-6 fw-bold">₹{{ monthly_revenue }}</h2>
+                <p class="card-text">Total for this month</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-dark shadow h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fa-solid fa-vault"></i> Total Revenue</h5>
+                <h2 class="display-6 fw-bold">₹{{ total_revenue }}</h2>
+                <p class="card-text">All-time earnings</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-5 mb-3"><i class="fa-solid fa-boxes-stacked"></i> Order Statistics</h4>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card shadow border-warning mb-3">
+            <div class="card-body text-center">
+                <h1 class="text-warning fw-bold">{{ pending_orders_count }}</h1>
+                <span class="text-muted">Pending Orders</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow border-success mb-3">
+            <div class="card-body text-center">
+                <h1 class="text-success fw-bold">{{ completed_orders_count }}</h1>
+                <span class="text-muted">Completed Orders</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow border-info mb-3">
+            <div class="card-body text-center">
+                <h1 class="text-info fw-bold">{{ today_orders }}</h1>
+                <span class="text-muted">New Orders Today</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow border-secondary mb-3">
+            <div class="card-body text-center">
+                <h1 class="text-secondary fw-bold">{{ total_orders_count }}</h1>
+                <span class="text-muted">Total Orders (All Time)</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

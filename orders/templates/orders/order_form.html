@@ -1,0 +1,736 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    .order-page {
+        background: linear-gradient(180deg, #f8fbff 0%, #f4f7fb 100%);
+        min-height: 100vh;
+        padding: 40px 0 56px;
+    }
+
+    .order-shell {
+        max-width: 1120px;
+        margin: 0 auto;
+    }
+
+    .order-hero {
+        background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+        color: #fff;
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: 0 18px 40px rgba(37, 99, 235, 0.18);
+        animation: heroSlideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes heroSlideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fieldFocus {
+        0% {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.2);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+        }
+    }
+
+    @keyframes buttonHover {
+        0% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-2px);
+        }
+    }
+
+    .order-hero .text-muted,
+    .order-hero .small {
+        color: rgba(255, 255, 255, 0.82) !important;
+    }
+
+    .info-card,
+    .form-card {
+        border: 1px solid #e5eefc;
+        border-radius: 22px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+        background: #fff;
+        animation: cardSlideUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes cardSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .info-card:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .form-card {
+        animation-delay: 0.15s;
+    }
+
+    .info-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .soft-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .soft-label i {
+        color: #2563eb;
+        font-size: 0.9rem;
+    }
+
+    .branch-box {
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        border-radius: 18px;
+        padding: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .branch-box:hover {
+        border-color: #2563eb;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+    }
+
+    .step-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .form-card .card-header {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+        border-bottom: 1px solid #e5eefc;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 14px;
+        min-height: 48px;
+        border: 2px solid #e5eefc;
+        padding: 12px 16px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        background-color: #f8fbff;
+    }
+
+    .form-control::placeholder,
+    .form-select {
+        color: #94a3b8;
+    }
+
+    .form-control:hover,
+    .form-select:hover {
+        border-color: #cbd5e1;
+        background-color: #ffffff;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #2563eb;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        outline: none;
+        animation: fieldFocus 0.6s ease-out;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+        animation: fieldSlideIn 0.5s ease-out backwards;
+    }
+
+    @keyframes fieldSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.15s; }
+    .form-group:nth-child(3) { animation-delay: 0.2s; }
+    .form-group:nth-child(4) { animation-delay: 0.25s; }
+    .form-group:nth-child(5) { animation-delay: 0.3s; }
+    .form-group:nth-child(6) { animation-delay: 0.35s; }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+
+    .btn-order {
+        border-radius: 14px;
+        padding: 14px 28px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        min-width: 140px;
+        border: none;
+    }
+
+    .btn-primary.btn-order {
+        background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+        color: white;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary.btn-order:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+        box-shadow: 0 12px 32px rgba(37, 99, 235, 0.35);
+        transform: translateY(-3px);
+    }
+
+    .btn-primary.btn-order:active {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-outline-secondary.btn-order {
+        border: 2px solid #cbd5e1;
+        color: #475569;
+        background-color: #ffffff;
+    }
+
+    .btn-outline-secondary.btn-order:hover {
+        background-color: #f1f5f9;
+        border-color: #94a3b8;
+        color: #1e293b;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-order:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .form-error-message {
+        color: #dc2626;
+        font-size: 0.85rem;
+        margin-top: 8px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-error-message i {
+        font-size: 0.9rem;
+    }
+
+    .alert-danger {
+        background-color: #fee2e2;
+        border: 2px solid #fecaca;
+        border-radius: 14px;
+        color: #7f1d1d;
+        padding: 16px;
+        margin-bottom: 24px;
+        font-weight: 500;
+    }
+
+    .row.button-row {
+        animation: buttonRowSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s backwards;
+    }
+
+    @keyframes buttonRowSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .add-new-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+        color: white;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .add-new-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        color: white;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 1024px) {
+        .order-shell {
+            max-width: 100%;
+            padding: 0 15px;
+        }
+
+        .order-hero {
+            padding: 24px !important;
+        }
+
+        .order-hero h2 {
+            font-size: 1.5rem;
+        }
+
+        .form-card .card-body {
+            padding: 24px !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .order-page {
+            padding: 20px 0 40px;
+        }
+
+        .order-shell {
+            padding: 0 12px;
+        }
+
+        .order-hero {
+            padding: 16px !important;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        .order-hero h2 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .order-hero p {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            min-height: 44px;
+            font-size: 1rem;
+            padding: 10px 14px;
+        }
+
+        .soft-label {
+            font-size: 0.7rem;
+            margin-bottom: 6px;
+        }
+
+        .btn-order {
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            min-width: 100%;
+        }
+
+        .d-md-flex {
+            flex-direction: column !important;
+        }
+
+        .row.button-row {
+            margin-top: 16px;
+            gap: 8px;
+        }
+
+        .row.button-row .col-md-6 {
+            width: 100% !important;
+        }
+
+        .info-card {
+            margin-bottom: 12px;
+            padding: 12px;
+        }
+
+        .form-card {
+            border-radius: 14px;
+        }
+
+        .form-card .card-header {
+            padding: 12px 16px !important;
+        }
+
+        .form-card .card-body {
+            padding: 16px !important;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-text {
+            font-size: 0.8rem;
+        }
+
+        .add-new-badge {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .row.g-3 {
+            gap: 8px !important;
+        }
+
+        .p-gradient {
+            padding: 12px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding: 0 10px;
+        }
+
+        .order-page {
+            padding: 12px 0 32px;
+        }
+
+        .order-shell {
+            padding: 0 10px;
+        }
+
+        .order-hero {
+            padding: 12px !important;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .order-hero h2 {
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .order-hero p {
+            font-size: 0.8rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            min-height: 42px;
+            font-size: 0.95rem;
+            padding: 9px 12px;
+        }
+
+        .form-control::placeholder {
+            font-size: 0.9rem;
+        }
+
+        .soft-label {
+            font-size: 0.65rem;
+            gap: 4px;
+        }
+
+        .soft-label i {
+            font-size: 0.8rem;
+        }
+
+        .btn-order {
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .btn-order i {
+            font-size: 0.95rem;
+        }
+
+        .info-card {
+            padding: 12px;
+        }
+
+        .form-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+        }
+
+        .form-card .card-header {
+            padding: 10px 14px !important;
+        }
+
+        .form-card .card-header h5 {
+            font-size: 1rem;
+        }
+
+        .form-card .card-body {
+            padding: 12px !important;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-text {
+            font-size: 0.75rem;
+        }
+
+        h5 {
+            font-size: 0.95rem;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+
+        .alert ul {
+            margin-bottom: 0;
+            padding-left: 1.5rem;
+        }
+
+        .alert li {
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 3px 8px !important;
+        }
+
+        /* Stack buttons vertically on extra small screens */
+        .col-md-6 {
+            width: 100% !important;
+            margin-bottom: 8px;
+        }
+
+        .p-gradient {
+            padding: 10px !important;
+        }
+
+        .text-end {
+            text-align: left !important;
+        }
+    }
+
+    /* Extra small screens - iPhone SE and smaller */
+    @media (max-width: 380px) {
+        .order-hero h2 {
+            font-size: 1rem;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 0.9rem;
+        }
+
+        .btn-order {
+            padding: 9px 14px;
+            font-size: 0.85rem;
+        }
+
+        .soft-label {
+            font-size: 0.6rem;
+        }
+    }
+</style>
+
+<div class="order-page">
+<div class="container order-shell">
+    <div class="order-hero mb-4">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center">
+            <div>
+                <div class="step-chip mb-3"><i class="fa-solid fa-plus-circle"></i> {% if is_edit %}Edit Order{% else %}Create Order{% endif %}</div>
+                <h2 class="fw-bold mb-2">{% if is_edit %}Update order status{% else %}Place a new order{% endif %}</h2>
+                <p class="mb-0">{% if is_edit %}Modify the order details and save your changes.{% else %}Fill in the details below to create a new laundry order.{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-4">
+            <div class="info-card p-4">
+                <div class="soft-label"><i class="fa-solid fa-lightbulb"></i> Quick Tips</div>
+                <ul class="ps-3 mb-0 text-muted small">
+                    <li class="mb-3">Select or add a customer</li>
+                    <li class="mb-3">Choose a service and quantity</li>
+                    <li class="mb-3">Set pickup date and time</li>
+                    <li class="mb-0">Add special instructions if needed</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card form-card">
+                <div class="card-header px-4 py-3">
+                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clipboard text-primary me-2"></i>Order Details</h5>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                        <div class="alert alert-danger mb-4">
+                            <strong><i class="fa-solid fa-triangle-exclamation me-2"></i>Please fix the errors below:</strong>
+                            <ul class="mb-0 mt-2 ps-3">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if form.customer %}
+                        <div class="form-group">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="soft-label"><i class="fa-solid fa-user-check"></i> Select Customer</label>
+                                {% if not is_edit %}
+                                <a href="{% url 'customer_register' %}" class="add-new-badge">
+                                    <i class="fa-solid fa-plus"></i> Add New
+                                </a>
+                                {% endif %}
+                            </div>
+                            {{ form.customer }}
+                            {% if form.customer.errors %}
+                            <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.customer.errors }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            <label class="soft-label"><i class="fa-solid fa-shirt"></i> Select Service</label>
+                            {{ form.service }}
+                            {% if form.service.errors %}
+                            <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.service.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="soft-label"><i class="fa-solid fa-cubes"></i> Quantity</label>
+                                    {{ form.quantity }}
+                                    {% if form.quantity.errors %}
+                                    <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.quantity.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                {% if form.payment_status %}
+                                <div class="col-md-6">
+                                    <label class="soft-label"><i class="fa-solid fa-credit-card"></i> Payment Status</label>
+                                    {{ form.payment_status }}
+                                    {% if form.payment_status.errors %}
+                                    <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.payment_status.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="soft-label"><i class="fa-solid fa-calendar"></i> Pickup Date</label>
+                                    {{ form.pickup_date }}
+                                    {% if form.pickup_date.errors %}
+                                    <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.pickup_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="soft-label"><i class="fa-solid fa-clock"></i> Preferred Time</label>
+                                    {{ form.pickup_time }}
+                                    {% if form.pickup_time.errors %}
+                                    <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.pickup_time.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="soft-label"><i class="fa-solid fa-note-sticky"></i> Special Instructions (Optional)</label>
+                            {{ form.notes }}
+                            <div class="form-text"><i class="fa-solid fa-info-circle"></i> Tell us about stains, fabric type, or handling requirements.</div>
+                            {% if form.notes.errors %}
+                            <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.notes.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if form.status %}
+                        <div class="form-group p-4 bg-gradient rounded-3 border border-primary border-opacity-25">
+                            <label class="soft-label text-primary"><i class="fa-solid fa-tasks text-primary"></i> {% if is_edit %}Update Status{% else %}Order Status{% endif %}</label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                            <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="row button-row g-3 mt-2">
+                            <div class="col-md-6">
+                                <a href="{% url 'order_list' %}" class="btn btn-outline-secondary btn-order w-100"><i class="fa-solid fa-xmark me-2"></i>Cancel</a>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary btn-order w-100"><i class="fa-solid fa-check me-2"></i>{% if is_edit %}Update Order{% else %}Place Order{% endif %}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

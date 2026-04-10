@@ -1,0 +1,909 @@
+{% extends 'orders/base.html' %}
+
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<style>
+
+    .dashboard-container {
+
+        background-color: #f8f9fa;
+
+        min-height: 100vh;
+
+    }
+
+
+    .card-gradient-blue {
+
+        background: linear-gradient(45deg, #4e73df, #224abe);
+
+        color: white;
+
+    }
+
+
+    .card-gradient-warning {
+
+        background: linear-gradient(45deg, #f6c23e, #dda20a);
+
+        color: white;
+
+    }
+
+
+    .card-gradient-success {
+
+        background: linear-gradient(45deg, #1cc88a, #13855c);
+
+        color: white;
+
+    }
+
+
+    .card-gradient-info {
+
+        background: linear-gradient(45deg, #36b9cc, #258391);
+
+        color: white;
+
+    }
+
+
+    .stats-card {
+
+        transition: transform 0.2s;
+
+        border: none;
+
+        border-radius: 15px;
+
+        overflow: hidden;
+
+    }
+
+
+    .stats-card:hover {
+
+        transform: translateY(-5px);
+
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+
+    }
+
+
+    .icon-circle {
+
+        opacity: 0.4;
+
+        font-size: 2.5rem;
+
+        position: absolute;
+
+        right: 20px;
+
+        top: 25%;
+
+    }
+
+
+    .custom-table-card {
+
+        border-radius: 15px;
+
+        border: none;
+
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+
+    }
+
+
+    .table thead th {
+
+        border-top: none;
+
+        background-color: #f8f9fc;
+
+        color: #858796;
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        font-size: 0.85rem;
+
+    }
+
+
+    .status-badge {
+
+        padding: 5px 12px;
+
+        border-radius: 20px;
+
+        font-size: 0.8rem;
+
+        font-weight: 600;
+
+    }
+
+</style>
+
+
+<div class="container-fluid dashboard-container py-4">
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="h3 mb-0 text-gray-800 fw-bold">Dashboard Overview</h1>
+
+            <p class="text-muted small mb-0">{{ request.user.userprofile.business.name }} Panel</p>
+
+        </div>
+
+        <div>
+
+            {% if perms.orders.add_order %}
+
+               {% if user.userprofile.role == 'Branch Manager' or user.userprofile.role == 'staff' %}
+
+                    <a href="{% url 'create_order' %}" class="btn btn-primary shadow-sm btn-sm me-2">
+
+                        <i class="fas fa-plus-circle"></i> New Order</a>
+                    <a href="{% url 'customer_register' %}" class="btn btn-success shadow-sm btn-sm">
+
+                        <i class="fa-solid fa-user-plus fa-sm text-white-50"></i> New Customer</a>
+
+                {% endif %}
+
+                    
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="row mb-4">
+
+        <div class="col-xl-3 col-md-6 mb-4">
+
+            <div class="card stats-card card-gradient-blue shadow h-100 py-2">
+
+                <div class="card-body">
+
+                    <div class="row no-gutters align-items-center">
+
+                        <div class="col mr-2">
+
+                            <div class="text-xs fw-bold text-uppercase mb-1 opacity-75">Total Orders</div>
+
+                            <div class="h2 mb-0 fw-bold">{{ total_orders }}</div>
+
+                        </div>
+
+                        <div class="col-auto"><i class="fas fa-calendar fa-2x icon-circle"></i></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6 mb-4">
+
+            <div class="card stats-card card-gradient-warning shadow h-100 py-2">
+
+                <div class="card-body">
+
+                    <div class="row no-gutters align-items-center">
+
+                        <div class="col mr-2">
+
+                            <div class="text-xs fw-bold text-uppercase mb-1 opacity-75">Pending Work</div>
+
+                            <div class="h2 mb-0 fw-bold">{{ pending_orders }}</div>
+
+                        </div>
+
+                        <div class="col-auto"><i class="fas fa-clock fa-2x icon-circle"></i></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6 mb-4">
+
+            <div class="card stats-card card-gradient-success shadow h-100 py-2">
+
+                <div class="card-body">
+
+                    <div class="row no-gutters align-items-center">
+
+                        <div class="col mr-2">
+
+                            <div class="text-xs fw-bold text-uppercase mb-1 opacity-75">Delivered</div>
+
+                            <div class="h2 mb-0 fw-bold">{{ delivered_orders }}</div>
+
+                        </div>
+
+                        <div class="col-auto"><i class="fas fa-check-circle fa-2x icon-circle"></i></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-3 col-md-6 mb-4">
+
+            <div class="card stats-card card-gradient-info shadow h-100 py-2">
+
+                <div class="card-body">
+
+                    <div class="row no-gutters align-items-center">
+
+                        <div class="col mr-2">
+
+                            <div class="text-xs fw-bold text-uppercase mb-1 opacity-75">Total Revenue</div>
+
+                            <div class="h2 mb-0 fw-bold">₹{{ total_revenue }}</div>
+
+                        </div>
+
+                        <div class="col-auto"><i class="fas fa-rupee-sign fa-2x icon-circle"></i></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row mb-4">
+
+        <div class="col-xl-8 col-lg-7">
+
+            <div class="card custom-table-card shadow mb-4">
+
+                <div class="card-header py-3 bg-white border-bottom-0">
+
+                    <h6 class="m-0 fw-bold text-primary">Monthly Earnings (2026)</h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="chart-area" style="height: 300px;">
+
+                        <canvas id="myAreaChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-4 col-lg-5">
+
+            <div class="card custom-table-card shadow mb-4">
+
+                <div class="card-header py-3 bg-white border-bottom-0">
+
+                    <h6 class="m-0 fw-bold text-primary">Quick Actions</h6>
+
+                </div>
+                
+                {% if request.user.userprofile.role|lower == 'staff' %}
+<div class="card custom-table-card shadow mb-4">
+    <div class="card-header py-3 bg-white border-bottom-0">
+        <h6 class="m-0 fw-bold text-info"><i class="fa-solid fa-calendar-check me-2"></i>My Upcoming Shifts</h6>
+    </div>
+    <div class="card-body p-0">
+        {% if my_shifts %}
+            <ul class="list-group list-group-flush rounded-bottom">
+                {% for shift in my_shifts %}
+                <li class="list-group-item p-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="fw-bold text-dark">{{ shift.date|date:"l, M d" }}</div>
+                            <small class="text-muted"><i class="fa-regular fa-clock me-1"></i> {{ shift.start_time|time:"g:i A" }} - {{ shift.end_time|time:"g:i A" }}</small>
+                        </div>
+                        
+                        {% if shift.shift_name == 'Morning' %}
+                            <span class="badge bg-warning text-dark shadow-sm"><i class="fas fa-sun me-1"></i> Morning</span>
+                        {% elif shift.shift_name == 'Afternoon' %}
+                            <span class="badge bg-orange text-white shadow-sm" style="background-color: #fd7e14;"><i class="fas fa-cloud-sun me-1"></i> Afternoon</span>
+                        {% else %}
+                            <span class="badge bg-dark text-white shadow-sm"><i class="fas fa-moon me-1"></i> Night</span>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="p-4 text-center text-muted small">
+                <i class="fa-solid fa-mug-hot mb-2 fa-2x opacity-50"></i><br>
+                You have no upcoming shifts scheduled.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+                <div class="card-body">
+
+                    <div class="d-grid gap-3">
+
+                        {% if user.userprofile.role|lower == 'staff' or user.userprofile.role|lower == 'branch manager' or user.userprofile.role|lower == 'laundry owner' or user.is_superuser %}
+                            <a href="{% url 'create_order' %}" class="btn btn-outline-primary text-start p-3 border-2">
+
+                                <i class="fa-solid fa-shirt me-2"></i> <strong>Take New Laundry</strong>
+
+                            <div class="small text-muted">Create a new order for walk-in</div>
+
+                            </a>
+
+                        {% endif %}
+
+                        <a href="{% url 'complaint_list' %}" class="btn btn-outline-danger text-start p-3 border-2">
+
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> <strong>Complaints</strong>
+
+                            <div class="small text-muted">View and resolve issues</div>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card custom-table-card shadow mb-4">
+
+        <div class="card-header py-3 bg-white border-bottom-0 d-flex justify-content-between">
+
+            <h6 class="m-0 fw-bold text-primary">Order List</h6>
+
+            <span class="badge bg-light text-dark">{{ total_orders }} Records</span>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="ps-4">Order ID</th>
+
+                            <th>Customer</th>
+
+                            <th>Service</th>
+
+                            <th>Pick Up</th>
+
+                            <th>Status</th>
+
+                            <th>Amount</th>
+
+                            <th>Payment</th>
+                            <th>Collected By</th>
+
+                            <th class="text-end pe-4">Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for order in orders %}
+
+                        <tr>
+
+                            <td class="ps-4 fw-bold text-secondary">#{{ order.id }}</td>
+                            <td>
+                                <div class="fw-bold">
+                                    {% if order.customer %}
+                                        {{ order.customer.name }}
+                                    {% elif order.customer_name_backup %}
+                                        {{ order.customer_name_backup }}
+                                    {% else %}
+                                        <span class="text-muted">Customer Deleted</span>
+                                    {% endif %}
+                                    <div class="small text-muted">{{ order.customer.phone }}</div>
+
+                                </div>
+                            </td>
+
+
+                            </td>
+
+                            <td>{{ order.service.name }} <span class="badge bg-light text-dark border">x{{ order.quantity }}</span></td>
+
+                            <td>
+
+                                {% if order.pickup_date %}
+
+                                <div class="fw-bold">{{ order.pickup_date|date:"d M, Y" }}</div>
+
+                                <small class="text-muted">{{ order.pickup_time }}</small>
+
+                                {% else %}
+
+                                <span class="text-muted">Not Scheduled</span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="text-center">
+
+                                {% if not order.is_approved %}
+
+                                <span
+
+                                    class="status-badge bg-warning text-dark border border-warning text-nowrap">Waiting
+
+                                    Approval</span>
+
+                                {% else %}
+
+                                {% if order.status == 'Pending' %}
+
+                                <span class="status-badge bg-secondary text-white">Pending</span>{% elif order.status ==
+
+                                'Washing' or order.status == 'Processing' %}
+
+                                <span class="status-badge bg-info text-white">Washing</span>{% elif order.status ==
+
+                                'Delivered' %}
+
+                                <span class="status-badge bg-success text-white">Delivered</span>
+
+                                {% else %}
+
+                                <span class="status-badge bg-secondary text-white">{{ order.status }}</span>
+
+                                {% endif %}
+
+
+                                {% if order.estimated_delivery %}
+
+                                <div class="small text-muted mt-1" style="font-size: 0.75rem;">
+
+                                    <i class="fa-regular fa-clock"></i> Due: {{ order.estimated_delivery|date:"M d" }}
+
+                                </div>
+
+                                {% endif %}
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="fw-bold text-dark">₹{{ order.total_price }}</td>
+
+                            <td>
+                                {% if order.payment_status != 'Paid' %}
+
+                                <button type="button" class="btn btn-sm btn-outline-success shadow-sm" data-bs-toggle="modal"
+                                    data-bs-target="#payModal{{ order.id }}">
+                                    Collect
+                                </button>
+
+                                <div class="modal fade text-start" id="payModal{{ order.id }}" tabindex="-1">
+
+                                    <div class="modal-dialog">
+
+                                        <div class="modal-content">
+
+                                            <div class="modal-header">
+
+                                                <h5 class="modal-title">Collect Payment #{{ order.id }}</h5>
+
+                                                <button type="button" class="btn-close"
+
+                                                    data-bs-dismiss="modal"></button>
+
+                                            </div>
+
+                                            <form action="{% url 'accept_payment' order.id %}" method="post">
+
+                                                {% csrf_token %}
+
+                                                <div class="modal-body">
+
+                                                    <p class="lead text-center">Amount: <strong class="text-success">₹{{ order.total_price }}</strong></p>
+
+                                                    <div class="mb-3">
+
+                                                        <label class="form-label">Method</label>
+
+                                                        <select name="payment_method" class="form-select" required>
+
+                                                            <option value="Cash">Cash</option>
+
+                                                            <option value="UPI">UPI / QR</option>
+
+                                                            <option value="Card">Card</option>
+
+                                                        </select>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="modal-footer">
+
+                                                    <button type="button" class="btn btn-secondary"
+
+                                                        data-bs-dismiss="modal">Cancel</button>
+
+                                                    <button type="submit" class="btn btn-success">Confirm</button>
+
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                {% else %}
+
+                                <span class="badge bg-success"><i class="fa-solid fa-check"></i> Paid</span>
+
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if order.payment_collected_by %}
+                                    <span class="text-muted small">
+                                        <i class="fa-solid fa-user-circle"></i> {{ order.payment_collected_by.username }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted small">-</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end pe-4">
+
+                                {% if not order.is_approved %}
+                                                        
+                                <button type="button" class="btn btn-sm btn-success shadow-sm me-1"
+                                                        
+                                    data-bs-toggle="modal" data-bs-target="#approveModal{{ order.id }}">
+                                                        
+                                    <i class="fa-solid fa-check"></i>
+                                                        
+                                </button>
+                            
+                            
+                                <div class="modal fade text-start" id="approveModal{{ order.id }}" tabindex="-1">
+                                
+                                    <div class="modal-dialog">
+                                    
+                                        <div class="modal-content">
+                                        
+                                            <div class="modal-header bg-success text-white">
+                                            
+                                                <h5 class="modal-title">Approve Order #{{ order.id }}</h5>
+                                            
+                                                <button type="button" class="btn-close"
+                                            
+                                                    data-bs-dismiss="modal"></button>
+                                            
+                                            </div>
+                                        
+                                            <form action="{% url 'approve_order' order.id %}" method="post">
+                                            
+                                                {% csrf_token %}
+                                            
+                                                <div class="modal-body">
+                                                
+                                                    <p>Customer: <strong>{{ order.customer.name }}</strong></p>
+                                                
+                                                    <div class="mb-3">
+                                                    
+                                                        <label class="fw-bold">Estimated Delivery Date</label>
+                                                    
+                                                        <input type="date" name="delivery_date" class="form-control" required>
+                                                    
+                                                    </div>
+                                                
+                                                </div>
+                                            
+                                                <div class="modal-footer">
+                                                
+                                                    <button type="button" class="btn btn-secondary"
+                                                
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                
+                                                    <button type="submit" class="btn btn-success">Confirm Approval</button>
+                                                
+                                                </div>
+                                            
+                                            </form>
+                                        
+                                        </div>
+                                    
+                                    </div>
+                                
+                                </div>
+                            
+                                {% endif %}
+                            
+                            
+                                {% if order.is_approved and order.status != 'Delivered' %}
+                            
+                                <button type="button" class="btn btn-sm btn-outline-primary shadow-sm me-1 {% if order.status|lower == 'delivered' %}disabled{% endif %}"
+                                    {% if order.status|lower == 'delivered' %}style="pointer-events: none; opacity: 0.4;" tabindex="-1" aria-disabled="true"{% else %}data-bs-toggle="modal" data-bs-target="#updateModal{{ order.id }}"{% endif %}>
+                            
+                                    <i class="fa-solid fa-rotate"></i>
+                            
+                                </button>
+                            
+                            
+                                <div class="modal fade text-start" id="updateModal{{ order.id }}" tabindex="-1">
+                                
+                                    <div class="modal-dialog">
+                                    
+                                        <div class="modal-content">
+                                        
+                                            <div class="modal-header bg-primary text-white">
+                                            
+                                                <h5 class="modal-title">Update Order #{{ order.id }}</h5>
+                                            
+                                                <button type="button" class="btn-close"
+                                            
+                                                    data-bs-dismiss="modal"></button>
+                                            
+                                            </div>
+                                        
+                                            <form action="{% url 'update_order_status' order.id %}" method="post">
+                                            
+                                                {% csrf_token %}
+                                            
+                                                <div class="modal-body">
+                                                
+                                                    <div class="mb-3">
+                                                    
+                                                        <label class="fw-bold form-label">Current Status</label>
+                                                    
+                                                        <select name="status" class="form-select">
+                                                        
+                                                            <option value="Processing" {% if order.status == 'Processing' %}selected{% endif %}>Processing</option>
+                                                        
+                                                            <option value="Washing" {% if order.status == 'Washing' %}selected{% endif %}>Washing</option>
+                                                        
+                                                            <option value="Ironing" {% if order.status == 'Ironing' %}selected{% endif %}>Ironing</option>
+                                                        
+                                                            <option value="Ready for Pickup" {% if order.status == 'Ready for Pickup' %}selected{% endif %}> Ready for Pickup</option>
+                                                        
+                                                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                                        
+                                                        </select>
+                                                    
+                                                    </div>
+                                                
+                                                    <hr>
+                                                
+                                                    <div class="mb-3">
+                                                    
+                                                        <label class="fw-bold form-label text-danger">
+                                                        
+                                                            <i class="fa-solid fa-clock"></i> Report Delay / Change Date
+                                                        
+                                                        </label>
+                                                    
+                                                        <input type="date" name="new_date" class="form-control"
+                                                    
+                                                            value="{{ order.estimated_delivery|date:'Y-m-d' }}">
+                                                    
+                                                        <small class="text-muted">Only change this if delivery is delayed.</small>
+                                                    
+                                                    </div>
+                                                
+                                                </div>
+                                            
+                                                <div class="modal-footer">
+                                                
+                                                    <button type="button" class="btn btn-secondary"
+                                                
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                
+                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                
+                                                </div>
+                                            
+                                            </form>
+                                        
+                                        </div>
+                                    
+                                    </div>
+                                
+                                </div>
+                            
+                                {% endif %}
+                            
+                            
+                                <a href="{% url 'order_receipt' order.id %}" target="_blank"
+                            
+                                    class="btn btn-sm btn-light text-dark border" title="Print Bill">
+                            
+                                    <i class="fa-solid fa-receipt"></i>
+                            
+                                </a>
+                            
+                            
+                                {% if perms.orders.change_order %}
+                            
+                                <a href="{% url 'edit_order' order.id %}"
+                            
+                                    class="btn btn-sm btn-light text-primary border {% if order.status|lower == 'delivered' %}disabled{% endif %}" title="Edit"
+                                    {% if order.status|lower == 'delivered' %}style="pointer-events: none; opacity: 0.4;" tabindex="-1" aria-disabled="true"{% endif %}>
+                            
+                                    <i class="fa-solid fa-pen"></i>
+                            
+                                </a>
+                            
+                                {% endif %}
+                            
+                            
+                                {% if perms.orders.delete_order %}
+                            
+                                <a href="{% url 'delete_order' order.id %}"
+                            
+                                    class="btn btn-sm btn-light text-danger border"
+                            
+                                    onclick="return confirm('Delete this order?');" title="Delete">
+                            
+                                    <i class="fa-solid fa-trash"></i>
+                            
+                                </a>
+                            
+                                {% endif %}
+                            
+                            
+                                {% if order.notes %}
+                            
+                                <button class="btn btn-sm btn-light text-warning border" data-bs-toggle="modal"
+                            
+                                    data-bs-target="#noteModal{{ order.id }}">
+                            
+                                    <i class="fa-solid fa-note-sticky"></i>
+                            
+                                </button>
+                            
+                                <div class="modal fade" id="noteModal{{ order.id }}" tabindex="-1">
+                                
+                                    <div class="modal-dialog">
+                                    
+                                        <div class="modal-content">
+                                        
+                                            <div class="modal-body text-center">{{ order.notes }}</div>
+                                        
+                                        </div>
+                                    
+                                    </div>
+                                
+                                </div>
+                            
+                                {% endif %}
+                            
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="9" class="text-center py-5 text-muted">No recent orders found.</td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const ctx = document.getElementById('myAreaChart').getContext('2d');
+
+    const myChart = new Chart(ctx, {
+
+        type: 'line',
+
+        data: {
+
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+
+            datasets: [{
+
+                label: 'Earnings (₹)',
+
+                data: [1500, 2200, 3100, 4800, 2400, 5200],
+
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+
+                borderColor: 'rgba(78, 115, 223, 1)',
+
+                borderWidth: 2,
+
+                pointRadius: 3,
+
+                fill: true,
+
+                tension: 0.4
+
+            }]
+
+        },
+
+        options: {
+
+            maintainAspectRatio: false,
+
+            plugins: { legend: { display: false } },
+
+            scales: { x: { grid: { display: false } }, y: { grid: { borderDash: [2] }, beginAtZero: true } }
+
+        }
+
+    });
+
+</script>
+
+{% endblock %}

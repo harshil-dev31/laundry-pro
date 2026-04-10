@@ -1,0 +1,896 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    /* Smooth Fade In Animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    /* Hero Gradient Card */
+    .hero-card {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(78, 115, 223, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hero-card > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Modern Action Buttons */
+    .btn-action {
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        width: 100%;
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .hero-kicker {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+    }
+
+    .hero-title {
+        font-size: clamp(1.15rem, 5vw, 2.5rem);
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(0.8rem, 3.8vw, 1.05rem);
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .hero-actions {
+            flex-direction: row;
+            width: auto;
+        }
+
+        .hero-actions .btn-action {
+            width: auto;
+            min-width: 140px;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .hero-card {
+            padding: 30px 32px !important;
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(220px, 0.85fr);
+            gap: 24px;
+            align-items: center;
+        }
+
+        .hero-content {
+            min-width: 0;
+            padding-right: 4px;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+            width: 100%;
+            max-width: 290px;
+            gap: 12px;
+            justify-self: end;
+            align-self: center;
+        }
+
+        .hero-actions .btn-action {
+            width: 100%;
+            min-width: 0;
+            justify-content: center;
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .hero-card h5 {
+            margin-bottom: 10px !important;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 2.7vw, 2.6rem);
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            max-width: 100%;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .hero-card {
+            padding: 34px 36px !important;
+        }
+
+        .hero-actions {
+            max-width: 310px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 2.6vw, 3rem);
+        }
+    }
+
+    .dashboard-aux-btn {
+        min-height: 36px;
+        font-size: 0.78rem;
+        padding: 6px 12px !important;
+        line-height: 1;
+    }
+
+    .section-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .section-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+
+    .section-actions .dashboard-aux-btn {
+        width: auto;
+        flex: 0 0 auto;
+    }
+
+    /* Order Card Design */
+    .order-card {
+        border: none;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    /* Table Styling */
+    .custom-table thead th {
+        background-color: #f8f9fc;
+        color: #858796;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        border: none;
+    }
+
+    .custom-table tbody tr {
+        transition: background-color 0.2s;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f8f9fc;
+    }
+
+    .summary-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #e5eefc;
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .summary-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid #dbeafe;
+    }
+
+    .mini-metric {
+        background: #ffffff;
+        border: 1px solid #e5eefc;
+        border-radius: 16px;
+        padding: 14px 16px;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .metrics-column {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .metrics-column .mini-metric {
+        flex: 1;
+    }
+
+    .branch-highlight {
+        background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+        border: 1px solid #dbeafe;
+        border-radius: 18px;
+        padding: 18px 20px;
+    }
+
+    .branch-label {
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .branch-value {
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 992px) {
+        .hero-card {
+            padding: 20px !important;
+        }
+
+        .hero-card h1 {
+            font-size: 1.75rem;
+        }
+
+
+        .hero-content {
+            min-width: 0;
+        }
+        .hero-card p {
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-card {
+            border-radius: 16px;
+            padding: 20px !important;
+        }
+
+        .hero-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 12px !important;
+        }
+
+        .hero-card h5 {
+            font-size: 0.75rem;
+        }
+
+        .hero-card p {
+            font-size: 0.9rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            min-height: 40px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            border-radius: 10px;
+        }
+
+        .btn-action i {
+            font-size: 1.1rem;
+        }
+
+        .summary-card {
+            border-radius: 16px;
+            padding: 16px !important;
+        }
+
+        .mini-metric {
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .mini-metric .fs-3 {
+            font-size: 1.5rem !important;
+        }
+
+        .order-card {
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .order-card .card-header {
+            padding: 12px 16px !important;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .order-card .card-body {
+            padding: 16px !important;
+        }
+
+        .order-card .card-footer {
+            padding: 12px 16px !important;
+        }
+
+        .icon-square {
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px !important;
+        }
+
+        .icon-square i {
+            font-size: 1.5rem !important;
+        }
+
+        .custom-table {
+            font-size: 0.85rem;
+        }
+
+        .custom-table thead th {
+            padding: 12px 8px !important;
+            font-size: 0.7rem;
+        }
+
+        .custom-table tbody td {
+            padding: 12px 8px !important;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px !important;
+        }
+
+        h4 {
+            font-size: 1.1rem !important;
+        }
+
+        .row.mb-4 {
+            flex-wrap: wrap;
+        }
+
+        .row.mb-4 .col-6 {
+            width: 50%;
+        }
+
+        .hero-kicker {
+            font-size: 0.64rem;
+        }
+
+        .hero-title {
+            font-size: clamp(1.05rem, 4.8vw, 1.4rem);
+        }
+
+        .hero-subtitle {
+            font-size: 0.82rem;
+        }
+
+        .dashboard-aux-btn {
+            min-height: 34px;
+            font-size: 0.74rem !important;
+        }
+
+        .section-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .section-actions {
+            width: 100%;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .section-actions .dashboard-aux-btn {
+            flex: 1 1 130px;
+        }
+
+        /* Mobile-friendly table layout */
+        .table-responsive {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .custom-table thead {
+            display: none;
+        }
+
+        .custom-table tbody tr {
+            display: block;
+            border: 1px solid #e5eefc;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: white;
+            padding: 12px;
+        }
+
+        .custom-table tbody td {
+            display: block;
+            text-align: right;
+            padding-left: 50% !important;
+            position: relative;
+            border: none;
+            padding: 8px 0 !important;
+        }
+
+        .custom-table tbody td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        .custom-table tbody td:first-child {
+            font-weight: 700;
+            background: #f8fbff;
+            padding: 12px !important;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+    }
+
+    /* Hide summary on mobile - shown in hero */
+    @media (max-width: 768px) {
+        .summary-card {
+            display: none;
+        }
+
+        .row.g-4.mb-5 {
+            margin-bottom: 16px !important;
+        }
+
+        .mini-metric {
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        /* Show metrics in single row on mobile */
+        .col-6.col-lg-12 {
+            width: 50% !important;
+        }
+
+        .row.g-3 {
+            gap: 8px !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .summary-card {
+            display: none !important;
+        }
+
+        .container {
+            padding: 0 10px;
+        }
+
+        .row.g-4.mb-5 {
+            margin-bottom: 12px !important;
+        }
+
+        .mini-metric {
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .mini-metric .text-muted {
+            font-size: 0.55rem !important;
+            letter-spacing: 0.05em;
+        }
+
+        .mini-metric .fs-3 {
+            font-size: 0.95rem !important;
+            margin-top: 4px;
+        }
+
+        .col-md-6.col-lg-4 {
+            min-height: auto;
+        }
+
+        .order-card .card-header {
+            padding: 8px 12px !important;
+        }
+
+        .order-card .card-body {
+            padding: 8px 12px !important;
+        }
+
+        .order-card h5 {
+            font-size: 0.8rem;
+        }
+
+        .order-card .small {
+            font-size: 0.65rem !important;
+        }
+
+        .icon-square {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+        }
+
+        .icon-square i {
+            font-size: 0.9rem !important;
+        }
+
+        .badge {
+            font-size: 0.55rem;
+            padding: 1px 4px !important;
+        }
+
+        h4 {
+            font-size: 0.9rem !important;
+            margin-bottom: 8px !important;
+        }
+
+        .hero-card {
+            padding: 14px !important;
+            border-radius: 14px;
+        }
+
+        .hero-actions {
+            gap: 8px;
+        }
+
+        .btn-action {
+            min-height: 40px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            border-radius: 9px;
+        }
+
+        .row.mb-5 {
+            margin-bottom: 12px !important;
+        }
+
+        .mb-3 {
+            margin-bottom: 8px !important;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .container {
+            padding: 0 8px;
+        }
+
+        .mini-metric {
+            padding: 8px;
+        }
+
+        .mini-metric .text-muted {
+            font-size: 0.5rem !important;
+        }
+
+        .mini-metric .fs-3 {
+            font-size: 0.85rem !important;
+        }
+
+        .order-card .card-header {
+            padding: 6px 10px !important;
+        }
+
+        .order-card .card-body {
+            padding: 6px 10px !important;
+        }
+
+        .order-card h5 {
+            font-size: 0.75rem;
+        }
+
+        .order-card .small {
+            font-size: 0.6rem !important;
+        }
+
+        .icon-square {
+            width: 28px !important;
+            height: 28px !important;
+            min-width: 28px !important;
+        }
+
+        .icon-square i {
+            font-size: 0.85rem !important;
+        }
+
+        .badge {
+            font-size: 0.5rem;
+            padding: 1px 2px !important;
+        }
+
+        .hero-card {
+            padding: 12px !important;
+        }
+
+        .hero-title {
+            font-size: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.74rem;
+        }
+
+        .btn-action {
+            min-height: 38px;
+            padding: 9px 12px;
+            font-size: 0.78rem;
+        }
+
+        .dashboard-aux-btn {
+            min-height: 32px;
+            padding: 5px 8px !important;
+            font-size: 0.7rem !important;
+        }
+
+        .mini-metric .fs-3 {
+            font-size: 0.9rem !important;
+        }
+    }</style>
+
+<div class="container py-4 py-md-5" style="background-color: #f8fbff; min-height: 100vh; padding-left: 12px; padding-right: 12px;">
+
+    <div class="row mb-4 mb-md-5 animate-fade-in">
+        <div class="col-12">
+            <div class="hero-card p-3 p-sm-4 p-lg-5 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 gap-sm-3">
+                
+                <div class="hero-content flex-grow-1">
+                    <h5 class="text-white-50 text-uppercase letter-spacing-1 mb-2 hero-kicker">Welcome Back</h5>
+                    <h1 class="fw-bold mb-2 hero-title">Hello, {{ customer.name }}! 👋</h1>
+                    <p class="mb-0 opacity-75 hero-subtitle">
+                        <i class="fa-solid fa-store me-1"></i> <span class="d-none d-sm-inline">{{ customer.business.name }}</span>
+                        <span class="mx-2 d-none d-sm-inline">|</span>
+                        <i class="fa-solid fa-location-dot me-1"></i> <span class="d-none d-sm-inline">{{ customer.address|default:"Location Not Set" }}</span>
+                        <span class="d-sm-none text-truncate">{{ customer.business.name }}</span>
+                    </p>
+                </div>
+
+                <div class="hero-actions w-100 w-sm-auto">
+                    <a href="{% url 'customer_request_pickup' %}" class="btn btn-light text-primary fw-bold btn-action" style="flex: 1;">
+                        <i class="fa-solid fa-plus-circle me-1"></i> New Order
+                    </a>
+                    <a href="{% url 'rate_card' %}" class="btn btn-outline-light fw-bold btn-action" style="flex: 1;">
+                        <i class="fa-solid fa-tags me-1"></i> Rate Card
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5 animate-fade-in" style="animation-delay: 0.08s;">
+        <div class="col-12 col-lg-8">
+            <div class="summary-card p-4 h-100">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="summary-pill"><i class="fa-solid fa-store"></i> {{ customer.business.name }}</span>
+                    <span class="summary-pill"><i class="fa-solid fa-location-dot"></i> {{ customer.address|default:"Location Not Set" }}</span>
+                </div>
+                <div class="branch-highlight">
+                    <div class="branch-label mb-2">Your Branch</div>
+                    <div class="branch-value fs-5 mb-1">{{ customer.business.name }}</div>
+                    <div class="text-muted">All orders, payments, and pickup updates will be linked to this branch.</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="metrics-column h-100">
+                <div class="mini-metric h-100">
+                    <div class="text-muted small fw-bold text-uppercase mb-1">Active Orders</div>
+                    <div class="fs-3 fw-bold text-primary">{{ active_orders|length }}</div>
+                </div>
+                <div class="mini-metric h-100">
+                    <div class="text-muted small fw-bold text-uppercase mb-1">Order History</div>
+                    <div class="fs-3 fw-bold text-dark">{{ history_orders|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3 animate-fade-in" style="animation-delay: 0.1s;">
+        <div class="col-12">
+            <div class="section-header-row">
+            <h4 class="fw-bold text-dark m-0" style="font-size: clamp(1rem, 4vw, 1.25rem);">
+                <i class="fa-solid fa-hourglass-half text-primary me-2"></i> In Progress
+            </h4>
+            <div class="section-actions">
+                <a href="{% url 'customer_complaint_list' %}" class="btn btn-white bg-white text-muted shadow-sm border rounded-pill px-3 dashboard-aux-btn" style="font-size: 0.78rem;">
+                    <i class="fas fa-list-ul me-1"></i> Complaints
+                </a>
+                <a href="{% url 'customer_raise_complaint' %}" class="btn btn-white bg-white text-danger shadow-sm border rounded-pill px-3 dashboard-aux-btn" style="font-size: 0.78rem;">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i> Help
+                </a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 animate-fade-in" style="animation-delay: 0.2s;">
+        {% for order in active_orders %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="order-card h-100 d-flex flex-column">
+                
+                <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                    <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">#{{ order.id }}</span>
+                    <span class="small text-muted fw-bold">{{ order.order_date|date:"M d, Y" }}</span>
+                </div>
+
+                <div class="card-body px-4 pt-3 pb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-square bg-soft-primary text-primary rounded-circle p-3 me-3" style="background: #eef2ff;">
+                            <i class="fa-solid fa-shirt fa-xl" style="color: #4e73df;"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">{{ order.service.name }}</h5>
+                            <span class="text-muted small">Qty: {{ order.quantity }} • {{ order.service.unit }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 p-3 rounded-3 border bg-light">
+                        <div class="small text-muted fw-bold text-uppercase mb-1">Branch</div>
+                        <div class="fw-bold text-dark">{{ order.business.name }}</div>
+                        <div class="small text-muted">{{ order.business.address }}</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-end mt-3">
+                        <div>
+                            <p class="text-uppercase text-muted x-small fw-bold mb-1">Status</p>
+                            {% if not order.is_approved %}
+                                <span class="badge bg-secondary opacity-75 rounded-pill px-3 py-2">Waiting Approval</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2 border border-warning">
+                                    {{ order.status|title }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <p class="text-uppercase text-muted x-small fw-bold mb-0">Total</p>
+                            <h3 class="text-primary fw-bold mb-0">₹{{ order.total_price }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light border-0 px-4 py-3">
+                    <div class="d-grid gap-2">
+                        {% if order.payment_status == 'Paid' %}
+                            <button class="btn btn-success btn-sm w-100 fw-bold" disabled>
+                                <i class="fa-solid fa-check-circle me-1"></i> Payment Complete
+                            </button>
+                        {% else %}
+                            <a href="{% url 'customer_payment' order.id %}" class="btn btn-primary btn-sm w-100 fw-bold shadow-sm">
+                                <i class="fa-regular fa-credit-card me-1"></i> Pay Now
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="btn btn-link btn-sm text-decoration-none text-muted">
+                            Download Bill
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm py-5 text-center bg-white rounded-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-basket-shopping fa-3x text-light" style="color: #e2e6ea;"></i>
+                    </div>
+                    <h5 class="text-muted fw-bold">No active orders right now</h5>
+                    <p class="text-muted small mb-4">Your branch is ready whenever you want to schedule a pickup.</p>
+                    <a href="{% url 'customer_request_pickup' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                        Start Washing
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3 animate-fade-in" style="animation-delay: 0.3s;">
+        <h4 class="fw-bold text-dark m-0">
+            <i class="fa-solid fa-clock-rotate-left text-secondary me-2"></i> Order History
+        </h4>
+        <a href="{% url 'customer_order_history' %}" class="btn btn-link text-decoration-none fw-bold text-primary">View All &rarr;</a>
+    </div>
+
+    <div class="card border-0 shadow-sm overflow-hidden animate-fade-in" style="border-radius: 16px; animation-delay: 0.4s;">
+        <div class="table-responsive">
+            <table class="table custom-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="py-3 ps-4">Date</th>
+                        <th>Order ID</th>
+                        <th>Service</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th class="pe-4 text-end">Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in history_orders %}
+                    <tr>
+                        <td class="ps-4 text-muted fw-bold">{{ order.order_date|date:"d M" }}</td>
+                        <td><span class="badge bg-light text-dark border rounded-pill">#{{ order.id }}</span></td>
+                        <td class="fw-bold text-dark">{{ order.service.name }}</td>
+                        <td class="fw-bold text-primary">₹{{ order.total_price }}</td>
+                        <td>
+                            {% if order.status == 'Delivered' %}
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Delivered</span>
+                            {% elif order.status == 'Cancelled' %}
+                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-light text-dark border rounded-pill px-3">{{ order.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="pe-4 text-end">
+                            {% if order.rating %}
+                                <span class="text-warning small" title="{{ order.review }}">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="fa-{% if forloop.counter <= order.rating %}solid{% else %}regular{% endif %} fa-star"></i>
+                                    {% endfor %}
+                                </span>
+                            {% else %}
+                                <a href="{% url 'rate_service' order.id %}" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-bold" style="font-size: 0.75rem;">
+                                    Rate Now
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted small">No history available yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

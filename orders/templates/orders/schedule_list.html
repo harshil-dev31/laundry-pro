@@ -1,0 +1,99 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fa-regular fa-calendar-days"></i> Staff Schedule</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#shiftModal">
+            <i class="fa-solid fa-plus"></i> Assign Shift
+        </button>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Staff Member</th>
+                    <th>Shift</th>
+                    <th>Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shift in shifts %}
+                <tr>
+                    <td>{{ shift.date|date:"D, M d" }}</td>
+                    <td class="fw-bold">{{ shift.staff.username }}</td>
+                    <td>
+                        {% if shift.shift_name == 'Morning' %}
+                            <span class="badge bg-warning text-dark"><i class="fa-regular fa-sun"></i> Morning</span>
+                        {% elif shift.shift_name == 'Afternoon' %}
+                            <span class="badge bg-info text-dark"><i class="fa-solid fa-cloud-sun"></i> Afternoon</span>
+                        {% else %}
+                            <span class="badge bg-dark"><i class="fa-solid fa-moon"></i> Night</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ shift.start_time|time:"g:i A" }} - {{ shift.end_time|time:"g:i A" }}</td>
+                    <td>
+                        <a href="{% url 'delete_shift' shift.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this shift?');">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">No upcoming shifts scheduled.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="shiftModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Assign Staff Shift</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Staff Member</label>
+                        {{ form.staff }}
+                    </div>
+                    <div class="mb-3">
+                        <label>Date</label>
+                        {{ form.date }}
+                    </div>
+                    <div class="mb-3">
+                        <label>Shift Type</label>
+                        {{ form.shift_name }}
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label>Start Time</label>
+                            {{ form.start_time }}
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label>End Time</label>
+                            {{ form.end_time }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 fw-bold text-gray-800">My Branches</h1>
+
+        <a href="{% url 'add_business' %}" class="btn btn-primary shadow-sm">
+            <i class="fa-solid fa-plus"></i> Add New Branch
+        </a>
+    </div>
+
+    <div class="row">
+
+        {% for shop in my_shops %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow h-100 {% if shop == current_business %}border-primary{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ shop.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fa-solid fa-location-dot"></i> {{ shop.address }}<br>
+                        <i class="fa-solid fa-phone"></i> {{ shop.contact_phone }}
+                    </p>
+
+                    <div class="d-grid gap-2">
+                        {% if shop == current_business %}
+                        <button class="btn btn-primary" disabled>
+                            <i class="fa-solid fa-check"></i> Currently Managing
+                        </button>
+                        {% else %}
+                        <a href="{% url 'switch_business' shop.id %}" class="btn btn-outline-primary">
+                            Switch to this Branch
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning">
+                No branches found matching your username <strong>{{ user.username }}</strong>.
+                <br>Please contact Super Admin to check if the 'Owner Name' is spelled correctly.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

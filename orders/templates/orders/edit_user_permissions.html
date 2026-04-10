@@ -1,0 +1,52 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 700px;">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user-lock"></i> Assign Permissions: {{ user_to_edit.username }}
+            </h5>
+        </div>
+
+        <div class="card-body">
+            <p class="text-muted mb-4">
+                Check the boxes to give <strong>extra</strong> permissions to this user.<br>
+                <small>(If a box is grey and checked, they already have it from their Role).</small>
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="list-group mb-4">
+                    {% for item in final_permission_list %}
+                    <div class="list-group-item d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-0">{{ item.label }}</h6>
+                            <small class="text-muted">System Code: {{ item.object.codename }}</small>
+                        </div>
+
+                        <div>
+                            {% if item.is_inherited %}
+                            <input class="form-check-input fs-5" type="checkbox" checked disabled>
+                            <span class="badge bg-secondary ms-2">From Role</span>
+                            {% else %}
+                            <input class="form-check-input fs-5" type="checkbox" name="permissions"
+                                value="{{ item.object.id }}" {% if item.is_direct %}checked{% endif %}>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'admin_user_list' %}" class="btn btn-light text-muted">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

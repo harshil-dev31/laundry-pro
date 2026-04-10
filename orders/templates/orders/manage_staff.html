@@ -1,0 +1,99 @@
+{% extends 'orders/base.html' %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">👥 Staff at {{ business_name }}</h5>
+            </div>
+            <div class="card-body">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for profile in staff_profiles %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold">{{ profile.user.username }}</div>
+                            </td>
+                            <td>
+                                {% if profile.user.groups.exists %}
+                                {% for group in profile.user.groups.all %}
+                                <span class="badge bg-info text-dark border border-info">
+                                    {{ group.name }}
+                                </span>
+                                {% endfor %}
+                                {% else %}
+                                <span class="badge bg-secondary">No Role</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'edit_staff' profile.user.id %}" class="btn btn-sm btn-warning me-1">
+                                    <i class="fas fa-edit"></i> Edit </a>
+
+                                <form method="post" style="display:inline;"
+                                    onsubmit="return confirm('Remove this staff?');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="delete_user_id" value="{{ profile.user.id }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">No staff found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow border-info">
+            <div class="card-header bg-info text-dark">
+                <h5 class="mb-0">+ Hire New Staff</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Email Address</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label>Password</label>
+                        {{ form.password }}
+                    </div>
+                    <div class="mb-3">
+                        <label>Role</label>
+                        {{ form.role }}
+                    </div>
+                    <button type="submit" class="btn btn-info w-100">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    /* Smooth Fade In */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-card {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* Bouncing Star Animation */
+    @keyframes bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    .star-icon {
+        color: #ffc107;
+        font-size: 4rem;
+        filter: drop-shadow(0 4px 6px rgba(255, 193, 7, 0.3));
+        animation: bounce 2s infinite ease-in-out;
+    }
+
+    /* Custom Form Styling (Forces style even if forms.py is basic) */
+    .review-card select, .review-card textarea, .review-card input {
+        border-radius: 12px;
+        border: 2px solid #eaecf4;
+        padding: 12px;
+        transition: all 0.3s;
+        width: 100%; /* Ensure full width */
+        display: block;
+    }
+
+    .review-card select:focus, .review-card textarea:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
+        outline: none;
+    }
+
+    .review-card label {
+        color: #5a5c69;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="container py-5" style="background-color: #f8f9fc; min-height: 100vh;">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-6 col-lg-5">
+            
+            <div class="card border-0 shadow-lg review-card animate-card" style="border-radius: 20px; overflow: hidden;">
+                
+                <div class="text-center pt-5 pb-3 bg-white">
+                    <div class="star-icon mb-3">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Rate Your Experience</h3>
+                    <p class="text-muted">We value your feedback!</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5 pt-0">
+                    
+                    <div class="text-center mb-4">
+                        <div class="d-inline-block bg-light px-4 py-2 rounded-pill border">
+                            <span class="text-muted small fw-bold text-uppercase me-2">Order #{{ order.id }}</span>
+                            <span class="text-primary fw-bold">{{ order.service.name }}</span>
+                        </div>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger rounded-3 border-0 shadow-sm mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Oops!</strong> Please fix the errors below.
+                        {{ form.errors }}
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label class="fw-bold">How was the quality?</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-2 border-end-0 rounded-start-3" style="border-color: #eaecf4;">
+                                    <i class="fa-solid fa-trophy text-warning"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    {{ form.rating }}
+                                </div>
+                            </div>
+                            <div class="form-text small">Select 'Excellent' for the best service.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="fw-bold">Tell us more (Optional)</label>
+                            {{ form.review }}
+                            <div class="form-text small text-end" id="charCount">Your feedback helps us improve.</div>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm" style="border-radius: 12px; background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); border: none;">
+                                Submit Review <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+                            
+                            <a href="{% url 'customer_dashboard' %}" class="btn btn-light text-muted fw-bold" style="border-radius: 12px;">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4 text-muted small animate-card" style="animation-delay: 0.2s;">
+                <p><i class="fa-solid fa-lock me-1"></i> Your feedback is shared privately with the manager.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Just a small enhancement to add Bootstrap classes if Django didn't add them
+    document.addEventListener("DOMContentLoaded", function() {
+        var inputs = document.querySelectorAll('select, textarea');
+        inputs.forEach(function(input) {
+            input.classList.add('form-control');
+            input.classList.add('bg-light');
+            input.style.border = "none";
+        });
+        
+        // Specific styling for the Select box to look like a pill
+        var select = document.querySelector('select');
+        if(select) {
+            select.classList.add('form-select');
+            select.style.height = "50px";
+        }
+
+        // Specific styling for Textarea
+        var textarea = document.querySelector('textarea');
+        if(textarea) {
+            textarea.rows = 4;
+            textarea.placeholder = "Write your honest feedback here...";
+        }
+    });
+</script>
+{% endblock %}

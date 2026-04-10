@@ -1,0 +1,37 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-dark">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">⚙️ Platform Settings</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Site Name</label>
+                        {{ form.site_name }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Global Announcement Banner</label>
+                        {{ form.global_announcement }}
+                        <small class="text-muted">Leave empty to hide.</small>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        {{ form.maintenance_mode }}
+                        <label class="form-check-label fw-bold text-danger">Enable Maintenance Mode</label>
+                        <br><small class="text-muted">If checked, only Admins can log in.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Save Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+{% load static %}
+{% load role_checks %}
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dhobi Kaka</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #1e293b;
+            padding-top: 20px;
+            color: white;
+            z-index: 1000;
+        }
+
+        .sidebar h4 {
+            text-align: center;
+            color: #60a5fa;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            color: #cbd5e1;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: white;
+            background-color: #334155;
+            border-left: 4px solid #60a5fa;
+        }
+
+        .sidebar i {
+            width: 30px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            /* Default for Staff (Sidebar visible) */
+            padding: 20px;
+            transition: 0.3s;
+        }
+
+        /* FIX: Class to remove margin for Customers */
+        .main-content.full-width {
+            margin-left: 0 !important;
+            width: 100%;
+        }
+
+        .top-navbar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #0f172a;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .brand-home-link:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .brand-home-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .brand-home-text {
+            font-size: 1.15rem;
+            line-height: 1;
+        }
+
+        .brand-home-text .accent {
+            color: #2563eb;
+        }
+
+        .customer-user-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 220px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #1d4ed8;
+            transition: color 0.2s ease;
+        }
+
+        .customer-user-link:hover {
+            color: #1e40af;
+        }
+
+        .customer-user-link i {
+            color: #2563eb;
+        }
+
+        .customer-user-name {
+            display: inline-block;
+            max-width: 170px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: bottom;
+        }
+
+        @media (max-width: 576px) {
+            .top-navbar {
+                padding: 10px 12px;
+                margin-bottom: 14px;
+                border-radius: 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .customer-nav-left {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            .customer-nav-right {
+                width: 100%;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .brand-home-icon {
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+            }
+
+            .brand-home-text {
+                font-size: 0.98rem;
+            }
+
+            .customer-user-link {
+                max-width: 68%;
+                margin-right: 0 !important;
+                font-size: 0.78rem;
+            }
+
+            .customer-user-name {
+                max-width: 95px;
+            }
+
+            .customer-logout-btn {
+                padding: 4px 8px;
+                font-size: 0.72rem;
+                white-space: nowrap;
+            }
+        }
+
+        .maintenance-alert {
+            background-color: #dc2626;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2000;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% if maintenance_mode %}
+    <div class="maintenance-alert">
+        <i class="fa-solid fa-triangle-exclamation"></i> SYSTEM IS CURRENTLY IN MAINTENANCE MODE
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated and user.userprofile.role != 'Customer' and not user.customer %}
+    <div class="sidebar">
+        <h4><a href="{% url 'public_home' %}" class="text-white text-decoration-none"><i class="fa-solid fa-shirt"></i> Dhobi Kaka</a></h4>
+
+        {% if user.is_superuser %}
+        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">SUPER ADMIN</p>
+        <a href="{% url 'super_admin_dashboard' %}"><i class="fa-solid fa-earth-americas"></i> Manage Branches</a>
+        <a href="{% url 'manage_roles' %}" class="nav-link text-white"><i class="fa-solid fa-user-shield me-2"></i>Manage Roles</a>
+        <a class="nav-link" href="{% url 'admin_user_list' %}"><i class="fas fa-users-cog"></i> User Permissions</a>
+        <a href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-chart-line"></i> Data </a>
+        <a href="{% url 'add_business' %}"><i class="fa-solid fa-building"></i> Add Branches</a>
+        <a href="{% url 'manage_reviews' %}"><i class="fa-solid fa-chart-pie"></i> Manage Reviews</a>
+        <a href="{% url 'system_settings' %}"><i class="fa-solid fa-gears"></i> System Settings</a>
+
+
+        {% elif user|has_group:"Laundry Owner" %}
+        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">MANAGER CONTROL</p>
+        <a href="{% url 'order_list' %}"><i class="fa-solid fa-chart-line"></i> MANAGER Dashboard</a>
+        {% comment %} <a href="{% url 'my_branches' %}"><i class="fa-solid fa-store"></i> My Branches</a> {% endcomment %}
+        <a href="{% url 'manage_services' %}"><i class="fa-solid fa-tags"></i> Service Prices</a>
+        {% if perms.auth.add_user %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'manage_staff' %}">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Manage Staff</span>
+            </a>
+        </li>
+        {% endif %}
+        <a href="{% url 'business_settings' %}"><i class="fa-solid fa-tools"></i> Branch Settings</a>
+        <a href="{% url 'manage_reviews' %}"><i class="fa-solid fa-chart-pie"></i> Manage Reviews</a>
+        <a href="{% url 'manage_stock_requests' %}"><i class="fa-solid fa-boxes-stacked"></i> Manage Stock</a>
+
+        {% elif user|has_group:"Branch Manager" %}
+        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">SHOP MANAGER</p>
+        <a href="{% url 'order_list' %}"><i class="fa-solid fa-shop"></i> Branch Dashboard</a>
+        <a href="{% url 'branch_reports' %}"><i class="fa-solid fa-chart-line"></i> Branch Reports</a>
+        <a href="{% url 'task_list' %}"><i class="fa-solid fa-list-check"></i> Daily Tasks</a>
+        {% if perms.auth.add_user %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'manage_staff' %}">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Manage Staff</span>
+            </a>
+        </li>
+        {% if perms.orders.add_customer %}
+
+        <a class="nav-link text-white" href="{% url 'customer_register' %}">
+            <i class="fas fa-user-plus"></i>
+            <span>New Customer</span>
+        </a>
+        {% endif %}
+        {% endif %} <a href="{% url 'schedule_list' %}"><i class="fa-regular fa-calendar-days"></i> Shift Schedule</a>
+        <a href="{% url 'stock_request_list' %}"><i class="fa-solid fa-boxes-packing"></i> Stock Request</a>
+        {% if perms.orders.add_order %}
+        <a href="{% url 'create_order' %}"><i class="fa-solid fa-plus-circle"></i> New Order</a>
+        {% endif %}
+        <a href="{% url 'complaint_list' %}"><i class="fa-solid fa-triangle-exclamation"></i> Complaints</a>
+
+        {% else %}
+        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">STAFF PANEL</p>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'order_list' %}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </li>
+        <a href="{% url 'task_list' %}"><i class="fa-solid fa-list-check"></i> Daily Tasks</a>
+        <a href="{% url 'create_order' %}"><i class="fa-solid fa-cart-plus"></i> Create Order</a>
+        {% if perms.orders.add_customer %}
+        <a class="nav-link text-white" href="{% url 'customer_register' %}">
+            <i class="fas fa-user-plus"></i>
+            <span>New Customer</span>
+        </a>
+        {% endif %} {% endif %}
+
+        <div style="border-top: 1px solid #475569; margin: 20px 20px 10px 20px;"></div>
+        <form action="{% url 'logout' %}" method="post" style="padding: 0;">
+            {% csrf_token %}
+            <button type="submit"
+                style="background:none; border:none; color:#cbd5e1; padding: 15px 25px; width:100%; text-align:left; cursor:pointer;">
+                <i class="fa-solid fa-right-from-bracket" style="width:30px;"></i> Logout
+            </button>
+        </form>
+
+    </div>
+    {% endif %}
+
+    <div class="main-content {% if user.userprofile.role == 'Customer' or user.customer %}full-width{% endif %}"
+        style="{% if not user.is_authenticated or user.userprofile.role == 'Customer' or user.customer %}margin-left: 0;{% endif %}">
+
+        <div class="top-navbar">
+            <div class="d-flex align-items-center customer-nav-left">
+                {% if user.is_superuser %} 
+                    <h5 class="m-0 text-secondary">HQ Control Center</h5>
+                
+                {% elif user|has_group:"Laundry Owner" %} 
+                    <form action="{% url 'my_branches' %}" method="POST" class="d-flex align-items-center gap-2 m-0">
+                        {% csrf_token %}
+                        <h5 class="m-0 text-secondary me-1">Branch:</h5>
+                        <select name="branch_id" class="form-select form-select-sm border-primary shadow-sm" style="width: 220px; font-weight: 600; color: #540863; cursor: pointer;" onchange="this.form.submit()">
+                            <option value="" disabled {% if not current_business %}selected{% endif %}>Select Branch...</option>
+                            {% for shop in my_shops %}
+                                <option value="{{ shop.id }}" {% if current_business and shop.id == current_business.id %}selected{% endif %}>
+                                    {{ shop.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+
+                {% elif user.userprofile.role == 'Customer' or user.customer %} 
+                    <a href="{% url 'customer_dashboard' %}" class="brand-home-link" aria-label="Go to customer dashboard">
+                        <span class="brand-home-icon"><i class="fa-solid fa-shirt"></i></span>
+                        <span class="brand-home-text">Dhobi<span class="accent">Kaka</span></span>
+                    </a>
+                
+                {% else %} 
+                    <h5 class="m-0 text-secondary">Shop Panel</h5> 
+                {% endif %}
+            </div>
+
+            <div class="d-flex align-items-center customer-nav-right">
+                {% if user.is_authenticated %}
+
+                {% if user.userprofile.role == 'Customer' or user.customer %}
+                <a href="{% url 'customer_profile' %}" class="me-3 fw-bold text-decoration-none customer-user-link">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span class="customer-user-name">{{ user.username }}</span>
+                </a>
+                {% else %}
+                <a href="{% url 'staff_profile' %}" class="me-3 text-dark fw-bold text-decoration-none" style="transition: color 0.2s;" onmouseover="this.style.color='#0d6efd'" onmouseout="this.style.color='#212529'">
+                    <i class="fa-solid fa-user-circle text-primary"></i> {{ user.username }}
+                </a>
+                {% endif %}
+                
+                {% if user.userprofile.role == 'Customer' or user.customer %}
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm customer-logout-btn" title="Logout">
+                        <i class="fa-solid fa-power-off"></i> Logout
+                    </button>
+                </form>
+                {% endif %}
+
+                {% else %}
+                <span class="text-muted">Login Required</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if maintenance_mode and not user.is_superuser and request.path != '/accounts/login/' %}
+        <div class="text-center mt-5">
+            <h2><i class="fa-solid fa-tools text-danger"></i> Under Maintenance</h2>
+            <p class="lead">We are currently performing scheduled maintenance. Please check back later.</p>
+        </div>
+        {% else %}
+        {% block content %}
+        {% endblock %}
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+{% comment %} <script>
+    // This instantly overwrites the URL in the address bar without reloading the page
+    if (window.location.pathname.startsWith('/orders/')) {
+        window.history.replaceState({}, document.title, '/');
+    }
+</script> {% endcomment %}
+</html>

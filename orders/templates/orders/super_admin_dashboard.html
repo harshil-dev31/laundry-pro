@@ -1,0 +1,64 @@
+{% extends 'orders/base.html' %}
+{% block content %}
+
+<div class="conatiner mt-4">
+    <h2>Super Admin Dashboard</h2>
+    <div class="mb-3 text-end">
+        <a href="{% url 'add_business' %}" class="btn btn-primary">+ Add New Branch</a>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Branch Name</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for business in businesses %}
+                    <tr>
+                        <td>#{{ business.id }}</td>
+                        <td>{{ business.name}}</td>
+                        <td>{{ business.owner_name }}</td>
+
+                        <td>
+                            {% if business.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-danger">Suspended</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_business' business.id %}" class="btn btn-sm btn-warning">Edit</a>
+
+                            {% if business.is_active %}
+                            <a href="{% url 'toggle_business_status' business.id %}"
+                                class="btn btn-sm btn-danger">Suspend</a>
+                            {% else %}
+                            <a href="{% url 'toggle_business_status' business.id %}"
+                                class="btn btn-sm btn-success">Activate</a>
+                            {% endif %}
+                        </td>
+                        {% comment %} <td>
+                            <a href="{% url 'delete_business' business.id %}" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Delete this business?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>  {% endcomment %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No Branch Found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,313 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    .history-hero {
+        background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%);
+        border: 1px solid #e5eefc;
+        border-radius: 20px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .history-table thead th {
+        background: #f8fbff;
+        color: #64748b;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border-bottom: 1px solid #e5eefc;
+    }
+
+    .order-history-card {
+        background: white;
+        border: 1px solid #e5eefc;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .order-history-card:hover {
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .order-history-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .order-history-row:last-child {
+        border-bottom: none;
+    }
+
+    .order-history-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .order-history-value {
+        font-weight: 600;
+        color: #0f172a;
+        text-align: right;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 992px) {
+        .history-hero {
+            padding: 20px !important;
+            border-radius: 16px;
+        }
+
+        .history-hero h3 {
+            font-size: 1.4rem;
+        }
+
+        .history-hero p {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .history-hero {
+            padding: 16px !important;
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+
+        .history-hero h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px !important;
+        }
+
+        .history-hero p {
+            font-size: 0.85rem;
+            margin-bottom: 0 !important;
+        }
+
+        /* Hide desktop table on mobile */
+        .table-responsive {
+            display: none;
+        }
+
+        /* Show card view on mobile */
+        .order-history-card {
+            display: block;
+        }
+
+        .order-history-card {
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .order-history-row {
+            padding: 10px 0;
+        }
+
+        .order-history-value {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px !important;
+        }
+
+        .btn-sm {
+            padding: 6px 12px !important;
+            font-size: 0.75rem !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding: 0 12px;
+        }
+
+        .history-hero {
+            padding: 14px !important;
+            border-radius: 12px;
+        }
+
+        .history-hero h3 {
+            font-size: 1.1rem;
+        }
+
+        .history-hero p {
+            font-size: 0.8rem;
+        }
+
+        .order-history-card {
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .order-history-label {
+            font-size: 0.7rem;
+        }
+
+        .order-history-value {
+            font-size: 0.85rem;
+        }
+
+        .btn-sm {
+            padding: 5px 10px !important;
+            font-size: 0.7rem !important;
+        }
+    }
+
+    /* Show table normally on larger screens */
+    @media (min-width: 769px) {
+        .order-history-card {
+            display: none;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="history-hero p-4 p-md-5 mb-4">
+        <h3 class="mb-2 fw-bold text-dark"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>My Order History</h3>
+        <p class="mb-0 text-muted">Review past orders, invoices, and delivery status in one place.</p>
+    </div>
+
+    <!-- Desktop Table View -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 history-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Branch</th>
+                            <th>Service</th>
+                            <th>Notes</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td class="fw-bold">#{{ order.id }}</td>
+                            <td>{{ order.order_date|date:"d M, Y" }}</td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ order.business.name }}</div>
+                                <small class="text-muted">{{ order.business.address }}</small>
+                            </td>
+                            <td>
+                                {{ order.service.name }} <br>
+                                <small class="text-muted">Qty: {{ order.quantity }}</small>
+                            </td>
+                            <td>
+                                {% if order.notes %}
+                                <span class="text-secondary small">"{{ order.notes }}"</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if order.status == 'delivered' %}
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Delivered</span>
+                                {% elif order.status == 'pending' %}
+                                <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-3 py-2">Pending</span>
+                                {% else %}
+                                <span class="badge bg-light text-dark border rounded-pill px-3 py-2">{{ order.status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="fw-bold">₹{{ order.total_price }}</td>
+                            <td>
+                                <a href="{% url 'order_receipt' order.id %}" class="btn btn-sm btn-primary rounded-pill px-3"
+                                    target="_blank">
+                                    <i class="fa-solid fa-file-invoice"></i> Download
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                You haven't placed any orders yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="d-md-none">
+        {% for order in orders %}
+        <div class="order-history-card">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge bg-light text-dark border rounded-pill px-2" style="font-size: 0.8rem;">#{{ order.id }}</span>
+                <span class="text-muted small fw-bold">{{ order.order_date|date:"d M, Y" }}</span>
+            </div>
+
+            <div class="order-history-row">
+                <span class="order-history-label">Branch</span>
+                <div class="text-end">
+                    <div class="order-history-value">{{ order.business.name }}</div>
+                    <small class="text-muted" style="font-size: 0.8rem;">{{ order.business.address }}</small>
+                </div>
+            </div>
+
+            <div class="order-history-row">
+                <span class="order-history-label">Service</span>
+                <div class="text-end">
+                    <div class="order-history-value">{{ order.service.name }}</div>
+                    <small class="text-muted" style="font-size: 0.8rem;">Qty: {{ order.quantity }}</small>
+                </div>
+            </div>
+
+            {% if order.notes %}
+            <div class="order-history-row">
+                <span class="order-history-label">Notes</span>
+                <div class="text-end">
+                    <small class="text-secondary" style="font-size: 0.8rem;">"{{ order.notes }}"</small>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="order-history-row">
+                <span class="order-history-label">Status</span>
+                <div>
+                    {% if order.status == 'delivered' %}
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2" style="font-size: 0.7rem;">Delivered</span>
+                    {% elif order.status == 'pending' %}
+                    <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-2" style="font-size: 0.7rem;">Pending</span>
+                    {% else %}
+                    <span class="badge bg-light text-dark border rounded-pill px-2" style="font-size: 0.7rem;">{{ order.status|title }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="order-history-row">
+                <span class="order-history-label">Amount</span>
+                <span class="order-history-value text-primary fw-bold">₹{{ order.total_price }}</span>
+            </div>
+
+            <div class="pt-2 mt-2" style="border-top: 1px solid #f1f5f9;">
+                <a href="{% url 'order_receipt' order.id %}" class="btn btn-sm btn-primary w-100 rounded-pill" target="_blank" style="font-size: 0.85rem;">
+                    <i class="fa-solid fa-file-invoice"></i> Download Invoice
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info text-center rounded-3" style="border-radius: 12px;">
+            <i class="fa-solid fa-info-circle me-2"></i> You haven't placed any orders yet.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

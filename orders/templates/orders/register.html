@@ -1,0 +1,750 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes softPulse {
+        0%, 100% {
+            box-shadow: 0 12px 26px rgba(37, 99, 235, 0.14);
+        }
+        50% {
+            box-shadow: 0 16px 32px rgba(14, 165, 233, 0.25);
+        }
+    }
+
+    @keyframes waterFlow {
+        0% {
+            background-position: 0% 50%, 0% 0%;
+        }
+        100% {
+            background-position: 220% 50%, 0% 0%;
+        }
+    }
+
+    @keyframes glossSweep {
+        0% {
+            transform: translateX(-130%) skewX(-20deg);
+        }
+        100% {
+            transform: translateX(230%) skewX(-20deg);
+        }
+    }
+
+    .register-page {
+        position: relative;
+        padding-top: 42px;
+        padding-bottom: 56px;
+    }
+
+    .register-page::before,
+    .register-page::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .register-page::before {
+        width: 280px;
+        height: 280px;
+        top: 6px;
+        left: -70px;
+        background: radial-gradient(circle, rgba(14, 165, 233, 0.16) 0%, rgba(14, 165, 233, 0) 72%);
+    }
+
+    .register-page::after {
+        width: 320px;
+        height: 320px;
+        right: -90px;
+        bottom: -20px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.16) 0%, rgba(37, 99, 235, 0) 72%);
+    }
+
+    .register-layout {
+        max-width: 980px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    /* Card Styling */
+    .register-card {
+        border-radius: 22px;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 24px 44px rgba(15, 23, 42, 0.1);
+        background: #ffffff;
+        overflow: hidden;
+        animation: fadeUp 0.55s ease-out;
+    }
+
+    .register-card .card-body {
+        background: linear-gradient(180deg, #ffffff 0%, #f4f9ff 100%);
+    }
+
+    /* Standard Input Styling */
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        padding: 12px 14px;
+        min-height: 50px;
+        border: 1px solid #e2e8f0;
+        background-color: #ffffff;
+        transition: all 0.25s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        z-index: 10; /* Bring to front on focus */
+    }
+
+    .input-group {
+        transition: transform 0.2s ease;
+    }
+
+    .input-group:focus-within {
+        transform: translateY(-1px);
+    }
+
+    /* Input Group Icons (Left Side) */
+    .input-group-text {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-right: none;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        color: #64748b;
+        padding-left: 15px;
+        padding-right: 15px;
+        min-width: 42px;
+        justify-content: center;
+    }
+
+    .form-label {
+        margin-bottom: 8px;
+        font-size: 12px;
+        letter-spacing: 0.4px;
+    }
+
+    /* FIX: When Input is inside a group, remove left corners */
+    .input-group > .form-control {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    /* 🔥 FIX: Verify Button (Right Side) Styling */
+    #sendOtpBtn {
+        border-top-right-radius: 10px !important;
+        border-bottom-right-radius: 10px !important;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        padding-left: 20px;
+        padding-right: 20px;
+        font-weight: 600;
+        z-index: 5;
+    }
+
+    /* Register Button */
+    .btn-register {
+        background-image:
+            linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 35%, rgba(255, 255, 255, 0.18) 70%, rgba(255, 255, 255, 0.04) 100%),
+            linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 45%, #2563eb 100%);
+        background-size: 220% 220%, 100% 100%;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        transition: transform 0.2s ease, box-shadow 0.25s ease;
+        box-shadow: 0 10px 22px rgba(14, 116, 215, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        animation: waterFlow 3.2s linear infinite;
+    }
+
+    .btn-register::before {
+        content: "";
+        position: absolute;
+        top: -20%;
+        left: -40%;
+        width: 38%;
+        height: 140%;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+        z-index: 0;
+        animation: glossSweep 2.4s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    .btn-register > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 26px rgba(14, 116, 215, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+    
+    .btn-register:disabled {
+        background-image:
+            linear-gradient(120deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 35%, rgba(255, 255, 255, 0.14) 70%, rgba(255, 255, 255, 0.02) 100%),
+            linear-gradient(135deg, #9caec8 0%, #8fa8c9 45%, #a4b4ca 100%);
+        background-size: 220% 220%, 100% 100%;
+        transform: none;
+        box-shadow: 0 6px 16px rgba(71, 85, 105, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        color: #eef2f7;
+        cursor: not-allowed;
+        animation: waterFlow 4.8s linear infinite;
+    }
+
+    .brand-logo-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 14px;
+        background: #ffffff;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 12px 26px rgba(37, 99, 235, 0.14);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        animation: fadeUp 0.4s ease-out, softPulse 3.2s ease-in-out infinite;
+    }
+
+    .brand-logo-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2);
+    }
+
+    .brand-logo-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .brand-logo-text {
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.6px;
+        color: #1e293b;
+    }
+
+    .brand-logo-text .accent {
+        color: #2563eb;
+    }
+
+    .register-title {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 1.7rem;
+        color: #0f172a;
+        letter-spacing: -0.4px;
+        animation: fadeUp 0.5s ease-out;
+    }
+
+    .register-top-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 0;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+        font-weight: 600;
+        font-size: 12px;
+        animation: fadeUp 0.45s ease-out;
+    }
+
+    .branch-help-text {
+        color: #64748b;
+        font-size: 0.82rem;
+        margin-top: 8px;
+    }
+
+    .branch-summary {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 12px 14px;
+    }
+
+    .branch-summary-label {
+        color: #1d4ed8;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 4px;
+    }
+
+    .branch-summary-name {
+        color: #0f172a;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .branch-summary-address {
+        color: #475569;
+        font-size: 0.9rem;
+    }
+
+    .register-card .mb-3,
+    .register-card .mb-4,
+    .register-card .row.g-3,
+    .register-card .d-grid {
+        animation: fadeUp 0.5s ease-out;
+    }
+
+    #otpSection .bg-light {
+        background: #f1f7ff !important;
+        border-color: #cfe2ff !important;
+    }
+</style>
+
+<div class="container register-page">
+    <div class="row justify-content-center register-layout">
+        <div class="col-12 col-lg-8">
+
+            <div class="text-center register-header">
+                <a href="{% url 'public_home' %}" class="brand-logo-link" aria-label="Go to Dhobi Kaka home">
+                    <span class="brand-logo-icon"><i class="fa-solid fa-shirt"></i></span>
+                    <span class="brand-logo-text">Dhobi<span class="accent">Kaka</span></span>
+                </a>
+                <div class="register-top-badge"><i class="fa-solid fa-shield-halved me-1"></i> Secure Sign Up</div>
+                <h2 class="register-title fw-bold">Create Your Account</h2>
+            </div>
+
+            <div class="card register-card">
+                <div class="card-body p-4 p-md-5">
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger rounded-3 shadow-sm border-0 mb-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Oops!</strong> {{ form.non_field_errors }}
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.business.errors %}
+                        <div class="alert alert-danger rounded-3 shadow-sm border-0 mb-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <strong>Oops!</strong> {{ form.business.errors }}
+                        </div>
+                        {% endif %}
+
+                        {% if not form.business.is_hidden %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Select Branch</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-store"></i></span>
+                                {{ form.business }}
+                            </div>
+                            <div class="branch-help-text">Choose your branch using both name and address to avoid confusion.</div>
+                            <div id="branchSummary" class="branch-summary mt-3" style="display: none;">
+                                <div class="branch-summary-label">Selected Branch</div>
+                                <div id="branchSummaryName" class="branch-summary-name"></div>
+                                <div id="branchSummaryAddress" class="branch-summary-address"></div>
+                            </div>
+                            <script>
+                                var businessSelect = document.getElementById("id_business");
+                                if (businessSelect) {
+                                    businessSelect.classList.add("form-select");
+                                    businessSelect.style.borderLeft = "none";
+
+                                    var branchLookup = {
+                                        {% for b in form.business.field.queryset %}
+                                        "{{ b.id }}": {
+                                            name: "{{ b.name|escapejs }}",
+                                            address: "{{ b.address|default:'Address not available'|escapejs }}"
+                                        }{% if not forloop.last %},{% endif %}
+                                        {% endfor %}
+                                    };
+
+                                    Array.prototype.forEach.call(businessSelect.options, function(opt) {
+                                        var info = branchLookup[opt.value];
+                                        if (info) {
+                                            opt.text = info.name + " - " + info.address;
+                                        }
+                                    });
+
+                                    var summaryBox = document.getElementById("branchSummary");
+                                    var summaryName = document.getElementById("branchSummaryName");
+                                    var summaryAddress = document.getElementById("branchSummaryAddress");
+
+                                    function updateBranchSummary() {
+                                        var selected = branchLookup[businessSelect.value];
+                                        if (!selected) {
+                                            summaryBox.style.display = "none";
+                                            return;
+                                        }
+                                        summaryName.textContent = selected.name;
+                                        summaryAddress.textContent = selected.address;
+                                        summaryBox.style.display = "block";
+                                    }
+
+                                    businessSelect.addEventListener("change", updateBranchSummary);
+                                    updateBranchSummary();
+                                }
+                            </script>
+                        </div>
+                        {% else %}
+                        {{ form.business }}
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                {{ form.username }}
+                            </div>
+                            <div id="usernameStatus" class="small mt-1"></div>
+                            {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                {{ form.name }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+    <label class="form-label fw-bold small text-uppercase text-muted">Email Address</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+        
+        <input type="email" name="email" id="id_email" class="form-control" placeholder="name@example.com" required>
+        
+        <button type="button" class="btn btn-primary" id="sendOtpBtn">
+            Verify
+        </button>
+    </div>
+    <div id="otpMessage" class="small mt-1 ps-1 text-danger fw-bold"></div>
+    
+    {% if form.email.errors %}
+        <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+    {% endif %}
+</div>
+
+                        <div class="mb-4" id="otpSection" style="display: none;">
+                            <div class="p-3 bg-light border rounded-3 text-center animate-fade-in">
+                                <label class="form-label fw-bold small text-muted text-uppercase mb-2">Enter Verification Code</label>
+                                <div class="d-flex justify-content-center">
+                                    <input type="text" name="otp_code" id="otpInput" class="form-control text-center fw-bold fs-5 shadow-sm" style="max-width: 180px; letter-spacing: 4px;" maxlength="6" placeholder="000000" disabled>
+                                </div>
+                                <div id="otpLiveStatus" class="small mt-2"></div>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-envelope-open-text me-1"></i> Check your inbox for the code
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                {{ form.phone }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                {{ form.address }}
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    {{ form.password }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Confirm</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-check-circle"></i></span>
+                                    {{ form.confirm_password }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-5">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-register text-white shadow" disabled>
+                                Create Account <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if not request.user.is_authenticated %}
+                <div class="card-footer bg-light text-center py-3 border-0"
+                    style="border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;">
+                    <small class="text-muted">Already have an account?
+                        <a href="{% url 'login' %}" class="fw-bold text-primary text-decoration-none">Log In</a>
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var isOtpVerified = false;
+    var isUsernameAvailable = false;
+
+    function refreshSubmitState() {
+        var submitBtn = document.getElementById('submitBtn');
+        if (!submitBtn) return;
+        submitBtn.disabled = !(isOtpVerified && isUsernameAvailable);
+    }
+
+    function bindUsernameAvailabilityCheck() {
+        var usernameInput = document.getElementById('id_username');
+        var statusBox = document.getElementById('usernameStatus');
+        if (!usernameInput || !statusBox) return;
+
+        var debounceTimer = null;
+        var lastRequested = '';
+
+        function checkUsername() {
+            var raw = (usernameInput.value || '').trim();
+
+            if (!raw) {
+                statusBox.innerHTML = '';
+                isUsernameAvailable = false;
+                refreshSubmitState();
+                return;
+            }
+
+            lastRequested = raw;
+            statusBox.innerHTML = '<span class="text-muted">Checking availability...</span>';
+
+            fetch("{% url 'check_username_availability' %}?username=" + encodeURIComponent(raw))
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (lastRequested !== raw) return;
+
+                    if (data.status !== 'success') {
+                        statusBox.innerHTML = '<span class="text-danger">Unable to check username right now.</span>';
+                        isUsernameAvailable = false;
+                        refreshSubmitState();
+                        return;
+                    }
+
+                    if (data.available) {
+                        statusBox.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Username is available.</span>';
+                        isUsernameAvailable = true;
+                    } else {
+                        statusBox.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Username already exists. Try a different username.</span>';
+                        isUsernameAvailable = false;
+                    }
+
+                    refreshSubmitState();
+                })
+                .catch(function() {
+                    statusBox.innerHTML = '<span class="text-danger">Unable to check username right now.</span>';
+                    isUsernameAvailable = false;
+                    refreshSubmitState();
+                });
+        }
+
+        usernameInput.addEventListener('input', function() {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(checkUsername, 350);
+        });
+
+        checkUsername();
+    }
+
+    function bindRealtimeOtpValidation() {
+        var otpInput = document.getElementById('otpInput');
+        var emailInput = document.getElementById('id_email');
+        var otpLiveStatus = document.getElementById('otpLiveStatus');
+        if (!otpInput || !emailInput || !otpLiveStatus) return;
+
+        var otpTimer = null;
+        var lastOtpRequested = '';
+
+        function verifyOtpNow() {
+            var otp = (otpInput.value || '').trim();
+            var email = (emailInput.value || '').trim();
+
+            if (!otp) {
+                otpLiveStatus.innerHTML = '';
+                isOtpVerified = false;
+                refreshSubmitState();
+                return;
+            }
+
+            if (!/^\d+$/.test(otp)) {
+                otpLiveStatus.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>OTP must be numeric.</span>';
+                isOtpVerified = false;
+                refreshSubmitState();
+                return;
+            }
+
+            if (otp.length < 6) {
+                otpLiveStatus.innerHTML = '<span class="text-muted">Enter full 6-digit OTP.</span>';
+                isOtpVerified = false;
+                refreshSubmitState();
+                return;
+            }
+
+            lastOtpRequested = otp;
+            otpLiveStatus.innerHTML = '<span class="text-muted">Checking OTP...</span>';
+
+            fetch("{% url 'verify_registration_otp' %}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'otp_code=' + encodeURIComponent(otp) + '&email=' + encodeURIComponent(email)
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (lastOtpRequested !== otpInput.value.trim()) return;
+
+                if (data.status !== 'success') {
+                    otpLiveStatus.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Unable to verify OTP.</span>';
+                    isOtpVerified = false;
+                    refreshSubmitState();
+                    return;
+                }
+
+                if (data.valid) {
+                    otpLiveStatus.innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>' + (data.message || 'OTP verified successfully.') + '</span>';
+                    isOtpVerified = true;
+                } else {
+                    otpLiveStatus.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (data.message || 'Incorrect OTP.') + '</span>';
+                    isOtpVerified = false;
+                }
+
+                refreshSubmitState();
+            })
+            .catch(function() {
+                otpLiveStatus.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Unable to verify OTP.</span>';
+                isOtpVerified = false;
+                refreshSubmitState();
+            });
+        }
+
+        otpInput.addEventListener('input', function() {
+            if (otpTimer) clearTimeout(otpTimer);
+            isOtpVerified = false;
+            refreshSubmitState();
+            otpTimer = setTimeout(verifyOtpNow, 280);
+        });
+    }
+
+    // Ensure all form inputs inside input-groups don't have right-borders causing gaps
+    document.addEventListener("DOMContentLoaded", function() {
+        var inputs = document.querySelectorAll('.input-group .form-control');
+        inputs.forEach(function(input) {
+            // If there is a button next to it (like email), remove right radius
+            if (input.nextElementSibling && input.nextElementSibling.tagName === 'BUTTON') {
+                input.style.borderTopRightRadius = '0';
+                input.style.borderBottomRightRadius = '0';
+                input.style.borderRight = 'none'; // Seamless connection
+            }
+        });
+    });
+
+    // OTP Logic
+    document.getElementById('sendOtpBtn').addEventListener('click', function() {
+        var emailInput = document.getElementById('id_email');
+        var email = emailInput ? emailInput.value : '';
+        var btn = this;
+        var msgBox = document.getElementById('otpMessage');
+        var otpSection = document.getElementById('otpSection');
+        var otpInput = document.getElementById('otpInput');
+        var submitBtn = document.getElementById('submitBtn');
+
+        if (!email || !email.includes('@')) {
+            msgBox.innerHTML = '<span class="text-danger fw-bold small"><i class="fas fa-exclamation-circle"></i> Please enter a valid email.</span>';
+            return;
+        }
+
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        btn.disabled = true;
+        msgBox.innerHTML = '';
+
+        fetch("{% url 'send_otp_email' %}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'email=' + encodeURIComponent(email)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                msgBox.innerHTML = '<span class="text-success fw-bold small"><i class="fas fa-check-circle"></i> OTP Sent! Check Inbox.</span>';
+                btn.innerHTML = 'Resend';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+                
+                otpSection.style.display = 'block';
+                otpInput.disabled = false;
+                otpInput.value = '';
+                var otpLiveStatus = document.getElementById('otpLiveStatus');
+                if (otpLiveStatus) {
+                    otpLiveStatus.innerHTML = '<span class="text-muted">Enter 6-digit OTP to verify.</span>';
+                }
+                isOtpVerified = false;
+                refreshSubmitState();
+            } else {
+                msgBox.innerHTML = '<span class="text-danger fw-bold small">' + data.message + '</span>';
+                btn.innerHTML = 'Verify';
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            msgBox.innerHTML = '<span class="text-danger small">Error sending email.</span>';
+            btn.innerHTML = 'Verify';
+            btn.disabled = false;
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        bindUsernameAvailabilityCheck();
+        bindRealtimeOtpValidation();
+        refreshSubmitState();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'orders/base.html' %}
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-dark"><i class="fa-solid fa-star text-warning me-2"></i> Customer Reviews</h3>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="px-4 py-3">Customer</th>
+                            <th>Rating</th>
+                            <th>Feedback / Review</th>
+                            <th>Date</th>
+                            <th class="text-center">Public Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                        <tr>
+                            <td class="px-4 fw-bold text-dark">{{ review.customer.name }}<br><small class="text-muted fw-normal">Order #{{ review.id }}</small></td>
+                            <td class="text-warning">
+                                {{ review.rating }} <i class="fa-solid fa-star"></i>
+                            </td>
+                            <td><p class="mb-0 text-muted small fst-italic" style="max-width: 300px;">"{{ review.review|default:'No text review provided.' }}"</p></td>
+                            <td class="text-muted small">{{ review.order_date|date:"M d, Y" }}</td>
+                            <td class="text-center">
+                                {% if review.is_review_approved %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-3 py-2 rounded-pill">Visible on Website</span>
+                                {% else %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle px-3 py-2 rounded-pill">Hidden</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'toggle_review_approval' review.id %}" class="btn btn-sm {% if review.is_review_approved %}btn-outline-danger{% else %}btn-success{% endif %} fw-bold rounded-pill shadow-sm">
+                                    {% if review.is_review_approved %}Revoke{% else %}<i class="fa-solid fa-check me-1"></i> Approve{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="text-center py-5 text-muted">No customer reviews available yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

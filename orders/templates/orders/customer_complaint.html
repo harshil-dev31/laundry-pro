@@ -1,0 +1,287 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<style>
+    .complaint-form-page {
+        max-width: 760px;
+        margin: 0 auto;
+    }
+
+    .complaint-form-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+    }
+
+    .complaint-form-header {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .complaint-form-header h4 {
+        margin: 0;
+        font-size: clamp(1.05rem, 3vw, 1.35rem);
+        font-weight: 700;
+    }
+
+    .complaint-form-body {
+        padding: 18px;
+    }
+
+    .complaint-form-body label {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 6px;
+        font-size: 0.92rem;
+    }
+
+    .complaint-form-body input,
+    .complaint-form-body select,
+    .complaint-form-body textarea {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.92rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .complaint-form-body textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .complaint-form-body input:focus,
+    .complaint-form-body select:focus,
+    .complaint-form-body textarea:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14);
+        outline: none;
+    }
+
+    .submit-complaint-btn {
+        min-height: 42px;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    .complaint-links {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .complaint-links a {
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .order-picker .dropdown-toggle {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        background: #fff;
+        color: #374151;
+        text-align: left;
+        padding: 8px 12px;
+        font-size: 0.92rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .order-picker .dropdown-toggle::after {
+        display: none;
+    }
+
+    .order-picker .dropdown-menu {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+        max-height: 220px;
+        overflow-y: auto;
+    }
+
+    .order-picker .dropdown-item {
+        white-space: normal;
+        font-size: 0.88rem;
+        line-height: 1.3;
+        padding: 8px 10px;
+    }
+
+    /* Keep dropdown UIs within the card on mobile (native/select2/bootstrap-select). */
+    .complaint-form-body select[name="order"],
+    .complaint-form-body #id_order,
+    .complaint-form-body .select2-container,
+    .complaint-form-body .bootstrap-select,
+    .complaint-form-body .dropdown-toggle {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .select2-dropdown,
+    .bootstrap-select .dropdown-menu {
+        max-width: calc(100vw - 24px) !important;
+    }
+
+    @media (max-width: 576px) {
+        .complaint-form-page {
+            padding: 0 4px;
+        }
+
+        .complaint-form-card {
+            border-radius: 12px;
+        }
+
+        .complaint-form-header {
+            padding: 12px 14px;
+        }
+
+        .complaint-form-header h4 {
+            font-size: 1rem;
+        }
+
+        .complaint-form-body {
+            padding: 14px;
+        }
+
+        .complaint-form-body input,
+        .complaint-form-body select,
+        .complaint-form-body textarea {
+            min-height: 40px;
+            font-size: 0.88rem;
+        }
+
+        .select2-dropdown,
+        .bootstrap-select .dropdown-menu {
+            max-width: calc(100vw - 16px) !important;
+        }
+
+        .complaint-form-body textarea {
+            min-height: 95px;
+        }
+
+        .order-picker .dropdown-toggle {
+            min-height: 40px;
+            font-size: 0.88rem;
+        }
+
+        .order-picker .dropdown-menu {
+            max-height: 200px;
+        }
+
+        .order-picker .dropdown-item {
+            font-size: 0.84rem;
+        }
+
+        .submit-complaint-btn {
+            min-height: 40px;
+            font-size: 0.9rem;
+        }
+
+        .complaint-links {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container py-3 py-md-4 complaint-form-page">
+    <div class="complaint-form-card">
+        <div class="complaint-form-header">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <h4>Raise a Complaint</h4>
+        </div>
+        <div class="complaint-form-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form.customer }}
+
+                <div class="mb-3">
+                    <label class="form-label">Related Order</label>
+                    {{ form.order.as_hidden }}
+                    <div class="dropdown order-picker">
+                        <button class="dropdown-toggle" type="button" id="orderPickerBtn" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <span id="orderPickerLabel">Select Related Order</span>
+                            <i class="fa-solid fa-chevron-down text-muted" style="font-size: 0.75rem;"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="orderPickerBtn">
+                            <li>
+                                <button class="dropdown-item" type="button" data-order-value="" data-order-label="Select Related Order">
+                                    Select Related Order
+                                </button>
+                            </li>
+                            {% for order in form.order.field.queryset %}
+                            <li>
+                                <button class="dropdown-item" type="button" data-order-value="{{ order.id }}" data-order-label="#{{ order.id }} - {{ order.service.name|default:'Service' }}">
+                                    #{{ order.id }} - {{ order.service.name|default:'Service' }}
+                                </button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Subject</label>
+                    {{ form.subject }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <button type="submit" class="btn btn-danger w-100 submit-complaint-btn">Submit Complaint</button>
+            </form>
+
+            <div class="complaint-links">
+                <a href="{% url 'customer_complaint_list' %}" class="text-primary"><i class="fas fa-list me-1"></i> View My Complaints</a>
+                <a href="{% url 'customer_dashboard' %}" class="text-muted"><i class="fas fa-arrow-left me-1"></i> Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const hiddenOrderField = document.getElementById('id_order');
+        const labelNode = document.getElementById('orderPickerLabel');
+        if (!hiddenOrderField || !labelNode) return;
+
+        const optionButtons = document.querySelectorAll('.order-picker .dropdown-item[data-order-value]');
+
+        function syncLabelFromValue() {
+            const currentValue = String(hiddenOrderField.value || '');
+            const selectedBtn = Array.from(optionButtons).find((btn) => String(btn.dataset.orderValue || '') === currentValue);
+            if (selectedBtn) {
+                labelNode.textContent = selectedBtn.dataset.orderLabel || 'Select Related Order';
+            }
+        }
+
+        optionButtons.forEach((btn) => {
+            btn.addEventListener('click', function () {
+                hiddenOrderField.value = this.dataset.orderValue || '';
+                labelNode.textContent = this.dataset.orderLabel || 'Select Related Order';
+            });
+        });
+
+        syncLabelFromValue();
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow border-danger">
+        <div class="card-header bg-danger text-white">
+            <h3>Confirm Deletion</h3>
+        </div>
+        <div class="card-body">
+            <p class="lead">Are you sure you want to delete Order #{{ order.id }} for {{ order.customer.name }}?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                <a href="{% url 'order_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

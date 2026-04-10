@@ -1,0 +1,99 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-dark">User Access Control</h2>
+            <p class="text-muted">Manage individual permissions for every user in the system.</p>
+        </div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-header bg-white py-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0 fw-bold text-primary">All System Users</h5>
+                </div>
+                <div class="col text-end">
+                    <span class="badge bg-light text-dark border">
+                        Total Users: {{ users.count }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">User</th>
+                            <th>Current Role (Group)</th>
+                            <th>Branch</th>
+                            <th>Custom Permissions</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle bg-primary text-white me-3 d-flex align-items-center justify-content-center rounded-circle"
+                                        style="width: 40px; height: 40px;">
+                                        {{ user.username|make_list|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ user.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if user.groups.exists %}
+                                {% for group in user.groups.all %}
+                                <span class="badge bg-info text-dark">{{ group.name }}</span>
+                                {% endfor %}
+                                {% else %}
+                                <span class="badge bg-secondary">No Role</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ user.branch_name }}
+                            </td>
+                            <td>
+                                {% if user.user_permissions.count > 0 %}
+                                <span class="badge bg-warning text-dark border border-warning">
+                                    {{ user.user_permissions.count }} Custom Rules
+                                </span>
+                                {% else %}
+                                <span class="text-muted small">Standard Role Access</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <a href="{% url 'edit_user_permissions' user.id %}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-lock"></i> Assign Permissions
+                                </a>
+
+                                <form action="{% url 'delete_user' user.id %}" method="post" style="display:inline;"
+                                    onsubmit="return confirm('Are you sure you want to PERMANENTLY delete {{ user.username }}?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-1"
+                                        title="Delete User">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">No users found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

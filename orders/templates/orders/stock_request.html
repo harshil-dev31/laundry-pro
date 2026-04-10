@@ -1,0 +1,72 @@
+{% extends 'orders/base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Stock Requests</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qty.</th>
+                            <th>Requested By</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in stock_requests %}
+                        <tr>
+                            <td>{{ req.item_name}}</td>
+                            <td>{{ req.quantity }}</td>
+                            <td>{{ req.requested_by.username}}</td>
+                            <td>
+                                {% if req.status == 'Pending' %}
+                                <span class="badge badge-warning text-dark">Pending</span>
+                                {% elif req.status == 'Approved' %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No requests found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if is_manager %}
+    <div class="col-md-4">
+        <div class="card shadow border-warning">
+            <div class="card-header bg-white text-dark fw-bold">
+                + Request Supplies
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Item Name</label>
+                        {{ form.item_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label>Quantity</label>
+                        {{ form.quantity }}
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Send Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

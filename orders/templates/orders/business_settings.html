@@ -1,0 +1,55 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Add New Laundry Branch</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="fw-bold">Branch Name:</label>
+                            {{ form.name }}
+                        </div>
+
+                        {% if not form.owner_name.is_hidden %}
+                        <div class="mb-3">
+                            <label class="fw-bold">Owner Name:</label>
+                            {{ form.owner_name }}
+                        </div>
+                        {% else %}
+                        {{ form.owner_name }}
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Contact Email:</label>
+                                {{ form.contact_email }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold">Contact Phone:</label>
+                                {{ form.contact_phone }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold">Address:</label>
+                            {{ form.address }}
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">Save Branch</button>
+                            <a href="{% url 'manage_branches' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
