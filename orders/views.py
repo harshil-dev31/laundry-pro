@@ -2321,7 +2321,8 @@ def public_home(request):
 # 3. Fetch Top Approved Reviews (Only 4 or 5 stars, text is optional!)
     approved_reviews = Order.objects.filter(
         is_review_approved=True, 
-        rating__gte=4
+        rating__gte=4,
+        customer__isnull=False
     ).order_by('-order_date')[:3]
     
     # Generate the stars for the HTML
