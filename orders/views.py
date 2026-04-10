@@ -2281,7 +2281,11 @@ def send_email_change_otp(request):
 def public_home(request):
     # 1. Handle Logged-In Users
     if request.user.is_authenticated:
-        if getattr(request.user.userprofile, 'role', '') == 'Customer' or hasattr(request.user, 'customer'):
+        try:
+            role = request.user.userprofile.role
+        except:
+            role = ''
+        if role == 'Customer' or hasattr(request.user, 'customer'):
             return redirect('customer_dashboard')
         else:
             return redirect('order_list')
