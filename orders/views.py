@@ -2299,11 +2299,12 @@ def public_home(request):
         branch_services = []
         for s in services_query:
             short_unit = str(s['unit']).replace('Per ', '').replace('Piece', 'pc').lower()
+            avg_price = s['avg_price'] if s['avg_price'] is not None else 0
 
             branch_services.append({
                 'name': s['name'].title(),
                 'category': s['category'],
-                'price': int(s['avg_price']),
+                'price': int(avg_price),
                 'unit': short_unit
             })
 
