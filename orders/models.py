@@ -13,6 +13,29 @@ class  LaundryBusiness(models.Model):
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # Keep owner User email and name in sync with the business contact details.
+        old_email = None
+        old_owner_name = None
+        if self.pk:
+            existing = LaundryBusiness.objects.filter(pk=self.pk).first()
+            if existing:
+                old_email = existing.contact_email
+                old_owner_name = existing.owner_name
+
+        super().save(*args, **kwargs)
+
+        if old_email != self.contact_email or old_owner_name != self.owner_name:
+            owner_profiles = UserProfile.objects.filter(business=self, role='owner')
+            for profile in owner_profiles:
+                user = profile.user
+                if old_email != self.contact_email and self.contact_email:
+                    user.email = self.contact_email
+                if old_owner_name != self.owner_name and self.owner_name:
+                    user.first_name = self.owner_name
+                user.save()
+
     def __str__(self):
         return self.name    
 

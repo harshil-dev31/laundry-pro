@@ -64,8 +64,13 @@
                     {% endif %}
                     {% if order.display_notes %}
                     <div class="col-12">
-                        <div class="text-muted small">Customer Instructions</div>
-                        <div class="fw-semibold">{{ order.display_notes }}</div>
+                        <div class="alert alert-info border-0 rounded-3 mb-0" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #1976d2;">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fa-solid fa-lightbulb text-primary" style="font-size: 1.1rem; margin-right: 10px;"></i>
+                                <span class="fw-bold text-primary">Special Instructions</span>
+                            </div>
+                            <p class="mb-0 text-secondary" style="line-height: 1.5; word-wrap: break-word; padding-left: 31px;">{{ order.display_notes }}</p>
+                        </div>
                     </div>
                     {% endif %}
                     {% if not order.line_items_data %}

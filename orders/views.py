@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Order, LaundryBusiness, Customer, Service, UserProfile, Task, StockRequest, PlatformSettings, Complaint, Shift
 from .forms import OrderForm, RoleForm, CustomerForm, StaffCreationForm, LaundryBusinessForm, ServiceForm, StaffCreationForm, TaskForm, StockRequestForm, PlatformSettingsForm, ComplaintForm, ShiftForm, CustomerRegistrationForm,CustomerOrderForm, ReviewForm, StaffEditForm
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+import json
 from django.db.models import Count, Sum, Q, Avg
+from django.db.models.functions import ExtractMonth
 from django.contrib.auth.models import User, Group
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -170,12 +172,26 @@ def edit_business(request, business_id):
     if request.method == 'POST':
         form = LaundryBusinessForm(request.POST, instance=business)
         if form.is_valid():
-            form.save()
+            old_email = business.contact_email
+            old_owner_name = business.owner_name
+            updated_business = form.save()
+
+            # Sync the linked owner user email and name when the branch owner details change.
+            if old_email != updated_business.contact_email or old_owner_name != updated_business.owner_name:
+                owner_profiles = UserProfile.objects.filter(business=updated_business, role='owner')
+                for profile in owner_profiles:
+                    user = profile.user
+                    if old_email != updated_business.contact_email:
+                        user.email = updated_business.contact_email
+                    if old_owner_name != updated_business.owner_name:
+                        user.first_name = updated_business.owner_name
+                    user.save()
+
             return redirect('super_admin_dashboard')
     else:
         form = LaundryBusinessForm(instance=business)
 
-        return render(request, 'orders/business_form.html', {'form': form})
+    return render(request, 'orders/business_form.html', {'form': form})
 
 @login_required
 def manage_roles(request):
@@ -287,15 +303,43 @@ def order_list(request):
         return redirect('customer_dashboard') 
     # --- UPDATE END ---
 
+    business_name = ''
+    logged_in_user_role = ''
+    if user_profile:
+        business_name = user_profile.business.name if user_profile.business else ''
+        logged_in_user_role = str(user_profile.role or '').strip()
+
     # 3. Check Business Profile
     if not user_profile or not user_profile.business:
-        return render(request, 'orders/order_list.html', {'orders': []})
+        return render(request, 'orders/order_list.html', {
+            'orders': [],
+            'business_name': business_name,
+            'logged_in_user_role': logged_in_user_role,
+            'current_year': timezone.now().year,
+            'monthly_revenue_json': json.dumps([0] * 12),
+        })
     
     my_business = user_profile.business
     user = request.user
 
     # 4. Base Query (Get everything for this business)
     orders = Order.objects.filter(business=my_business).order_by('-order_date')
+
+    current_year = timezone.now().year
+    delivered_monthly_data = (
+        Order.objects.filter(
+            business=my_business,
+            status__iexact='delivered',
+            payment_status__iexact='Paid',
+            order_date__year=current_year
+        )
+        .annotate(month=ExtractMonth('order_date'))
+        .values('month')
+        .annotate(revenue=Sum('total_price'))
+        .order_by('month')
+    )
+    revenue_by_month = {item['month']: float(item['revenue'] or 0) for item in delivered_monthly_data}
+    delivered_monthly_revenue = [revenue_by_month.get(month, 0) for month in range(1, 13)]
 
     # 5. SECURITY FILTER (Your Logic - CRITICAL)
     # Check if user is Manager or Owner
@@ -324,7 +368,6 @@ def order_list(request):
     my_shifts = []
     
     if request.user.is_authenticated:
-        from django.utils import timezone
         from .models import Shift 
         
         today = timezone.now().date()
@@ -342,7 +385,11 @@ def order_list(request):
         'delivered_orders': delivered_orders,
         'total_revenue': total_revenue,
         'is_manager': is_manager,
-        'my_shifts': my_shifts
+        'my_shifts': my_shifts,
+        'current_year': current_year,
+        'delivered_monthly_revenue_json': json.dumps(delivered_monthly_revenue),
+        'business_name': business_name,
+        'logged_in_user_role': logged_in_user_role,
     })
 @login_required
 def create_order(request, service_id=None):
@@ -1845,6 +1892,12 @@ from django.contrib.auth import update_session_auth_hash # Important for keeping
 
 @login_required
 def change_password(request):
+    effective_email = request.user.email or ''
+    if not effective_email:
+        profile = getattr(request.user, 'userprofile', None)
+        if profile and profile.business and profile.business.contact_email:
+            effective_email = profile.business.contact_email
+
     if request.method == 'POST':
         method = request.POST.get('auth_method') # We will send this from HTML ('old_pass' or 'otp')
 
@@ -1889,7 +1942,7 @@ def change_password(request):
                 messages.success(request, "✅ Password reset successfully via Email Verification!")
                 return redirect('customer_dashboard')
 
-    return render(request, 'orders/change_password.html')
+    return render(request, 'orders/change_password.html', {'effective_email': effective_email})
 # In orders/views.py
 
 @login_required
@@ -2206,18 +2259,34 @@ def forgot_password(request):
 @csrf_exempt
 def verify_reset_otp(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '')
-        otp_input = request.POST.get('otp_code', '')
+        username = request.POST.get('username', '').strip()
+        otp_input = str(request.POST.get('otp_code', '')).strip()
         
-        session_otp = request.session.get('reset_otp')
+        session_otp = request.session.get('reset_otp') or request.session.get('generated_otp')
         session_username = request.session.get('reset_username')
+        session_email = request.session.get('otp_email')
         last_sent = request.session.get('reset_otp_time', 0)
 
-        # Check expiration (Dynamic)
+        # If this is the authenticated password change flow, allow validation by session.
+        if session_otp and not username:
+            if session_email and request.user.is_authenticated:
+                effective_email = request.user.email or ''
+                if not effective_email:
+                    profile = getattr(request.user, 'userprofile', None)
+                    if profile and profile.business and profile.business.contact_email:
+                        effective_email = profile.business.contact_email
+                if effective_email and effective_email.lower() != session_email.lower():
+                    return JsonResponse({'status': 'error', 'message': 'Session email mismatch. Please request a new OTP.'})
+            if otp_input != str(session_otp):
+                return JsonResponse({'status': 'error', 'message': 'Invalid OTP. Please check your code.'})
+            return JsonResponse({'status': 'success', 'message': 'OTP Verified!'})
+
+        # Forgot-password flow requires username + session match.
+        if not session_otp or not session_username:
+            return JsonResponse({'status': 'error', 'message': 'OTP expired. Please resend.'})
         if time.time() - last_sent > OTP_EXPIRY_SECONDS:
             return JsonResponse({'status': 'error', 'message': 'OTP has expired. Please resend.'})
-
-        if not session_otp or otp_input != session_otp or username != session_username:
+        if otp_input != str(session_otp) or username != session_username:
             return JsonResponse({'status': 'error', 'message': 'Invalid OTP. Please check your code.'})
 
         return JsonResponse({'status': 'success', 'message': 'OTP Verified!'})

@@ -210,7 +210,7 @@
                             </td>
                             <td>
                                 {% if order.display_notes %}
-                                <span class="text-secondary small">"{{ order.display_notes }}"</span>
+                                <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-2 py-2" style="max-width: 150px; word-wrap: break-word; display: inline-block;">"{{ order.display_notes }}"</span>
                                 {% else %}
                                 <span class="text-muted">-</span>
                                 {% endif %}
@@ -271,10 +271,13 @@
             </div>
 
             {% if order.display_notes %}
-            <div class="order-history-row">
-                <span class="order-history-label">Notes</span>
+            <div class="order-history-row" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #1976d2; border-radius: 8px; padding: 12px 15px;">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fa-solid fa-lightbulb text-primary"></i>
+                    <span class="order-history-label text-primary fw-bold">Special Instructions</span>
+                </div>
                 <div class="text-end">
-                    <small class="text-secondary" style="font-size: 0.8rem;">"{{ order.display_notes }}"</small>
+                    <small class="text-secondary" style="font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; display: block; text-align: left; margin-left: 26px;">"{{ order.display_notes }}"</small>
                 </div>
             </div>
             {% endif %}

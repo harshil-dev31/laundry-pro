@@ -175,9 +175,12 @@
                             {% if c.status == 'Resolved' %}
                                 <span class="badge bg-success status-pill">Resolved</span>
                                 {% if c.resolution_note %}
-                                    <div class="admin-reply">
-                                        <strong><i class="fas fa-reply me-1"></i>Admin Reply:</strong><br>
-                                        {{ c.resolution_note }}
+                                    <div class="alert alert-success border-0 rounded-3 mt-2" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #4caf50;">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fa-solid fa-check-circle text-success" style="font-size: 1.1rem; margin-right: 10px;"></i>
+                                            <strong class="text-success"><i class="fas fa-reply me-1"></i>Admin Reply:</strong>
+                                        </div>
+                                        <p class="mb-0 text-secondary" style="line-height: 1.5; word-wrap: break-word; padding-left: 31px;">{{ c.resolution_note }}</p>
                                     </div>
                                 {% endif %}
                             {% else %}
@@ -219,9 +222,12 @@
                 {% endif %}
             </p>
             {% if c.status == 'Resolved' and c.resolution_note %}
-            <div class="admin-reply">
-                <strong><i class="fas fa-reply me-1"></i>Admin Reply:</strong><br>
-                {{ c.resolution_note }}
+            <div class="alert alert-success border-0 rounded-3 mt-2" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #4caf50;">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fa-solid fa-check-circle text-success" style="font-size: 1.1rem; margin-right: 10px;"></i>
+                    <strong class="text-success"><i class="fas fa-reply me-1"></i>Admin Reply:</strong>
+                </div>
+                <p class="mb-0 text-secondary" style="line-height: 1.5; word-wrap: break-word; padding-left: 31px;">{{ c.resolution_note }}</p>
             </div>
             {% endif %}
         </div>

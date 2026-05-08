@@ -36,7 +36,7 @@
 
                     <div class="mb-2">
                         <label class="form-label fw-bold small text-muted">Current Email</label>
-                        <input type="text" class="form-control bg-light border-0 shadow-none" value="{{ request.user.email|default:'No email linked' }}" readonly>
+                        <input type="text" class="form-control bg-light border-0 shadow-none" value="{{ request.user.email|default:profile.business.contact_email|default:'No email linked' }}" readonly>
                     </div>
                 </div>
             </div>
