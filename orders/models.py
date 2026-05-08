@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -86,6 +88,7 @@ class Order(models.Model):
     quantity = models.IntegerField(default=1)
     order_date = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True, help_text="Special instructions from customer")
+    customer_note = models.TextField(blank=True, null=True, help_text="Customer note for quick booking or special instructions.")
 
     payment_collected_by = models.ForeignKey(
         User,
@@ -110,6 +113,8 @@ class Order(models.Model):
         ('Pending', 'Pending'),
     ]
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='Pending')
+
+    QB_LINE_ITEMS_PREFIX = '__QB_LINE_ITEMS__'
 
     # Your Custom Statuses (KEPT)
     STATUS_CHOICES = [
@@ -145,10 +150,51 @@ class Order(models.Model):
         # It calculates the price NOW and saves it to the database column.
         if not self.id and self.customer:
             self.customer_name_backup = self.customer.name
-        
+
         if self.service:
             self.total_price = self.service.price * self.quantity
+        elif self.notes and self.notes.startswith(self.QB_LINE_ITEMS_PREFIX):
+            try:
+                items = json.loads(self.notes[len(self.QB_LINE_ITEMS_PREFIX):])
+                self.total_price = sum(float(item.get('line_total', 0)) for item in items)
+            except (json.JSONDecodeError, TypeError, ValueError):
+                self.total_price = self.total_price
+
         super(Order, self).save(*args, **kwargs)
+
+    @property
+    def line_items_data(self):
+        if self.notes and self.notes.startswith(self.QB_LINE_ITEMS_PREFIX):
+            try:
+                return json.loads(self.notes[len(self.QB_LINE_ITEMS_PREFIX):])
+            except json.JSONDecodeError:
+                return []
+        return []
+
+    @property
+    def service_description(self):
+        if self.line_items_data:
+            count = sum(int(item.get('quantity', 0)) for item in self.line_items_data)
+            return f"{len(self.line_items_data)} services ({count} items)"
+        if self.service:
+            return f"{self.service.name} x{self.quantity}"
+        return "Multiple services"
+
+    @property
+    def line_items_count(self):
+        if self.line_items_data:
+            return sum(int(item.get('quantity', 0)) for item in self.line_items_data)
+        return self.quantity
+
+    @property
+    def display_notes(self):
+        if self.customer_note:
+            return self.customer_note
+
+        if self.notes and not self.notes.startswith(self.QB_LINE_ITEMS_PREFIX):
+            return self.notes
+
+        return ''
 
     def __str__(self):
         # Check if the customer exists before trying to read their name
@@ -157,6 +203,9 @@ class Order(models.Model):
         
         # Fallback if the customer was deleted
         return f"Order #{self.id} - Deleted/Unknown Customer"
+
+    is_quick_booking = models.BooleanField(default=False, help_text="Indicates if the order was placed via Quick Booking.")
+    temporary_customer = models.BooleanField(default=True, help_text="Marks if the customer is temporary (Quick Booking).")
 
 class Task(models.Model):
     business = models.ForeignKey(LaundryBusiness, on_delete=models.CASCADE)
@@ -238,3 +287,18 @@ class Shift(models.Model):
 
     def __str__(self):
         return f"{self.staff.username} - {self.date} ({self.shift_name})"
+
+class Area(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Branch(models.Model):
+    name = models.CharField(max_length=100)
+    area = models.ForeignKey(Area, on_delete=models.CASCADE, related_name='branches')
+    business = models.ForeignKey(LaundryBusiness, on_delete=models.CASCADE)
+    address = models.TextField()
+
+    def __str__(self):
+        return self.name

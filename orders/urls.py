@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .quick_booking import quick_booking_view, quick_booking_submit, get_areas, get_branches, price_chart_view, payment_view, order_confirmation_view
 
 urlpatterns =[
     # 1. Make the Traffic Cop the front door
@@ -86,5 +87,12 @@ urlpatterns =[
     path('', views.public_home, name='public_home'),
     path('manage-reviews/', views.manage_reviews, name='manage_reviews'),
     path('toggle-review/<int:order_id>/', views.toggle_review_approval, name='toggle_review_approval'),
-    ]
+    path('quick-booking/', quick_booking_view, name='quick_booking'),
+    path('quick-booking/submit/', quick_booking_submit, name='quick_booking_submit'),
+    path('api/areas/', get_areas, name='get_areas'),
+    path('api/branches/', get_branches, name='get_branches'),
+    path('price-chart/<int:branch_id>/', price_chart_view, name='price_chart'),
+    path('payment/', payment_view, name='payment'),
+    path('order-confirmation/<int:order_id>/', order_confirmation_view, name='order_confirmation'),
+]
 

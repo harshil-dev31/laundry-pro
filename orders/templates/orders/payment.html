@@ -1,0 +1,118 @@
+{% extends 'orders/base_public.html' %}
+
+{% block content %}
+<style>
+    .pay-hero {
+        background: linear-gradient(130deg, #1d4ed8 0%, #2563eb 60%, #38bdf8 100%);
+        color: #fff;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.22);
+    }
+
+    .pay-card {
+        border: 0;
+        border-radius: 18px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .item-row {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+    }
+
+    .payment-option {
+        border: 1px solid #dbe2ea;
+        border-radius: 12px;
+        padding: 10px 12px;
+        transition: 0.2s ease;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .payment-option:has(input:checked) {
+        border-color: #2563eb;
+        background: #eff6ff;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+</style>
+
+<div class="container py-2 py-md-3">
+    <div class="pay-hero mb-4">
+        <p class="mb-1 text-uppercase small fw-bold opacity-75">Quick Booking - Step 3 of 3</p>
+        <h2 class="fw-bold mb-1">Confirm Your Booking</h2>
+        <p class="mb-0 opacity-75">{{ branch.name }} | {{ branch.address }}</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="card pay-card">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Selected Services</h5>
+                    <div class="d-grid gap-2">
+                        {% for item in selected_services %}
+                        <div class="item-row d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-semibold">{{ item.name }}</div>
+                                <div class="small text-muted">{{ item.quantity }} x Rs {{ item.price }} ({{ item.unit }})</div>
+                            </div>
+                            <div class="fw-bold text-primary">Rs {{ item.line_total|floatformat:2 }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card pay-card">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Order Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Customer</span>
+                        <span class="fw-semibold">{{ quick_customer.name }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Mobile</span>
+                        <span class="fw-semibold">{{ quick_customer.mobile }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Total Items</span>
+                        <span class="fw-semibold">{{ total_items }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Estimated Total</span>
+                        <span class="fw-bold text-primary">Rs {{ estimated_total|floatformat:2 }}</span>
+                    </div>
+
+                    <hr>
+
+                    <form method="post" action="{% url 'payment' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="confirm_order" value="1">
+
+                        <h6 class="fw-bold mb-2">Payment Method</h6>
+                        <div class="d-grid gap-2 mb-3">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="Cash" {% if payment_method == 'Cash' %}checked{% endif %}> Cash on Pickup
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="UPI" {% if payment_method == 'UPI' %}checked{% endif %}> UPI
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="Card" {% if payment_method == 'Card' %}checked{% endif %}> Credit / Debit Card
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Place Quick Booking</button>
+                    </form>
+
+                    <a href="{% url 'price_chart' branch.id %}" class="btn btn-outline-secondary w-100 mt-2">Back to Price Chart</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

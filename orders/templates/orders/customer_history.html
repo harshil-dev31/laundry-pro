@@ -209,8 +209,8 @@
                                 <small class="text-muted">Qty: {{ order.quantity }}</small>
                             </td>
                             <td>
-                                {% if order.notes %}
-                                <span class="text-secondary small">"{{ order.notes }}"</span>
+                                {% if order.display_notes %}
+                                <span class="text-secondary small">"{{ order.display_notes }}"</span>
                                 {% else %}
                                 <span class="text-muted">-</span>
                                 {% endif %}
@@ -270,11 +270,11 @@
                 </div>
             </div>
 
-            {% if order.notes %}
+            {% if order.display_notes %}
             <div class="order-history-row">
                 <span class="order-history-label">Notes</span>
                 <div class="text-end">
-                    <small class="text-secondary" style="font-size: 0.8rem;">"{{ order.notes }}"</small>
+                    <small class="text-secondary" style="font-size: 0.8rem;">"{{ order.display_notes }}"</small>
                 </div>
             </div>
             {% endif %}

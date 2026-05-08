@@ -51,18 +51,35 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>{{ order.service.name }}</td>
-                <td class="text-center">{{ order.quantity }}</td>
-                <td class="text-end">₹{{ order.total_price }}</td>
-            </tr>
+            {% if order.line_items_data %}
+                {% for item in order.line_items_data %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-end">₹{{ item.line_total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>{{ order.service.name }}</td>
+                    <td class="text-center">{{ order.quantity }}</td>
+                    <td class="text-end">₹{{ order.total_price|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 
     <div class="d-flex justify-content-between mt-4">
         <h4>Total:</h4>
-        <h4 class="fw-bold">₹{{ order.total_price }}</h4>
+        <h4 class="fw-bold">₹{{ order.total_price|floatformat:2 }}</h4>
     </div>
+
+    {% if order.display_notes %}
+    <div class="mt-4">
+        <p class="mb-1"><strong>Customer Instructions</strong></p>
+        <p>{{ order.display_notes }}</p>
+    </div>
+    {% endif %}
 
     <div class="text-center mt-2">
         {% if order.payment_status == 'Paid' %}

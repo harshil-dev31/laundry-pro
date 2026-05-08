@@ -534,6 +534,13 @@ def edit_order(request, order_id):
             form.fields['service'].queryset = Service.objects.filter(business=request.user.userprofile.business)
         # ------------------------------------------------------
         
+        # --- 🔥 DISABLE ONLY CUSTOMER, SERVICE, QUANTITY FOR READ-ONLY 🔥 ---
+        fields_to_disable = ['customer', 'service', 'quantity']
+        for field_name in fields_to_disable:
+            if field_name in form.fields:
+                form.fields[field_name].disabled = True
+        # ---------------------------------------------------------------
+        
         if form.is_valid():
             obj = form.save(commit=False)
             
@@ -553,6 +560,13 @@ def edit_order(request, order_id):
         if hasattr(request.user, 'userprofile') and request.user.userprofile.business:
             form.fields['service'].queryset = Service.objects.filter(business=request.user.userprofile.business)
         # ------------------------------------------------------------------
+        
+        # --- 🔥 DISABLE ONLY CUSTOMER, SERVICE, QUANTITY FOR READ-ONLY 🔥 ---
+        fields_to_disable = ['customer', 'service', 'quantity']
+        for field_name in fields_to_disable:
+            if field_name in form.fields:
+                form.fields[field_name].disabled = True
+        # ---------------------------------------------------------------
     
     # 2. Pass Variables to Template
     context = {

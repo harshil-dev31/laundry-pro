@@ -139,38 +139,43 @@
         border-bottom: 1px solid #e5eefc;
     }
 
-    .form-control,
-    .form-select {
-        border-radius: 14px;
-        min-height: 48px;
-        border: 2px solid #e5eefc;
-        padding: 12px 16px;
-        font-weight: 500;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        background-color: #f8fbff;
+    .form-control:disabled,
+    .form-select:disabled {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+        cursor: not-allowed;
+        opacity: 0.85;
     }
 
-    .form-control::placeholder,
-    .form-select {
+    .form-control:disabled::placeholder {
         color: #94a3b8;
     }
 
-    .form-control:hover,
-    .form-select:hover {
-        border-color: #cbd5e1;
-        background-color: #ffffff;
+    .readonly-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #2563eb;
-        background-color: #ffffff;
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        outline: none;
-        animation: fieldFocus 0.6s ease-out;
+    .readonly-badge i {
+        font-size: 0.8rem;
     }
 
-    .form-group {
+    .readonly-badge.editable {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .form-control {
         margin-bottom: 24px;
         animation: fieldSlideIn 0.5s ease-out backwards;
     }
@@ -614,7 +619,10 @@
         <div class="col-lg-8">
             <div class="card form-card">
                 <div class="card-header px-4 py-3">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clipboard text-primary me-2"></i>Order Details</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-clipboard text-primary me-2"></i>Order Details</h5>
+                        {% if is_edit %}<span class="readonly-badge"><i class="fa-solid fa-lock"></i> Customer & Service Locked</span>{% endif %}
+                    </div>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     <form method="post">
@@ -701,8 +709,15 @@
 
                         <div class="form-group">
                             <label class="soft-label"><i class="fa-solid fa-note-sticky"></i> Special Instructions (Optional)</label>
-                            {{ form.notes }}
-                            <div class="form-text"><i class="fa-solid fa-info-circle"></i> Tell us about stains, fabric type, or handling requirements.</div>
+                            {% if is_edit and form.instance.display_notes %}
+                                <div class="form-control" style="background-color: #f1f5f9; cursor: not-allowed;">
+                                    <small class="text-muted">{{ form.instance.display_notes }}</small>
+                                </div>
+                                <div class="form-text"><i class="fa-solid fa-info-circle"></i> Customer's instructions (view only)</div>
+                            {% else %}
+                                {{ form.notes }}
+                                <div class="form-text"><i class="fa-solid fa-info-circle"></i> Tell us about stains, fabric type, or handling requirements.</div>
+                            {% endif %}
                             {% if form.notes.errors %}
                             <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.notes.errors }}</div>
                             {% endif %}
@@ -710,7 +725,10 @@
                         
                         {% if form.status %}
                         <div class="form-group p-4 bg-gradient rounded-3 border border-primary border-opacity-25">
-                            <label class="soft-label text-primary"><i class="fa-solid fa-tasks text-primary"></i> {% if is_edit %}Update Status{% else %}Order Status{% endif %}</label>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="soft-label text-primary"><i class="fa-solid fa-tasks text-primary"></i> {% if is_edit %}Update Status{% else %}Order Status{% endif %}</label>
+                                {% if is_edit %}<span class="readonly-badge editable"><i class="fa-solid fa-pen"></i> Editable</span>{% endif %}
+                            </div>
                             {{ form.status }}
                             {% if form.status.errors %}
                             <div class="form-error-message"><i class="fa-solid fa-circle-exclamation"></i>{{ form.status.errors }}</div>

@@ -1,0 +1,224 @@
+{% extends 'orders/base_public.html' %}
+
+{% block content %}
+<style>
+    .qb-hero {
+        background: linear-gradient(120deg, #2563eb 0%, #1d4ed8 55%, #0ea5e9 100%);
+        border-radius: 20px;
+        color: #fff;
+        padding: 26px 24px;
+        box-shadow: 0 14px 30px rgba(30, 64, 175, 0.25);
+    }
+
+    .qb-card {
+        border: 0;
+        border-radius: 18px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .service-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 14px;
+        height: 100%;
+        background: #fff;
+        transition: 0.2s ease;
+    }
+
+    .service-card:hover {
+        border-color: #bfdbfe;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .category-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 11px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid #dbeafe;
+    }
+
+    .qty-wrap {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #dbe2ea;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .qty-btn {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        background: #f8fafc;
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .qty-input {
+        width: 58px;
+        border: 0;
+        text-align: center;
+        height: 36px;
+        font-weight: 600;
+    }
+
+    .sticky-summary {
+        position: sticky;
+        top: 18px;
+    }
+</style>
+
+<div class="container py-2 py-md-3">
+    <div class="qb-hero mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+            <div>
+                <p class="mb-1 text-uppercase small fw-bold opacity-75">Quick Booking - Step 2 of 3</p>
+                <h2 class="mb-1 fw-bold">{{ branch.name }} Price Chart</h2>
+                <p class="mb-0 opacity-75">{{ branch.address }}</p>
+            </div>
+            <div class="category-chip">Branch Services by Owner</div>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'payment' %}" id="price-chart-form">
+        {% csrf_token %}
+        <div class="row g-4">
+            <div class="col-12 col-lg-8">
+                {% for category, category_services in services_by_category.items %}
+                <div class="card qb-card mb-4">
+                    <div class="card-header bg-white border-0 p-4 pb-2">
+                        <h5 class="m-0 fw-bold">{{ category }}</h5>
+                    </div>
+                    <div class="card-body pt-2 p-4">
+                        <div class="row g-3">
+                            {% for service in category_services %}
+                            <div class="col-12 col-md-6">
+                                <div class="service-card">
+                                    <div class="d-flex justify-content-between align-items-start gap-2">
+                                        <h6 class="mb-1 fw-bold">{{ service.name }}</h6>
+                                        <span class="text-primary fw-bold">Rs {{ service.price }}</span>
+                                    </div>
+                                    <div class="small text-muted mb-2">
+                                        {{ service.description|default:"Quality care with doorstep convenience." }}
+                                    </div>
+                                    <div class="small mb-3 text-secondary">Unit: {{ service.unit }}</div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="small fw-semibold text-muted m-0">Qty</label>
+                                        <div class="qty-wrap">
+                                            <button type="button" class="qty-btn js-qty-minus" data-target="quantity_{{ service.id }}">-</button>
+                                            <input
+                                                class="qty-input js-qty-input"
+                                                type="number"
+                                                name="quantity_{{ service.id }}"
+                                                id="quantity_{{ service.id }}"
+                                                min="0"
+                                                value="0"
+                                                data-price="{{ service.price }}"
+                                            >
+                                            <button type="button" class="qty-btn js-qty-plus" data-target="quantity_{{ service.id }}">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="card qb-card p-4">
+                    <h5 class="fw-bold">No services configured yet</h5>
+                    <p class="text-muted mb-0">This branch has not added service rates yet. Please try another branch.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="card qb-card sticky-summary">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">Booking Summary</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Selected Items</span>
+                            <span class="fw-bold" id="selected-items">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Estimated Total</span>
+                            <span class="fw-bold text-primary" id="estimated-total">Rs 0</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2" id="confirm-btn">
+                            Review & Continue
+                        </button>
+                        <p class="small text-muted mt-2 mb-0">Next step: confirm payment mode and place order.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    (function () {
+        const qtyInputs = Array.from(document.querySelectorAll('.js-qty-input'));
+        const selectedItemsEl = document.getElementById('selected-items');
+        const estimatedTotalEl = document.getElementById('estimated-total');
+        const form = document.getElementById('price-chart-form');
+
+        function sanitize(input) {
+            const v = parseInt(input.value || '0', 10);
+            input.value = Number.isNaN(v) || v < 0 ? 0 : v;
+        }
+
+        function updateSummary() {
+            let totalItems = 0;
+            let totalAmount = 0;
+            qtyInputs.forEach((input) => {
+                sanitize(input);
+                const qty = parseInt(input.value || '0', 10);
+                const price = parseFloat(input.dataset.price || '0');
+                if (qty > 0) {
+                    totalItems += qty;
+                    totalAmount += qty * price;
+                }
+            });
+            selectedItemsEl.textContent = totalItems;
+            estimatedTotalEl.textContent = `Rs ${Math.round(totalAmount)}`;
+        }
+
+        document.querySelectorAll('.js-qty-plus').forEach((btn) => {
+            btn.addEventListener('click', function () {
+                const el = document.getElementById(this.dataset.target);
+                el.value = (parseInt(el.value || '0', 10) || 0) + 1;
+                updateSummary();
+            });
+        });
+
+        document.querySelectorAll('.js-qty-minus').forEach((btn) => {
+            btn.addEventListener('click', function () {
+                const el = document.getElementById(this.dataset.target);
+                const next = (parseInt(el.value || '0', 10) || 0) - 1;
+                el.value = next < 0 ? 0 : next;
+                updateSummary();
+            });
+        });
+
+        qtyInputs.forEach((input) => input.addEventListener('input', updateSummary));
+
+        form.addEventListener('submit', function (e) {
+            const hasSelection = qtyInputs.some((input) => parseInt(input.value || '0', 10) > 0);
+            if (!hasSelection) {
+                e.preventDefault();
+                alert('Please select at least one item quantity to continue.');
+            }
+        });
+
+        updateSummary();
+    })();
+</script>
+{% endblock %}

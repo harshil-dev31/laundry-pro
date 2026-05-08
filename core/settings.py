@@ -27,7 +27,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-#^g(gfcp9o++mx8)qi7qt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',') if os.environ.get('ALLOWED_HOSTS') else ['*']
+def parse_env_list(value: str) -> list[str]:
+    return [item.strip().strip("'\"") for item in value.split(',') if item.strip()]
+
+allowed_hosts = os.environ.get('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = parse_env_list(allowed_hosts)
+if not ALLOWED_HOSTS or any(any(ch in host for ch in '[]()=') for host in ALLOWED_HOSTS):
+    ALLOWED_HOSTS = ['*']
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_TRUSTED_ORIGINS = parse_env_list(os.environ.get('CSRF_TRUSTED_ORIGINS', ''))
 
 # Application definition
 

@@ -9,125 +9,228 @@
 <style>
 
     .dashboard-container {
-
-        background-color: #f8f9fa;
-
+        background-color: #f4f7fb;
         min-height: 100vh;
-
     }
-
 
     .card-gradient-blue {
-
-        background: linear-gradient(45deg, #4e73df, #224abe);
-
+        background: linear-gradient(135deg, #4e73df, #2f5ddf);
         color: white;
-
     }
-
 
     .card-gradient-warning {
-
-        background: linear-gradient(45deg, #f6c23e, #dda20a);
-
+        background: linear-gradient(135deg, #f6c23e, #d89d1e);
         color: white;
-
     }
-
 
     .card-gradient-success {
-
-        background: linear-gradient(45deg, #1cc88a, #13855c);
-
+        background: linear-gradient(135deg, #1cc88a, #11835d);
         color: white;
-
     }
-
 
     .card-gradient-info {
-
-        background: linear-gradient(45deg, #36b9cc, #258391);
-
+        background: linear-gradient(135deg, #36b9cc, #1f7f92);
         color: white;
-
     }
-
 
     .stats-card {
-
-        transition: transform 0.2s;
-
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
         border: none;
-
-        border-radius: 15px;
-
+        border-radius: 24px;
         overflow: hidden;
-
     }
-
 
     .stats-card:hover {
-
         transform: translateY(-5px);
-
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
-
+        box-shadow: 0 22px 40px rgba(32, 64, 122, 0.16) !important;
     }
-
 
     .icon-circle {
-
-        opacity: 0.4;
-
-        font-size: 2.5rem;
-
+        opacity: 0.14;
+        font-size: 3rem;
         position: absolute;
-
-        right: 20px;
-
-        top: 25%;
-
+        right: 22px;
+        top: 20px;
     }
-
 
     .custom-table-card {
-
-        border-radius: 15px;
-
+        border-radius: 24px;
         border: none;
-
-        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-
+        box-shadow: 0 20px 45px rgba(35, 55, 95, 0.08);
+        overflow: hidden;
     }
 
+    .custom-table-card .card-header {
+        background-color: #f8fbff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .custom-table-card .card-body {
+        padding: 0;
+    }
+
+    .table-responsive {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid #e5e9f2;
+        background: #ffffff;
+    }
+
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 100%;
+        background: transparent;
+    }
 
     .table thead th {
-
-        border-top: none;
-
-        background-color: #f8f9fc;
-
-        color: #858796;
-
+        background-color: #eef4ff;
+        color: #304156;
         font-weight: 700;
-
         text-transform: uppercase;
-
-        font-size: 0.85rem;
-
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        border-bottom: 1px solid #dbe4f0;
+        vertical-align: middle;
+        padding: 1rem 1.15rem;
     }
 
+    .table tbody td {
+        vertical-align: middle;
+        padding: 1rem 1.15rem;
+        border-top: 1px solid #f1f5f9;
+        color: #334155;
+    }
+
+    .table tbody tr {
+        transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f5f8ff;
+    }
+
+    .table tbody td .fw-bold {
+        color: #1f2937;
+    }
+
+    .table tbody td small {
+        color: #64748b;
+    }
 
     .status-badge {
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+    }
 
-        padding: 5px 12px;
+    .status-badge.bg-warning {
+        background: #fef3c7;
+        color: #78350f;
+    }
 
-        border-radius: 20px;
+    .status-badge.bg-secondary {
+        background: #e2e8f0;
+        color: #334155;
+    }
 
-        font-size: 0.8rem;
+    .status-badge.bg-info {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
 
-        font-weight: 600;
+    .status-badge.bg-success {
+        background: #d1fae5;
+        color: #166534;
+    }
 
+    .table-action-group {
+        display: inline-flex;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .action-btn {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+    }
+
+    .action-btn.btn-light {
+        background: #ffffff;
+        border-color: #e5e9f2;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .btn-pill {
+        border-radius: 999px;
+    }
+
+    .btn-outline-primary,
+    .btn-outline-danger,
+    .btn-light,
+    .btn-primary,
+    .btn-success {
+        border-radius: 14px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-outline-primary:hover,
+    .btn-outline-danger:hover,
+    .btn-light:hover,
+    .btn-primary:hover,
+    .btn-success:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(34, 77, 183, 0.12);
+    }
+
+    .card .btn {
+        min-height: 48px;
+    }
+
+    .card.custom-table-card .badge.bg-light {
+        background: #f8fafc !important;
+        color: #334155 !important;
+    }
+
+    .modal-content {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .table .text-center {
+        min-width: 145px;
+    }
+
+    .table .text-end.pe-4 {
+        min-width: 220px;
     }
 
 </style>
@@ -447,15 +550,13 @@
                                     {% else %}
                                         <span class="text-muted">Customer Deleted</span>
                                     {% endif %}
-                                    <div class="small text-muted">{{ order.customer.phone }}</div>
-
+                                    {% if order.customer %}
+                                        <div class="small text-muted">{{ order.customer.phone }}</div>
+                                    {% endif %}
                                 </div>
                             </td>
 
-
-                            </td>
-
-                            <td>{{ order.service.name }} <span class="badge bg-light text-dark border">x{{ order.quantity }}</span></td>
+                            <td>{{ order.service_description }}</td>
 
                             <td>
 
@@ -608,16 +709,17 @@
                             </td>
 
                             <td class="text-end pe-4">
+                                <div class="table-action-group">
+                                    <a href="{% url 'order_receipt' order.id %}" class="btn btn-sm btn-light action-btn shadow-sm" title="View Order">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
 
-                                {% if not order.is_approved %}
+                                    {% if not order.is_approved %}
                                                         
-                                <button type="button" class="btn btn-sm btn-success shadow-sm me-1"
-                                                        
-                                    data-bs-toggle="modal" data-bs-target="#approveModal{{ order.id }}">
-                                                        
-                                    <i class="fa-solid fa-check"></i>
-                                                        
-                                </button>
+                                    <button type="button" class="btn btn-sm btn-success action-btn shadow-sm" 
+                                        data-bs-toggle="modal" data-bs-target="#approveModal{{ order.id }}" title="Approve Order">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
                             
                             
                                 <div class="modal fade text-start" id="approveModal{{ order.id }}" tabindex="-1">
@@ -677,8 +779,8 @@
                             
                                 {% if order.is_approved and order.status != 'Delivered' %}
                             
-                                <button type="button" class="btn btn-sm btn-outline-primary shadow-sm me-1 {% if order.status|lower == 'delivered' %}disabled{% endif %}"
-                                    {% if order.status|lower == 'delivered' %}style="pointer-events: none; opacity: 0.4;" tabindex="-1" aria-disabled="true"{% else %}data-bs-toggle="modal" data-bs-target="#updateModal{{ order.id }}"{% endif %}>
+                                <button type="button" class="btn btn-sm btn-outline-primary action-btn shadow-sm {% if order.status|lower == 'delivered' %}disabled{% endif %}"
+                                    {% if order.status|lower == 'delivered' %}style="pointer-events: none; opacity: 0.4;" tabindex="-1" aria-disabled="true"{% else %}data-bs-toggle="modal" data-bs-target="#updateModal{{ order.id }}"{% endif %} title="Update Status">
                             
                                     <i class="fa-solid fa-rotate"></i>
                             
@@ -770,7 +872,7 @@
                             
                                 <a href="{% url 'order_receipt' order.id %}" target="_blank"
                             
-                                    class="btn btn-sm btn-light text-dark border" title="Print Bill">
+                                    class="btn btn-sm btn-light action-btn shadow-sm" title="Print Bill">
                             
                                     <i class="fa-solid fa-receipt"></i>
                             
@@ -781,55 +883,76 @@
                             
                                 <a href="{% url 'edit_order' order.id %}"
                             
-                                    class="btn btn-sm btn-light text-primary border {% if order.status|lower == 'delivered' %}disabled{% endif %}" title="Edit"
+                                    class="btn btn-sm btn-light action-btn shadow-sm text-primary {% if order.status|lower == 'delivered' %}disabled{% endif %}" title="Edit"
                                     {% if order.status|lower == 'delivered' %}style="pointer-events: none; opacity: 0.4;" tabindex="-1" aria-disabled="true"{% endif %}>
                             
                                     <i class="fa-solid fa-pen"></i>
                             
                                 </a>
-                            
+                             
                                 {% endif %}
-                            
+                             
                             
                                 {% if perms.orders.delete_order %}
                             
                                 <a href="{% url 'delete_order' order.id %}"
                             
-                                    class="btn btn-sm btn-light text-danger border"
-                            
-                                    onclick="return confirm('Delete this order?');" title="Delete">
-                            
+                                    class="btn btn-sm btn-light action-btn shadow-sm text-danger" title="Delete Order"
+                                    onclick="return confirm('Delete this order?');">
                                     <i class="fa-solid fa-trash"></i>
-                            
                                 </a>
                             
                                 {% endif %}
-                            
-                            
-                                {% if order.notes %}
-                            
-                                <button class="btn btn-sm btn-light text-warning border" data-bs-toggle="modal"
-                            
-                                    data-bs-target="#noteModal{{ order.id }}">
-                            
+
+                                {% if order.line_items_data or order.display_notes %}
+
+                                <button class="btn btn-sm btn-light action-btn shadow-sm text-warning" data-bs-toggle="modal"
+                                    data-bs-target="#noteModal{{ order.id }}" title="Order Details">
                                     <i class="fa-solid fa-note-sticky"></i>
-                            
                                 </button>
-                            
+
                                 <div class="modal fade" id="noteModal{{ order.id }}" tabindex="-1">
-                                
                                     <div class="modal-dialog">
-                                    
                                         <div class="modal-content">
-                                        
-                                            <div class="modal-body text-center">{{ order.notes }}</div>
-                                        
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Order Details</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {% if order.line_items_data %}
+                                                    <div class="list-group">
+                                                        {% for item in order.line_items_data %}
+                                                        <div class="list-group-item border-0 px-0 py-2 d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <div class="fw-semibold">{{ item.name }}</div>
+                                                                <small class="text-muted">{{ item.quantity }} × Rs {{ item.price }} ({{ item.unit }})</small>
+                                                            </div>
+                                                            <div class="fw-bold text-primary">Rs {{ item.line_total|floatformat:2 }}</div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <hr>
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <span class="fw-bold">Total</span>
+                                                        <span class="fw-bold text-primary">Rs {{ order.total_price|floatformat:2 }}</span>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if order.display_notes %}
+                                                    <div>
+                                                        <p class="mb-1 fw-bold">Customer Instructions</p>
+                                                        <p class="small text-muted mb-0">{{ order.display_notes }}</p>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if not order.line_items_data and not order.display_notes %}
+                                                    <div class="text-center text-muted">No additional details.</div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                    
                                     </div>
-                                
                                 </div>
-                            
+
                                 {% endif %}
                             
                             </td>
