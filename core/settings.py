@@ -148,7 +148,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# Replace with your actual Gmail address
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'socialbuzz31@gmail.com') 
-# Replace with the 16-char App Password you just generated (NOT your normal password)
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'taox jccf ylyl zehv')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+# Default email fallback (only for testing - remove in production)
+if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing

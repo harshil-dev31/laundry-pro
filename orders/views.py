@@ -2084,12 +2084,18 @@ def send_otp_email(request):
         message = f'Hello! Your verification code is: {otp_code}. It expires in 5 minutes.'
         from_email = settings.EMAIL_HOST_USER
         
+        if not from_email:
+            import logging
+            logging.error('EMAIL_HOST_USER is not configured')
+            return JsonResponse({'status': 'error', 'message': 'Email service is not configured. Contact administrator.'})
+        
         try:
             send_mail(subject, message, from_email, [email], fail_silently=False)
             return JsonResponse({'status': 'success', 'message': 'OTP sent successfully! Check your inbox.'})
         except Exception as e:
-            print(f"Email Error: {e}")
-            return JsonResponse({'status': 'error', 'message': 'Failed to send email. Please try again.'})
+            import logging
+            logging.error(f'Email Error: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': f'Failed to send email: {str(e)}'})
             
     return JsonResponse({'status': 'error', 'message': 'Invalid request.'})
 
@@ -2193,7 +2199,18 @@ def send_reset_otp(request):
             subject = 'Password Reset Verification Code'
             message = f'Hello {user.first_name or username},\n\nYour password reset OTP is: {otp_code}.\nIt expires in {minutes} minute(s).\nIf you did not request this, please ignore this email.'
             from_email = settings.EMAIL_HOST_USER
-            send_mail(subject, message, from_email, [user.email], fail_silently=False)
+            
+            if not from_email:
+                import logging
+                logging.error('EMAIL_HOST_USER is not configured')
+                return JsonResponse({'status': 'error', 'message': 'Email service is not configured. Contact administrator.'})
+            
+            try:
+                send_mail(subject, message, from_email, [user.email], fail_silently=False)
+            except Exception as e:
+                import logging
+                logging.error(f'Password reset email failed: {str(e)}')
+                return JsonResponse({'status': 'error', 'message': f'Failed to send email: {str(e)}'})
 
             parts = user.email.split('@')
             masked_email = f"{parts[0][0]}***@{parts[1]}"
@@ -2363,6 +2380,12 @@ def send_email_change_otp(request):
     message = f'Hello {request.user.username},\n\nYou requested to change your account email to: {new_email}.\n\nTo authorize this change, please use this verification code: {otp_code}.\nIt expires in {minutes} minute(s).\n\nIf you did not request this, please change your password immediately.'
     from_email = settings.EMAIL_HOST_USER
     
+    # Verify email configuration
+    if not from_email:
+        import logging
+        logging.error('EMAIL_HOST_USER is not configured')
+        return JsonResponse({'status': 'error', 'message': 'Email service is not configured on the server. Contact administrator.'})
+    
     try:
         send_mail(subject, message, from_email, [old_email], fail_silently=False)
         
@@ -2372,7 +2395,10 @@ def send_email_change_otp(request):
         
         return JsonResponse({'status': 'success', 'message': f'OTP sent securely to your CURRENT email ({masked_old})'})
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': 'Failed to send email. Check server logs.'})
+        import logging
+        logging.error(f'Email sending failed: {str(e)}')
+        return JsonResponse({'status': 'error', 'message': f'Failed to send email: {str(e)}'})
+
 
 def public_home(request):
     # 1. Handle Logged-In Users
