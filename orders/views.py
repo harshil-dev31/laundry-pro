@@ -18,8 +18,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.conf import settings
 import re
-from .email_utils import send_branch_credentials_email
-
+from .email_utils import send_branch_credentials_email, send_branch_credentials_email_async
 
 
 def is_manager(user):
@@ -130,8 +129,8 @@ def add_business(request):
                         role='owner' 
                     )
                     
-                    # Send credentials email
-                    email_sent, email_error = send_branch_credentials_email(
+                    # Send credentials email asynchronously to avoid request timeout
+                    send_branch_credentials_email_async(
                         owner_name=o_name,
                         owner_email=o_email,
                         username=username,
@@ -139,11 +138,7 @@ def add_business(request):
                         branch_name=business.name
                     )
                     
-                    if email_sent:
-                        messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials sent to {o_email}")
-                    else:
-                        error_text = f" Email error: {email_error}." if email_error else ''
-                        messages.warning(request, f"Branch '{business.name}' created! ⚠️ But email could not be sent.{error_text} Username: {username} | Password: {raw_password}")
+                    messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials will be emailed to {o_email}")
                 else:
                     # SCENARIO B: Existing owner
                     # Since the owner already exists, your Branch Switcher will automatically 

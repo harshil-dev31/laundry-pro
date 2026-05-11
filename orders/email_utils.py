@@ -1,4 +1,5 @@
 import logging
+import threading
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -52,3 +53,14 @@ def send_branch_credentials_email(owner_name, owner_email, username, password, b
     except Exception as e:
         logger.error('Error sending branch credentials email to %s: %s', owner_email, str(e), exc_info=True)
         return False, str(e)
+
+
+def send_branch_credentials_email_async(owner_name, owner_email, username, password, branch_name):
+    """Send branch credentials email in a background thread."""
+    thread = threading.Thread(
+        target=send_branch_credentials_email,
+        args=(owner_name, owner_email, username, password, branch_name),
+        daemon=True
+    )
+    thread.start()
+    return thread
