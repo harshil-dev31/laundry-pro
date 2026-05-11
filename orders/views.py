@@ -131,7 +131,7 @@ def add_business(request):
                     )
                     
                     # Send credentials email
-                    email_sent = send_branch_credentials_email(
+                    email_sent, email_error = send_branch_credentials_email(
                         owner_name=o_name,
                         owner_email=o_email,
                         username=username,
@@ -142,7 +142,8 @@ def add_business(request):
                     if email_sent:
                         messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials sent to {o_email}")
                     else:
-                        messages.warning(request, f"Branch '{business.name}' created! ⚠️ But email could not be sent. Username: {username} | Password: {raw_password}")
+                        error_text = f" Email error: {email_error}." if email_error else ''
+                        messages.warning(request, f"Branch '{business.name}' created! ⚠️ But email could not be sent.{error_text} Username: {username} | Password: {raw_password}")
                 else:
                     # SCENARIO B: Existing owner
                     # Since the owner already exists, your Branch Switcher will automatically 

@@ -1,7 +1,10 @@
+import logging
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 def send_branch_credentials_email(owner_name, owner_email, username, password, branch_name):
     """
@@ -14,6 +17,14 @@ def send_branch_credentials_email(owner_name, owner_email, username, password, b
         password: Generated password
         branch_name: Name of the branch
     """
+    if not owner_email:
+        logger.error('Branch email failed: owner_email is empty for branch %s', branch_name)
+        return False, 'Owner email is missing.'
+
+    if not getattr(settings, 'EMAIL_HOST_USER', None):
+        logger.error('Branch email failed: EMAIL_HOST_USER not configured')
+        return False, 'Email sender configuration is missing.'
+
     try:
         context = {
             'owner_name': owner_name,
@@ -37,7 +48,7 @@ def send_branch_credentials_email(owner_name, owner_email, username, password, b
             fail_silently=False,
         )
         
-        return True
+        return True, None
     except Exception as e:
-        print(f"Error sending email to {owner_email}: {str(e)}")
-        return False
+        logger.error('Error sending branch credentials email to %s: %s', owner_email, str(e), exc_info=True)
+        return False, str(e)
