@@ -129,16 +129,26 @@ def add_business(request):
                         role='owner' 
                     )
                     
-                    # Send credentials email asynchronously to avoid request timeout
-                    send_branch_credentials_email_async(
-                        owner_name=o_name,
-                        owner_email=o_email,
-                        username=username,
-                        password=raw_password,
-                        branch_name=business.name
+                    email_configured = bool(
+                        getattr(settings, 'EMAIL_HOST_USER', None) and
+                        getattr(settings, 'EMAIL_HOST_PASSWORD', None) and
+                        settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend'
                     )
-                    
-                    messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials will be emailed to {o_email}")
+
+                    if email_configured and o_email:
+                        send_branch_credentials_email_async(
+                            owner_name=o_name,
+                            owner_email=o_email,
+                            username=username,
+                            password=raw_password,
+                            branch_name=business.name
+                        )
+                        messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials will be emailed to {o_email}")
+                    else:
+                        messages.warning(request, (
+                            f"Branch '{business.name}' created, but email is not configured or the owner's email is unavailable. "
+                            f"Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in your deployment environment to send credentials by email."
+                        ))
                 else:
                     # SCENARIO B: Existing owner
                     # Since the owner already exists, your Branch Switcher will automatically 
