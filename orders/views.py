@@ -18,7 +18,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.conf import settings
 import re
-from .email_utils import send_branch_credentials_email, send_branch_credentials_email_async
+from .email_utils import send_branch_credentials_email
 
 
 def is_manager(user):
@@ -136,14 +136,20 @@ def add_business(request):
                     )
 
                     if email_configured and o_email:
-                        send_branch_credentials_email_async(
+                        email_sent, email_error = send_branch_credentials_email(
                             owner_name=o_name,
                             owner_email=o_email,
                             username=username,
                             password=raw_password,
                             branch_name=business.name
                         )
-                        messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials will be emailed to {o_email}")
+                        if email_sent:
+                            messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials emailed to {o_email}")
+                        else:
+                            messages.warning(request, (
+                                f"Branch '{business.name}' created, but email could not be sent. "
+                                f"Reason: {email_error}. Username: {username} | Password: {raw_password}"
+                            ))
                     else:
                         messages.warning(request, (
                             f"Branch '{business.name}' created, but email is not configured or the owner's email is unavailable. "
