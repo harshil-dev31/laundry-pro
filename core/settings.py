@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-#^g(gfcp9o++mx8)qi7qto2gm#ma2xm4=4y_+8-!!1l+ma-u!3')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
 
 def parse_env_list(value: str) -> list[str]:
     return [item.strip().strip("'\"") for item in value.split(',') if item.strip()]
@@ -148,10 +148,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_TIMEOUT = 10
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-
-# Default email fallback (only for testing - remove in production)
-if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For testing
+# Replace with your actual Gmail address
+EMAIL_HOST_USER = (os.environ.get('EMAIL_HOST_USER') or 'socialbuzz31@gmail.com').strip()
+# Replace with the 16-char App Password you just generated (NOT your normal password)
+# Gmail app passwords are displayed as four groups of four characters, but the actual password should be used without spaces.
+EMAIL_HOST_PASSWORD = (os.environ.get('EMAIL_HOST_PASSWORD') or 'mpwlsxgohfnmqghm').replace(' ', '')

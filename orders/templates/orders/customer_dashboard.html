@@ -2,834 +2,758 @@
 
 {% block content %}
 <style>
-    /* Smooth Fade In Animation */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .animate-fade-in {
-        animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    /* Hero Gradient Card */
-    .hero-card {
-        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-        color: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(78, 115, 223, 0.25);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .hero-card > * {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Modern Action Buttons */
-    .btn-action {
-        border-radius: 12px;
-        padding: 12px 24px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 44px;
-        width: 100%;
-        cursor: pointer;
-        touch-action: manipulation;
-    }
-
-    .btn-action:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .hero-kicker {
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-    }
-
-    .hero-title {
-        font-size: clamp(1.15rem, 5vw, 2.5rem);
-        line-height: 1.2;
-    }
-
-    .hero-subtitle {
-        font-size: clamp(0.8rem, 3.8vw, 1.05rem);
-    }
-
-    .hero-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        width: 100%;
-    }
-
-    @media (min-width: 576px) and (max-width: 991.98px) {
-        .hero-actions {
-            flex-direction: row;
-            width: auto;
-        }
-
-        .hero-actions .btn-action {
-            width: auto;
-            min-width: 140px;
-        }
-    }
-
-    @media (min-width: 992px) {
-        .hero-card {
-            padding: 30px 32px !important;
-            display: grid;
-            grid-template-columns: minmax(0, 1.55fr) minmax(220px, 0.85fr);
-            gap: 24px;
-            align-items: center;
-        }
-
-        .hero-content {
-            min-width: 0;
-            padding-right: 4px;
-        }
-
-        .hero-actions {
-            flex-direction: column;
-            width: 100%;
-            max-width: 290px;
-            gap: 12px;
-            justify-self: end;
-            align-self: center;
-        }
-
-        .hero-actions .btn-action {
-            width: 100%;
-            min-width: 0;
-            justify-content: center;
-            padding-left: 18px;
-            padding-right: 18px;
-        }
-
-        .hero-card h5 {
-            margin-bottom: 10px !important;
-        }
-
-        .hero-title {
-            font-size: clamp(2rem, 2.7vw, 2.6rem);
-        }
-
-        .hero-subtitle {
-            font-size: 1rem;
-            max-width: 100%;
-        }
-    }
-
-    @media (min-width: 1200px) {
-        .hero-card {
-            padding: 34px 36px !important;
-        }
-
-        .hero-actions {
-            max-width: 310px;
-        }
-
-        .hero-title {
-            font-size: clamp(2.2rem, 2.6vw, 3rem);
-        }
-    }
-
-    .dashboard-aux-btn {
-        min-height: 36px;
-        font-size: 0.78rem;
-        padding: 6px 12px !important;
-        line-height: 1;
-    }
-
-    .section-header-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-    }
-
-    .section-actions {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 8px;
-        flex-wrap: nowrap;
-        white-space: nowrap;
-    }
-
-    .section-actions .dashboard-aux-btn {
-        width: auto;
-        flex: 0 0 auto;
-    }
-
-    /* Order Card Design */
-    .order-card {
-        border: none;
-        border-radius: 16px;
-        background: #fff;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-
-    .order-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-    }
-
-    .status-badge {
-        padding: 6px 16px;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-    }
-
-    /* Table Styling */
-    .custom-table thead th {
-        background-color: #f8f9fc;
-        color: #858796;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        border: none;
-    }
-
-    .custom-table tbody tr {
-        transition: background-color 0.2s;
-    }
-
-    .custom-table tbody tr:hover {
-        background-color: #f8f9fc;
-    }
-
-    .summary-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
-        border: 1px solid #e5eefc;
-        border-radius: 18px;
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-    }
-
-    .summary-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: #eff6ff;
-        color: #1d4ed8;
-        font-weight: 600;
-        font-size: 0.85rem;
-        border: 1px solid #dbeafe;
-    }
-
-    .mini-metric {
-        background: #ffffff;
-        border: 1px solid #e5eefc;
-        border-radius: 16px;
-        padding: 14px 16px;
-        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
-    }
-
-    .metrics-column {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .metrics-column .mini-metric {
-        flex: 1;
-    }
-
-    .branch-highlight {
-        background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
-        border: 1px solid #dbeafe;
-        border-radius: 18px;
-        padding: 18px 20px;
-    }
-
-    .branch-label {
-        color: #64748b;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-
-    .branch-value {
-        color: #0f172a;
-        font-weight: 700;
-    }
-
-    /* Mobile Responsiveness */
-    @media (max-width: 992px) {
-        .hero-card {
-            padding: 20px !important;
-        }
-
-        .hero-card h1 {
-            font-size: 1.75rem;
-        }
-
-
-        .hero-content {
-            min-width: 0;
-        }
-        .hero-card p {
-            font-size: 0.95rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .hero-card {
-            border-radius: 16px;
-            padding: 20px !important;
-        }
-
-        .hero-card h1 {
-            font-size: 1.5rem;
-            margin-bottom: 12px !important;
-        }
-
-        .hero-card h5 {
-            font-size: 0.75rem;
-        }
-
-        .hero-card p {
-            font-size: 0.9rem;
-        }
-
-        .btn-action {
-            width: 100%;
-            min-height: 40px;
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            border-radius: 10px;
-        }
-
-        .btn-action i {
-            font-size: 1.1rem;
-        }
-
-        .summary-card {
-            border-radius: 16px;
-            padding: 16px !important;
-        }
-
-        .mini-metric {
-            border-radius: 12px;
-            padding: 12px 14px;
-        }
-
-        .mini-metric .fs-3 {
-            font-size: 1.5rem !important;
-        }
-
-        .order-card {
-            border-radius: 14px;
-            margin-bottom: 16px;
-        }
-
-        .order-card .card-header {
-            padding: 12px 16px !important;
-            border-radius: 14px 14px 0 0;
-        }
-
-        .order-card .card-body {
-            padding: 16px !important;
-        }
-
-        .order-card .card-footer {
-            padding: 12px 16px !important;
-        }
-
-        .icon-square {
-            width: 50px !important;
-            height: 50px !important;
-            min-width: 50px !important;
-        }
-
-        .icon-square i {
-            font-size: 1.5rem !important;
-        }
-
-        .custom-table {
-            font-size: 0.85rem;
-        }
-
-        .custom-table thead th {
-            padding: 12px 8px !important;
-            font-size: 0.7rem;
-        }
-
-        .custom-table tbody td {
-            padding: 12px 8px !important;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            padding: 4px 10px !important;
-        }
-
-        h4 {
-            font-size: 1.1rem !important;
-        }
-
-        .row.mb-4 {
-            flex-wrap: wrap;
-        }
-
-        .row.mb-4 .col-6 {
-            width: 50%;
-        }
-
-        .hero-kicker {
-            font-size: 0.64rem;
-        }
-
-        .hero-title {
-            font-size: clamp(1.05rem, 4.8vw, 1.4rem);
-        }
-
-        .hero-subtitle {
-            font-size: 0.82rem;
-        }
-
-        .dashboard-aux-btn {
-            min-height: 34px;
-            font-size: 0.74rem !important;
-        }
-
-        .section-header-row {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .section-actions {
-            width: 100%;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .section-actions .dashboard-aux-btn {
-            flex: 1 1 130px;
-        }
-
-        /* Mobile-friendly table layout */
-        .table-responsive {
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .custom-table thead {
-            display: none;
-        }
-
-        .custom-table tbody tr {
-            display: block;
-            border: 1px solid #e5eefc;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            background: white;
-            padding: 12px;
-        }
-
-        .custom-table tbody td {
-            display: block;
-            text-align: right;
-            padding-left: 50% !important;
-            position: relative;
-            border: none;
-            padding: 8px 0 !important;
-        }
-
-        .custom-table tbody td:before {
-            content: attr(data-label);
-            position: absolute;
-            left: 12px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-        }
-
-        .custom-table tbody td:first-child {
-            font-weight: 700;
-            background: #f8fbff;
-            padding: 12px !important;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-    }
-
-    /* Hide summary on mobile - shown in hero */
-    @media (max-width: 768px) {
-        .summary-card {
-            display: none;
-        }
-
-        .row.g-4.mb-5 {
-            margin-bottom: 16px !important;
-        }
-
-        .mini-metric {
-            border-radius: 10px;
-            padding: 12px;
-        }
-
-        /* Show metrics in single row on mobile */
-        .col-6.col-lg-12 {
-            width: 50% !important;
-        }
-
-        .row.g-3 {
-            gap: 8px !important;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .summary-card {
-            display: none !important;
-        }
-
-        .container {
-            padding: 0 10px;
-        }
-
-        .row.g-4.mb-5 {
-            margin-bottom: 12px !important;
-        }
-
-        .mini-metric {
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .mini-metric .text-muted {
-            font-size: 0.55rem !important;
-            letter-spacing: 0.05em;
-        }
-
-        .mini-metric .fs-3 {
-            font-size: 0.95rem !important;
-            margin-top: 4px;
-        }
-
-        .col-md-6.col-lg-4 {
-            min-height: auto;
-        }
-
-        .order-card .card-header {
-            padding: 8px 12px !important;
-        }
-
-        .order-card .card-body {
-            padding: 8px 12px !important;
-        }
-
-        .order-card h5 {
-            font-size: 0.8rem;
-        }
-
-        .order-card .small {
-            font-size: 0.65rem !important;
-        }
-
-        .icon-square {
-            width: 32px !important;
-            height: 32px !important;
-            min-width: 32px !important;
-        }
-
-        .icon-square i {
-            font-size: 0.9rem !important;
-        }
-
-        .badge {
-            font-size: 0.55rem;
-            padding: 1px 4px !important;
-        }
-
-        h4 {
-            font-size: 0.9rem !important;
-            margin-bottom: 8px !important;
-        }
-
-        .hero-card {
-            padding: 14px !important;
-            border-radius: 14px;
-        }
-
-        .hero-actions {
-            gap: 8px;
-        }
-
-        .btn-action {
-            min-height: 40px;
-            padding: 10px 14px;
-            font-size: 0.82rem;
-            border-radius: 9px;
-        }
-
-        .row.mb-5 {
-            margin-bottom: 12px !important;
-        }
-
-        .mb-3 {
-            margin-bottom: 8px !important;
-        }
-    }
-
-    @media (max-width: 380px) {
-        .container {
-            padding: 0 8px;
-        }
-
-        .mini-metric {
-            padding: 8px;
-        }
-
-        .mini-metric .text-muted {
-            font-size: 0.5rem !important;
-        }
-
-        .mini-metric .fs-3 {
-            font-size: 0.85rem !important;
-        }
-
-        .order-card .card-header {
-            padding: 6px 10px !important;
-        }
-
-        .order-card .card-body {
-            padding: 6px 10px !important;
-        }
-
-        .order-card h5 {
-            font-size: 0.75rem;
-        }
-
-        .order-card .small {
-            font-size: 0.6rem !important;
-        }
-
-        .icon-square {
-            width: 28px !important;
-            height: 28px !important;
-            min-width: 28px !important;
-        }
-
-        .icon-square i {
-            font-size: 0.85rem !important;
-        }
-
-        .badge {
-            font-size: 0.5rem;
-            padding: 1px 2px !important;
-        }
-
-        .hero-card {
-            padding: 12px !important;
-        }
-
-        .hero-title {
-            font-size: 1rem;
-        }
-
-        .hero-subtitle {
-            font-size: 0.74rem;
-        }
-
-        .btn-action {
-            min-height: 38px;
-            padding: 9px 12px;
-            font-size: 0.78rem;
-        }
-
-        .dashboard-aux-btn {
-            min-height: 32px;
-            padding: 5px 8px !important;
-            font-size: 0.7rem !important;
-        }
-
-        .mini-metric .fs-3 {
-            font-size: 0.9rem !important;
-        }
-    }</style>
-
-<div class="container py-4 py-md-5" style="background-color: #f8fbff; min-height: 100vh; padding-left: 12px; padding-right: 12px;">
-
-    <div class="row mb-4 mb-md-5 animate-fade-in">
-        <div class="col-12">
-            <div class="hero-card p-3 p-sm-4 p-lg-5 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 gap-sm-3">
-                
-                <div class="hero-content flex-grow-1">
-                    <h5 class="text-white-50 text-uppercase letter-spacing-1 mb-2 hero-kicker">Welcome Back</h5>
-                    <h1 class="fw-bold mb-2 hero-title">Hello, {{ customer.name }}! 👋</h1>
-                    <p class="mb-0 opacity-75 hero-subtitle">
-                        <i class="fa-solid fa-store me-1"></i> <span class="d-none d-sm-inline">{{ customer.business.name }}</span>
-                        <span class="mx-2 d-none d-sm-inline">|</span>
-                        <i class="fa-solid fa-location-dot me-1"></i> <span class="d-none d-sm-inline">{{ customer.address|default:"Location Not Set" }}</span>
-                        <span class="d-sm-none text-truncate">{{ customer.business.name }}</span>
-                    </p>
-                </div>
-
-                <div class="hero-actions w-100 w-sm-auto">
-                    <a href="{% url 'customer_request_pickup' %}" class="btn btn-light text-primary fw-bold btn-action" style="flex: 1;">
-                        <i class="fa-solid fa-plus-circle me-1"></i> New Order
-                    </a>
-                    <a href="{% url 'rate_card' %}" class="btn btn-outline-light fw-bold btn-action" style="flex: 1;">
-                        <i class="fa-solid fa-tags me-1"></i> Rate Card
-                    </a>
-                </div>
-            </div>
-        </div>
+/* -- RESET OLD HERO COMPLETELY -- */
+.hero-card, .hero-cta, .hero-content, .hero-machine,
+.hero-model, .hero-bubble, .hero-kicker, .hero-title,
+.hero-subtitle, .hero-actions, .btn-gloss,
+.row.g-4.mb-5, .summary-card, .metrics-column,
+.mini-metric, .branch-highlight {
+  display: none !important;
+}
+
+/* -- NEW HERO -- */
+.hb-wrap { font-family: system-ui, -apple-system, sans-serif; margin-bottom: 24px; }
+
+.hb-hero {
+  position: relative;
+  background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 60%, #e0f2fe 100%);
+  border-radius: 24px 24px 0 0;
+  padding: 38px 32px 0;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.hb-ripple-wrap {
+  position: absolute;
+  top: -20px; right: 40px;
+  pointer-events: none;
+}
+
+.hb-ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(37,99,235,0.15);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  animation: hbRipple 3.6s ease-out infinite;
+}
+
+.hb-ripple:nth-child(1) { width:80px;  height:80px;  animation-delay: 0s; }
+.hb-ripple:nth-child(2) { width:140px; height:140px; animation-delay: 1.2s; }
+.hb-ripple:nth-child(3) { width:200px; height:200px; animation-delay: 2.4s; }
+
+@keyframes hbRipple {
+  0%   { transform: translate(-50%,-50%) scale(0.3); opacity: 0.8; }
+  100% { transform: translate(-50%,-50%) scale(1);   opacity: 0; }
+}
+
+.hb-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hb-text-block { flex: 1; padding-bottom: 40px; }
+
+.hb-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2563eb;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: hbUp 0.5s ease forwards 0.1s;
+}
+
+.hb-live {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #2563eb;
+  animation: hbBlink 2s ease-in-out infinite;
+}
+
+@keyframes hbBlink {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%     { opacity:0.3; transform:scale(1.5); }
+}
+
+.hb-greeting {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1e3a8a;
+  line-height: 1.08;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+  opacity: 0;
+  animation: hbUp 0.55s ease forwards 0.2s;
+}
+
+@keyframes hbUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hb-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  opacity: 0;
+  animation: hbUp 0.55s ease forwards 0.32s;
+}
+
+.hb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(37,99,235,0.09);
+  border: 1px solid rgba(37,99,235,0.2);
+  color: #1d4ed8;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.hb-illustration {
+  flex-shrink: 0;
+  width: 150px;
+  position: relative;
+  align-self: flex-end;
+  opacity: 0;
+  animation: hbUp 0.6s ease forwards 0.15s;
+}
+
+.hb-shirt {
+  display: block;
+  width: 120px;
+  margin: 0 auto;
+  animation: hbFloat 3.8s ease-in-out infinite;
+  filter: drop-shadow(0 14px 20px rgba(37,99,235,0.18));
+}
+
+@keyframes hbFloat {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-11px); }
+}
+
+.hb-star {
+  position: absolute;
+  animation: hbStar var(--d) ease-in-out infinite var(--dl);
+}
+
+@keyframes hbStar {
+  0%,100% { opacity:0; transform:scale(0.5) rotate(0deg); }
+  45%     { opacity:1; transform:scale(1.2) rotate(20deg); }
+}
+
+.hb-wave-svg {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 70px;
+  display: block;
+  pointer-events: none;
+}
+
+/* stats strip */
+.hb-stats-strip {
+  background: #ffffff;
+  border: 1px solid rgba(37,99,235,0.12);
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+  display: flex;
+  overflow: hidden;
+  opacity: 0;
+  animation: hbUp 0.6s ease forwards 0.42s;
+}
+
+.hb-sstat {
+  flex: 1;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+
+.hb-sstat + .hb-sstat::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 12px; bottom: 12px;
+  width: 1px;
+  background: rgba(37,99,235,0.1);
+}
+
+.hb-arc-box {
+  position: relative;
+  width: 50px; height: 50px;
+  flex-shrink: 0;
+}
+
+.hb-arc-box svg {
+  width: 50px; height: 50px;
+  transform: rotate(-90deg);
+}
+
+.hb-arc-bg  { fill:none; stroke:#e0effe; stroke-width:5; }
+.hb-arc-bl  {
+  fill:none; stroke:#2563eb; stroke-width:5; stroke-linecap:round;
+  stroke-dasharray:126; stroke-dashoffset:126;
+  animation: hbArcFill 1.3s cubic-bezier(.22,1,.36,1) 0.55s forwards;
+}
+.hb-arc-gr  {
+  fill:none; stroke:#10b981; stroke-width:5; stroke-linecap:round;
+  stroke-dasharray:126; stroke-dashoffset:126;
+  animation: hbArcFillGr 1.3s cubic-bezier(.22,1,.36,1) 0.7s forwards;
+}
+
+@keyframes hbArcFill   { to { stroke-dashoffset: 28; } }
+@keyframes hbArcFillGr { to { stroke-dashoffset: 126; } }
+
+.hb-arc-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800;
+}
+
+.hb-arc-num.bl { color: #1d4ed8; }
+.hb-arc-num.gr { color: #059669; }
+
+.hb-sstat-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 2px;
+}
+
+.hb-sstat-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.hb-sstat-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* CTA */
+.hb-cta-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  opacity: 0;
+  animation: hbUp 0.6s ease forwards 0.52s;
+}
+
+.hb-cta-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hb-cta-btn:hover { transform: translateY(-2px); text-decoration: none; }
+
+.hb-cta-primary {
+  background: #2563eb;
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(37,99,235,0.25);
+}
+
+.hb-cta-primary:hover { color: #fff; box-shadow: 0 12px 30px rgba(37,99,235,0.35); }
+
+.hb-cta-secondary {
+  background: #fff;
+  color: #1d4ed8;
+  border: 1.5px solid rgba(37,99,235,0.2) !important;
+}
+
+.hb-cta-secondary:hover { background: #eff6ff; color: #1d4ed8; }
+
+@media (max-width: 576px) {
+  .hb-greeting    { font-size: 24px; }
+  .hb-illustration{ width: 100px; }
+  .hb-hero        { padding: 26px 20px 0; }
+  .hb-cta-row     { flex-direction: column; }
+  .hb-sstat       { padding: 12px 14px; }
+}
+
+@media (max-width: 380px) {
+  .hb-illustration { display: none; }
+  .hb-greeting     { font-size: 20px; }
+}
+</style>
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.dashboard-aux-btn {
+  min-height: 36px;
+  font-size: 0.78rem;
+  padding: 6px 12px !important;
+  line-height: 1;
+}
+
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.section-actions .dashboard-aux-btn {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+@keyframes stripSlide { from{opacity:0;transform:translateX(-14px)} to{opacity:1;transform:translateX(0)} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.28} }
+@keyframes shimmer { 0%{transform:translateX(-100%)} 40%,100%{transform:translateX(150%)} }
+@keyframes ripple { 0%{transform:scale(1);opacity:.55} 100%{transform:scale(2.1);opacity:0} }
+@keyframes progressIn { from{width:0} }
+
+.live-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:#3B82F6; margin-right:5px; vertical-align:middle; animation:blink 1.4s ease infinite; }
+.active-count-pill { font-size:.68rem; font-weight:600; background:#E6F1FB; color:#0C447C; border-radius:99px; padding:2px 10px; vertical-align:middle; }
+
+.order-strip { background:#fff; border:1px solid rgba(59,130,246,.13); border-radius:14px; margin-bottom:8px; overflow:hidden; opacity:0; animation:stripSlide .42s ease forwards; }
+.order-strip:nth-child(1){animation-delay:.05s;} .order-strip:nth-child(2){animation-delay:.13s;} .order-strip:nth-child(3){animation-delay:.21s;} .order-strip:nth-child(4){animation-delay:.29s;} .order-strip:nth-child(n+5){animation-delay:.35s;}
+.order-strip.t-blue  { border-left:3px solid #3B82F6; }
+.order-strip.t-amber { border-left:3px solid #F59E0B; }
+.order-strip.t-green { border-left:3px solid #10B981; }
+.order-strip.t-gray  { border-left:3px solid #94A3B8; }
+.strip-top  { display:flex; align-items:center; gap:10px; padding:10px 14px 7px 14px; }
+.s-icon     { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; position:relative; overflow:hidden; }
+.s-icon::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,.42); transform:translateX(-100%); animation:shimmer 2.8s ease infinite; }
+.s-icon.ib { background:#E6F1FB; color:#1D4ED8; } .s-icon.ia { background:#FAEEDA; color:#92400E; } .s-icon.ig { background:#D1FAE5; color:#065F46; } .s-icon.ix { background:#F1F5F9; color:#475569; }
+.s-info { flex:1; min-width:0; } .s-name { font-size:.82rem; font-weight:700; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.s-meta { font-size:.68rem; color:#64748b; display:flex; gap:5px; align-items:center; margin-top:1px; flex-wrap:wrap; } .m-sep { width:3px; height:3px; border-radius:50%; background:#CBD5E1; flex-shrink:0; }
+.s-right { display:flex; flex-direction:column; align-items:flex-end; gap:3px; flex-shrink:0; } .s-price { font-size:.88rem; font-weight:700; font-variant-numeric:tabular-nums; }
+.s-price.pb { color:#1D4ED8; } .s-price.pa { color:#92400E; } .s-price.pg { color:#065F46; } .s-price.px { color:#475569; }
+.s-badge { font-size:.62rem; font-weight:600; letter-spacing:.04em; padding:2px 8px; border-radius:99px; white-space:nowrap; }
+.bb { background:#E6F1FB; color:#0C447C; } .ba { background:#FAEEDA; color:#633806; } .bg-g { background:#D1FAE5; color:#065F46; } .bx { background:#F1F5F9; color:#475569; }
+.strip-bar { padding:0 14px 8px 14px; } .p-nodes { display:flex; align-items:center; }
+.p-node { width:16px; height:16px; border-radius:50%; border:1.5px solid #CBD5E1; background:#fff; display:flex; align-items:center; justify-content:center; font-size:7px; color:#94A3B8; flex-shrink:0; position:relative; z-index:1; }
+.p-node.db { background:#3B82F6; border-color:#3B82F6; color:#fff; } .p-node.da { background:#F59E0B; border-color:#F59E0B; color:#fff; } .p-node.dg { background:#10B981; border-color:#10B981; color:#fff; }
+.p-node.ab { border-color:#3B82F6; color:#3B82F6; } .p-node.aa { border-color:#F59E0B; color:#F59E0B; } .p-node.ax { border-color:#94A3B8; color:#94A3B8; }
+.p-node.rip::after { content:''; position:absolute; inset:-3px; border-radius:50%; border:1.5px solid currentColor; animation:ripple 1.6s ease infinite; }
+.p-line { flex:1; height:2px; background:#E2E8F0; overflow:hidden; }
+.p-fill { height:100%; width:0; animation:progressIn 1s cubic-bezier(.34,1.4,.64,1) forwards; animation-delay:.5s; }
+.p-fill.fb { background:#3B82F6; } .p-fill.fa { background:#F59E0B; } .p-fill.fg { background:#10B981; } .p-fill.full { width:100%!important; animation:none; }
+.p-labels { display:flex; justify-content:space-between; margin-top:4px; } .p-lbl { font-size:.6rem; color:#94A3B8; text-align:center; flex:1; }
+.p-lbl.lb { color:#1D4ED8; font-weight:700; } .p-lbl.la { color:#92400E; font-weight:700; }
+.strip-foot { border-top:1px solid rgba(226,232,240,.8); display:flex; }
+.sf-btn { flex:1; padding:7px 10px; font-size:.72rem; font-weight:600; background:#fff; border:none; cursor:pointer; color:#64748b; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; transition:background .18s; }
+.sf-btn:hover { background:#F8FAFC; color:#475569; text-decoration:none; } .sf-btn.pay { border-left:1px solid rgba(226,232,240,.8); }
+.sf-btn.pay.pb { color:#1D4ED8; } .sf-btn.pay.pb:hover { background:#EFF6FF; } .sf-btn.pay.pa { color:#92400E; } .sf-btn.pay.pa:hover { background:#FFFBEB; } .sf-btn.pay.pg { color:#065F46; } .sf-btn.pay.pg:hover { background:#ECFDF5; }
+.strips-empty { background:#fff; border:1px solid rgba(59,130,246,.1); border-radius:14px; padding:28px; text-align:center; }
+
+.custom-table thead th {
+  background-color: #f8f9fc;
+  color: #858796;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border: none;
+}
+
+.custom-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f8f9fc;
+}
+</style>
+
+<!-- NEW HERO BANNER -->
+<div class="container py-4 py-md-5" style="background-color:#eff6ff; min-height:100vh; padding-left:12px; padding-right:12px;">
+<div class="hb-wrap">
+
+  <div class="hb-hero">
+    <div class="hb-ripple-wrap" aria-hidden="true">
+      <div class="hb-ripple"></div>
+      <div class="hb-ripple"></div>
+      <div class="hb-ripple"></div>
     </div>
 
-    <div class="row g-4 mb-5 animate-fade-in" style="animation-delay: 0.08s;">
-        <div class="col-12 col-lg-8">
-            <div class="summary-card p-4 h-100">
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="summary-pill"><i class="fa-solid fa-store"></i> {{ customer.business.name }}</span>
-                    <span class="summary-pill"><i class="fa-solid fa-location-dot"></i> {{ customer.address|default:"Location Not Set" }}</span>
-                </div>
-                <div class="branch-highlight">
-                    <div class="branch-label mb-2">Your Branch</div>
-                    <div class="branch-value fs-5 mb-1">{{ customer.business.name }}</div>
-                    <div class="text-muted">All orders, payments, and pickup updates will be linked to this branch.</div>
-                </div>
-            </div>
+    <div class="hb-inner">
+      <div class="hb-text-block">
+        <div class="hb-eyebrow">
+          <span class="hb-live"></span> Laundry Concierge
         </div>
-        <div class="col-12 col-lg-4">
-            <div class="metrics-column h-100">
-                <div class="mini-metric h-100">
-                    <div class="text-muted small fw-bold text-uppercase mb-1">Active Orders</div>
-                    <div class="fs-3 fw-bold text-primary">{{ active_orders|length }}</div>
-                </div>
-                <div class="mini-metric h-100">
-                    <div class="text-muted small fw-bold text-uppercase mb-1">Order History</div>
-                    <div class="fs-3 fw-bold text-dark">{{ history_orders|length }}</div>
-                </div>
-            </div>
+        <h1 class="hb-greeting">Hello,<br>{{ customer.name }}! ??</h1>
+        <div class="hb-pill-row">
+          <span class="hb-pill">
+            <i class="fa-solid fa-store fa-xs"></i>
+            {{ customer.business.name }}
+          </span>
+          <span class="hb-pill">
+            <i class="fa-solid fa-location-dot fa-xs"></i>
+            {{ customer.address|default:"Location Not Set" }}
+          </span>
         </div>
+      </div>
+
+      <div class="hb-illustration" aria-hidden="true">
+        <div class="hb-star" style="top:-6px;right:14px;--d:2.6s;--dl:0s">
+          <svg width="13" height="13" viewBox="0 0 14 14"><path d="M7 0L7.8 5.5L13 7L7.8 8.5L7 14L6.2 8.5L1 7L6.2 5.5Z" fill="#2563eb" opacity=".65"/></svg>
+        </div>
+        <div class="hb-star" style="top:22px;left:-8px;--d:3.2s;--dl:1s">
+          <svg width="10" height="10" viewBox="0 0 14 14"><path d="M7 0L7.8 5.5L13 7L7.8 8.5L7 14L6.2 8.5L1 7L6.2 5.5Z" fill="#10b981" opacity=".7"/></svg>
+        </div>
+        <div class="hb-star" style="bottom:24px;right:-6px;--d:2.2s;--dl:.5s">
+          <svg width="8" height="8" viewBox="0 0 14 14"><path d="M7 0L7.8 5.5L13 7L7.8 8.5L7 14L6.2 8.5L1 7L6.2 5.5Z" fill="#2563eb" opacity=".45"/></svg>
+        </div>
+
+        <svg class="hb-shirt" viewBox="0 0 130 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="hbSG1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#93c5fd"/>
+              <stop offset="100%" stop-color="#2563eb"/>
+            </linearGradient>
+            <linearGradient id="hbSG2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#dbeafe"/>
+              <stop offset="100%" stop-color="#93c5fd"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 10 Q65 0 90 10 L115 35 L97 45 L97 105 Q97 110 92 110 L38 110 Q33 110 33 105 L33 45 L15 35 Z"
+                fill="url(#hbSG1)" stroke="#1d4ed8" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M40 10 Q65 0 90 10 C85 28 75 34 65 34 C55 34 45 28 40 10Z"
+                fill="url(#hbSG2)" stroke="#1d4ed8" stroke-width="1"/>
+          <line x1="65" y1="34" x2="65" y2="110" stroke="#1d4ed8" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.35"/>
+          <circle cx="65" cy="52" r="2.5" fill="#1d4ed8" opacity="0.45"/>
+          <circle cx="65" cy="67" r="2.5" fill="#1d4ed8" opacity="0.45"/>
+          <circle cx="65" cy="82" r="2.5" fill="#1d4ed8" opacity="0.45"/>
+        </svg>
+      </div>
     </div>
 
-    <div class="row mb-3 animate-fade-in" style="animation-delay: 0.1s;">
+    <svg class="hb-wave-svg" viewBox="0 0 700 70" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 35 Q175 0 350 28 Q525 56 700 18 L700 70 L0 70 Z" fill="#fff" opacity="0.55"/>
+      <path d="M0 48 Q175 18 350 40 Q525 62 700 30 L700 70 L0 70 Z" fill="#fff"/>
+    </svg>
+  </div>
+
+  <div class="hb-stats-strip">
+    <div class="hb-sstat">
+      <div class="hb-arc-box">
+        <svg viewBox="0 0 50 50">
+          <circle class="hb-arc-bg" cx="25" cy="25" r="20"/>
+          <circle class="hb-arc-bl" cx="25" cy="25" r="20"/>
+        </svg>
+        <div class="hb-arc-num bl">{{ active_orders|length }}</div>
+      </div>
+      <div class="hb-sstat-text">
+        <div class="hb-sstat-label">Active orders</div>
+        <div class="hb-sstat-val">{{ active_orders|length }}</div>
+        <div class="hb-sstat-sub">In progress</div>
+      </div>
+    </div>
+    <div class="hb-sstat">
+      <div class="hb-arc-box">
+        <svg viewBox="0 0 50 50">
+          <circle class="hb-arc-bg" cx="25" cy="25" r="20"/>
+          <circle class="hb-arc-gr" cx="25" cy="25" r="20"/>
+        </svg>
+        <div class="hb-arc-num gr">{{ history_orders|length }}</div>
+      </div>
+      <div class="hb-sstat-text">
+        <div class="hb-sstat-label">Order history</div>
+        <div class="hb-sstat-val">{{ history_orders|length }}</div>
+        <div class="hb-sstat-sub">Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hb-cta-row">
+    <a href="{% url 'customer_request_pickup' %}" class="hb-cta-btn hb-cta-primary">
+      <i class="fa-solid fa-plus-circle"></i> New Order
+    </a>
+    <a href="{% url 'rate_card' %}" class="hb-cta-btn hb-cta-secondary">
+      <i class="fa-solid fa-tags"></i> Rate Card
+    </a>
+  </div>
+
+</div>
+    <div class="row mb-3 animate-fade-in" style="animation-delay:.1s;">
         <div class="col-12">
             <div class="section-header-row">
-            <h4 class="fw-bold text-dark m-0" style="font-size: clamp(1rem, 4vw, 1.25rem);">
-                <i class="fa-solid fa-hourglass-half text-primary me-2"></i> In Progress
-            </h4>
-            <div class="section-actions">
-                <a href="{% url 'customer_complaint_list' %}" class="btn btn-white bg-white text-muted shadow-sm border rounded-pill px-3 dashboard-aux-btn" style="font-size: 0.78rem;">
-                    <i class="fas fa-list-ul me-1"></i> Complaints
-                </a>
-                <a href="{% url 'customer_raise_complaint' %}" class="btn btn-white bg-white text-danger shadow-sm border rounded-pill px-3 dashboard-aux-btn" style="font-size: 0.78rem;">
-                    <i class="fa-solid fa-circle-exclamation me-1"></i> Help
-                </a>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <div class="row mb-5 animate-fade-in" style="animation-delay: 0.2s;">
-        {% for order in active_orders %}
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="order-card h-100 d-flex flex-column">
-                
-                <div class="card-header bg-white border-bottom-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">#{{ order.id }}</span>
-                    <span class="small text-muted fw-bold">{{ order.order_date|date:"M d, Y" }}</span>
-                </div>
-
-                <div class="card-body px-4 pt-3 pb-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="icon-square bg-soft-primary text-primary rounded-circle p-3 me-3" style="background: #eef2ff;">
-                            <i class="fa-solid fa-shirt fa-xl" style="color: #4e73df;"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold text-dark mb-0">{{ order.service.name }}</h5>
-                            <span class="text-muted small">Qty: {{ order.quantity }} • {{ order.service.unit }}</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-3 p-3 rounded-3 border bg-light">
-                        <div class="small text-muted fw-bold text-uppercase mb-1">Branch</div>
-                        <div class="fw-bold text-dark">{{ order.business.name }}</div>
-                        <div class="small text-muted">{{ order.business.address }}</div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-end mt-3">
-                        <div>
-                            <p class="text-uppercase text-muted x-small fw-bold mb-1">Status</p>
-                            {% if not order.is_approved %}
-                                <span class="badge bg-secondary opacity-75 rounded-pill px-3 py-2">Waiting Approval</span>
-                            {% else %}
-                                <span class="badge bg-warning text-dark rounded-pill px-3 py-2 border border-warning">
-                                    {{ order.status|title }}
-                                </span>
-                            {% endif %}
-                        </div>
-                        <div class="text-end">
-                            <p class="text-uppercase text-muted x-small fw-bold mb-0">Total</p>
-                            <h3 class="text-primary fw-bold mb-0">₹{{ order.total_price }}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer bg-light border-0 px-4 py-3">
-                    <div class="d-grid gap-2">
-                        {% if order.payment_status == 'Paid' %}
-                            <button class="btn btn-success btn-sm w-100 fw-bold" disabled>
-                                <i class="fa-solid fa-check-circle me-1"></i> Payment Complete
-                            </button>
-                        {% else %}
-                            <a href="{% url 'customer_payment' order.id %}" class="btn btn-primary btn-sm w-100 fw-bold shadow-sm">
-                                <i class="fa-regular fa-credit-card me-1"></i> Pay Now
-                            </a>
-                        {% endif %}
-                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="btn btn-link btn-sm text-decoration-none text-muted">
-                            Download Bill
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="card border-0 shadow-sm py-5 text-center bg-white rounded-4">
-                <div class="card-body">
-                    <div class="mb-3">
-                        <i class="fa-solid fa-basket-shopping fa-3x text-light" style="color: #e2e6ea;"></i>
-                    </div>
-                    <h5 class="text-muted fw-bold">No active orders right now</h5>
-                    <p class="text-muted small mb-4">Your branch is ready whenever you want to schedule a pickup.</p>
-                    <a href="{% url 'customer_request_pickup' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                        Start Washing
+                <h4 class="fw-bold text-dark m-0" style="font-size:clamp(1rem,4vw,1.25rem);">
+                    <span class="live-dot"></span>In Progress
+                    <span class="active-count-pill ms-1">{{ active_orders|length }} active</span>
+                </h4>
+                <div class="section-actions">
+                    <a href="{% url 'customer_complaint_list' %}" class="btn btn-white bg-white text-muted shadow-sm border rounded-pill px-3 dashboard-aux-btn">
+                        <i class="fas fa-list-ul me-1"></i> Complaints
+                    </a>
+                    <a href="{% url 'customer_raise_complaint' %}" class="btn btn-white bg-white text-danger shadow-sm border rounded-pill px-3 dashboard-aux-btn">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> Help
                     </a>
                 </div>
             </div>
         </div>
-        {% endfor %}
+    </div>
+
+    <div class="row mb-5 animate-fade-in" style="animation-delay:.18s;">
+        <div class="col-12">
+            {% for order in active_orders %}
+            {% if not order.is_approved %}
+                <div class="order-strip t-gray">
+                    <div class="strip-top">
+                        <div class="s-icon ix"><i class="fa-solid fa-clock"></i></div>
+                        <div class="s-info">
+                            <div class="s-name">{{ order.service.name }}</div>
+                            <div class="s-meta">
+                                <span>{{ order.business.name }}</span><span class="m-sep"></span><span>#{{ order.id }}</span>
+                                <span class="m-sep"></span><span>Qty {{ order.quantity }} &bull; {{ order.service.unit }}</span>
+                                <span class="m-sep"></span><span>{{ order.order_date|date:"d M" }}</span>
+                            </div>
+                        </div>
+                        <div class="s-right">
+                            <span class="s-price px">&#8377;{{ order.total_price }}</span>
+                            <span class="s-badge bx">Awaiting Approval</span>
+                        </div>
+                    </div>
+                    <div class="strip-bar">
+                        <div class="p-nodes">
+                            <div class="p-node ax rip"><i class="fa-solid fa-circle-dot" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb" style="width:0%"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-droplet" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-wind" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-truck" style="font-size:6px;"></i></div>
+                        </div>
+                        <div class="p-labels"><span class="p-lbl lb">Approval</span><span class="p-lbl">Washing</span><span class="p-lbl">Drying</span><span class="p-lbl">Delivery</span></div>
+                    </div>
+                    <div class="strip-foot">
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="sf-btn"><i class="fa-solid fa-file-invoice" style="font-size:11px;"></i> Bill</a>
+                        {% if order.payment_status == 'Paid' %}
+                        <span class="sf-btn pay pg"><i class="fa-solid fa-check-circle" style="font-size:11px;"></i> Paid</span>
+                        {% else %}
+                        <a href="{% url 'customer_payment' order.id %}" class="sf-btn pay pb"><i class="fa-regular fa-credit-card" style="font-size:11px;"></i> Pay now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif order.status == 'Washing' %}
+                <div class="order-strip t-blue">
+                    <div class="strip-top">
+                        <div class="s-icon ib"><i class="fa-solid fa-shirt"></i></div>
+                        <div class="s-info">
+                            <div class="s-name">{{ order.service.name }}</div>
+                            <div class="s-meta">
+                                <span>{{ order.business.name }}</span><span class="m-sep"></span><span>#{{ order.id }}</span>
+                                <span class="m-sep"></span><span>Qty {{ order.quantity }} &bull; {{ order.service.unit }}</span>
+                                <span class="m-sep"></span><span>{{ order.order_date|date:"d M" }}</span>
+                            </div>
+                        </div>
+                        <div class="s-right">
+                            <span class="s-price pb">&#8377;{{ order.total_price }}</span>
+                            <span class="s-badge bb">Washing</span>
+                        </div>
+                    </div>
+                    <div class="strip-bar">
+                        <div class="p-nodes">
+                            <div class="p-node db"><i class="fa-solid fa-check" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb full"></div></div>
+                            <div class="p-node ab rip"><i class="fa-solid fa-droplet" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-wind" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-truck" style="font-size:6px;"></i></div>
+                        </div>
+                        <div class="p-labels"><span class="p-lbl">Pickup</span><span class="p-lbl lb">Washing</span><span class="p-lbl">Drying</span><span class="p-lbl">Delivery</span></div>
+                    </div>
+                    <div class="strip-foot">
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="sf-btn"><i class="fa-solid fa-file-invoice" style="font-size:11px;"></i> Bill</a>
+                        {% if order.payment_status == 'Paid' %}
+                        <span class="sf-btn pay pg"><i class="fa-solid fa-check-circle" style="font-size:11px;"></i> Paid</span>
+                        {% else %}
+                        <a href="{% url 'customer_payment' order.id %}" class="sf-btn pay pb"><i class="fa-regular fa-credit-card" style="font-size:11px;"></i> Pay now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif order.status == 'Processing' %}
+                <div class="order-strip t-blue">
+                    <div class="strip-top">
+                        <div class="s-icon ib"><i class="fa-solid fa-shirt"></i></div>
+                        <div class="s-info">
+                            <div class="s-name">{{ order.service.name }}</div>
+                            <div class="s-meta">
+                                <span>{{ order.business.name }}</span><span class="m-sep"></span><span>#{{ order.id }}</span>
+                                <span class="m-sep"></span><span>Qty {{ order.quantity }} &bull; {{ order.service.unit }}</span>
+                                <span class="m-sep"></span><span>{{ order.order_date|date:"d M" }}</span>
+                            </div>
+                        </div>
+                        <div class="s-right">
+                            <span class="s-price pb">&#8377;{{ order.total_price }}</span>
+                            <span class="s-badge bb">Processing</span>
+                        </div>
+                    </div>
+                    <div class="strip-bar">
+                        <div class="p-nodes">
+                            <div class="p-node ab rip"><i class="fa-solid fa-circle-dot" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-droplet" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-wind" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-truck" style="font-size:6px;"></i></div>
+                        </div>
+                        <div class="p-labels"><span class="p-lbl lb">Pickup</span><span class="p-lbl">Washing</span><span class="p-lbl">Drying</span><span class="p-lbl">Delivery</span></div>
+                    </div>
+                    <div class="strip-foot">
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="sf-btn"><i class="fa-solid fa-file-invoice" style="font-size:11px;"></i> Bill</a>
+                        {% if order.payment_status == 'Paid' %}
+                        <span class="sf-btn pay pg"><i class="fa-solid fa-check-circle" style="font-size:11px;"></i> Paid</span>
+                        {% else %}
+                        <a href="{% url 'customer_payment' order.id %}" class="sf-btn pay pb"><i class="fa-regular fa-credit-card" style="font-size:11px;"></i> Pay now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif order.status == 'Ironing' or order.status == 'Drying' %}
+                <div class="order-strip t-amber">
+                    <div class="strip-top">
+                        <div class="s-icon ia"><i class="fa-solid fa-shirt"></i></div>
+                        <div class="s-info">
+                            <div class="s-name">{{ order.service.name }}</div>
+                            <div class="s-meta">
+                                <span>{{ order.business.name }}</span><span class="m-sep"></span><span>#{{ order.id }}</span>
+                                <span class="m-sep"></span><span>Qty {{ order.quantity }} &bull; {{ order.service.unit }}</span>
+                                <span class="m-sep"></span><span>{{ order.order_date|date:"d M" }}</span>
+                            </div>
+                        </div>
+                        <div class="s-right">
+                            <span class="s-price pa">&#8377;{{ order.total_price }}</span>
+                            <span class="s-badge ba">{{ order.status }}</span>
+                        </div>
+                    </div>
+                    <div class="strip-bar">
+                        <div class="p-nodes">
+                            <div class="p-node da"><i class="fa-solid fa-check" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fa full"></div></div>
+                            <div class="p-node da"><i class="fa-solid fa-check" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fa full"></div></div>
+                            <div class="p-node aa rip"><i class="fa-solid fa-fire" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fa"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-truck" style="font-size:6px;"></i></div>
+                        </div>
+                        <div class="p-labels"><span class="p-lbl">Pickup</span><span class="p-lbl">Washing</span><span class="p-lbl la">{{ order.status }}</span><span class="p-lbl">Delivery</span></div>
+                    </div>
+                    <div class="strip-foot">
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="sf-btn"><i class="fa-solid fa-file-invoice" style="font-size:11px;"></i> Bill</a>
+                        {% if order.payment_status == 'Paid' %}
+                        <span class="sf-btn pay pg"><i class="fa-solid fa-check-circle" style="font-size:11px;"></i> Paid</span>
+                        {% else %}
+                        <a href="{% url 'customer_payment' order.id %}" class="sf-btn pay pa"><i class="fa-regular fa-credit-card" style="font-size:11px;"></i> Pay now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif order.status == 'Delivered' %}
+                <div class="order-strip t-green">
+                    <div class="strip-top">
+                        <div class="s-icon ig"><i class="fa-solid fa-shirt"></i></div>
+                        <div class="s-info">
+                            <div class="s-name">{{ order.service.name }}</div>
+                            <div class="s-meta">
+                                <span>{{ order.business.name }}</span><span class="m-sep"></span><span>#{{ order.id }}</span>
+                                <span class="m-sep"></span><span>Qty {{ order.quantity }} &bull; {{ order.service.unit }}</span>
+                                <span class="m-sep"></span><span>{{ order.order_date|date:"d M" }}</span>
+                            </div>
+                        </div>
+                        <div class="s-right">
+                            <span class="s-price pg">&#8377;{{ order.total_price }}</span>
+                            <span class="s-badge bg-g">Delivered</span>
+                        </div>
+                    </div>
+                    <div class="strip-bar">
+                        <div class="p-nodes">
+                            <div class="p-node dg"><i class="fa-solid fa-check" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fg full"></div></div>
+                            <div class="p-node dg"><i class="fa-solid fa-check" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fg full"></div></div>
+                            <div class="p-node dg"><i class="fa-solid fa-check" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fg full"></div></div>
+                            <div class="p-node dg"><i class="fa-solid fa-check" style="font-size:6px;"></i></div>
+                        </div>
+                        <div class="p-labels"><span class="p-lbl">Pickup</span><span class="p-lbl">Washing</span><span class="p-lbl">Drying</span><span class="p-lbl">Delivered</span></div>
+                    </div>
+                    <div class="strip-foot">
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="sf-btn"><i class="fa-solid fa-file-invoice" style="font-size:11px;"></i> Bill</a>
+                        {% if order.payment_status == 'Paid' %}
+                        <span class="sf-btn pay pg"><i class="fa-solid fa-check-circle" style="font-size:11px;"></i> Paid</span>
+                        {% else %}
+                        <a href="{% url 'customer_payment' order.id %}" class="sf-btn pay pg"><i class="fa-regular fa-credit-card" style="font-size:11px;"></i> Pay now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="order-strip t-blue">
+                    <div class="strip-top">
+                        <div class="s-icon ib"><i class="fa-solid fa-shirt"></i></div>
+                        <div class="s-info">
+                            <div class="s-name">{{ order.service.name }}</div>
+                            <div class="s-meta">
+                                <span>{{ order.business.name }}</span><span class="m-sep"></span><span>#{{ order.id }}</span>
+                                <span class="m-sep"></span><span>Qty {{ order.quantity }} &bull; {{ order.service.unit }}</span>
+                                <span class="m-sep"></span><span>{{ order.order_date|date:"d M" }}</span>
+                            </div>
+                        </div>
+                        <div class="s-right">
+                            <span class="s-price pb">&#8377;{{ order.total_price }}</span>
+                            <span class="s-badge bb">{{ order.status|default:"In Progress"|title }}</span>
+                        </div>
+                    </div>
+                    <div class="strip-bar">
+                        <div class="p-nodes">
+                            <div class="p-node ab rip"><i class="fa-solid fa-circle-dot" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-droplet" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-wind" style="font-size:6px;"></i></div><div class="p-line"><div class="p-fill fb"></div></div>
+                            <div class="p-node"><i class="fa-solid fa-truck" style="font-size:6px;"></i></div>
+                        </div>
+                        <div class="p-labels"><span class="p-lbl lb">Pickup</span><span class="p-lbl">Washing</span><span class="p-lbl">Drying</span><span class="p-lbl">Delivery</span></div>
+                    </div>
+                    <div class="strip-foot">
+                        <a href="{% url 'order_receipt' order.id %}" target="_blank" class="sf-btn"><i class="fa-solid fa-file-invoice" style="font-size:11px;"></i> Bill</a>
+                        {% if order.payment_status == 'Paid' %}
+                        <span class="sf-btn pay pg"><i class="fa-solid fa-check-circle" style="font-size:11px;"></i> Paid</span>
+                        {% else %}
+                        <a href="{% url 'customer_payment' order.id %}" class="sf-btn pay pb"><i class="fa-regular fa-credit-card" style="font-size:11px;"></i> Pay now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            {% empty %}
+            <div class="strips-empty">
+                <i class="fa-solid fa-basket-shopping fa-2x mb-3" style="color:#CBD5E1;"></i>
+                <h6 class="text-muted fw-bold mb-1">No active orders right now</h6>
+                <p class="text-muted small mb-3">Your branch is ready whenever you want to schedule a pickup.</p>
+                <a href="{% url 'customer_request_pickup' %}" class="btn btn-primary rounded-pill px-4 shadow-sm btn-sm">Start Washing</a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3 animate-fade-in" style="animation-delay: 0.3s;">

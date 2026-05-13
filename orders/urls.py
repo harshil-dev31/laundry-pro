@@ -45,6 +45,7 @@ urlpatterns =[
     path('reports/', views.branch_reports, name='branch_reports'),
     path('customers/delete/<int:customer_id>/', views.delete_customer, name='delete_customer'),
     path('order/receipt/<int:order_id>/', views.order_receipt, name='order_receipt'),
+    path('order/<int:order_id>/', views.order_detail, name='order_detail'),
     path('register/', views.public_register, name='public_register'),
     path('my-laundry/', views.customer_dashboard, name='customer_dashboard'),   
     path('dashboard-redirect/', views.dashboard_redirect, name='dashboard_redirect'),

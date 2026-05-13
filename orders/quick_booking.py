@@ -1,11 +1,12 @@
-import json
-
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User, Group
 from .models import Area, Branch, Service, Order, Customer, LaundryBusiness
+from .email_utils import send_customer_credentials_email
 from django.contrib import messages
 from django.db.models import Count
 from collections import OrderedDict
+import re
 
 
 def _infer_area_name_from_address(address):
@@ -79,9 +80,10 @@ def quick_booking_submit(request):
 
     name = (request.POST.get('name') or '').strip()
     mobile = (request.POST.get('mobile') or '').strip()
+    email = (request.POST.get('email') or '').strip()
     address = (request.POST.get('address') or '').strip()
-    if not name or not address or not mobile.isdigit() or len(mobile) != 10:
-        messages.error(request, 'Please enter valid name, mobile number, and pickup address.')
+    if not name or not address or not mobile.isdigit() or len(mobile) != 10 or not email or '@' not in email:
+        messages.error(request, 'Please enter valid name, email, mobile number, and pickup address.')
         return redirect('quick_booking')
 
     request.session['quick_booking'] = {
@@ -89,8 +91,8 @@ def quick_booking_submit(request):
         'branch': branch.id,
         'name': name,
         'mobile': mobile,
+        'email': email,
         'address': address,
-        'note': (request.POST.get('note') or '').strip(),
     }
     request.session.pop('quick_booking_cart', None)
     return redirect('price_chart', branch_id=branch.id)
@@ -205,53 +207,96 @@ def payment_view(request):
 
         customer = Customer.objects.create(
             name=quick_booking_data['name'],
+            email=quick_booking_data['email'],
             phone=quick_booking_data['mobile'],
             address=quick_booking_data['address'],
             business=branch.business,
         )
 
-        line_items = []
-        total_quantity = 0
-        estimated_total = 0
+        customer_user = None
+        raw_password = None
+        quick_email = quick_booking_data.get('email')
+        if quick_email:
+            clean_name = re.sub(r'[^a-z0-9]', '', quick_booking_data['name'].lower()) or 'user'
+            base_username = f"{clean_name}{quick_booking_data['mobile'][-4:]}"
+            username = base_username
+            suffix = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{suffix}"
+                suffix += 1
 
+            existing_user = User.objects.filter(email=quick_email).first()
+            if existing_user is None:
+                raw_password = f"{clean_name}@{quick_booking_data['mobile'][-4:]}"
+                customer_user = User.objects.create_user(
+                    username=username,
+                    email=quick_email,
+                    password=raw_password,
+                    first_name=quick_booking_data['name']
+                )
+            elif not hasattr(existing_user, 'customer'):
+                customer_user = existing_user
+            else:
+                raw_password = f"{clean_name}@{quick_booking_data['mobile'][-4:]}"
+                customer_user = User.objects.create_user(
+                    username=username,
+                    email=quick_email,
+                    password=raw_password,
+                    first_name=quick_booking_data['name']
+                )
+
+            if customer_user:
+                customer.user = customer_user
+                customer.save()
+
+                customer_group, _ = Group.objects.get_or_create(name='Customer')
+                customer_user.groups.add(customer_group)
+
+        created_order_ids = []
+        last_order = None
         for item in selected_services:
             service = Service.objects.filter(id=item['service_id'], business=branch.business).first()
             if not service:
                 continue
+            order = Order.objects.create(
+                customer=customer,
+                business=branch.business,
+                service=service,
+                quantity=item['quantity'],
+                is_quick_booking=True,
+                temporary_customer=True,
+                status='pending',
+                payment_method=payment_method,
+            )
+            created_order_ids.append(order.id)
+            last_order = order
 
-            line_total = float(service.price) * item['quantity']
-            line_items.append({
-                'service_id': service.id,
-                'name': service.name,
-                'unit': service.unit,
-                'price': float(service.price),
-                'quantity': item['quantity'],
-                'line_total': line_total,
-            })
-            total_quantity += item['quantity']
-            estimated_total += line_total
-
-        if not line_items:
+        if not last_order:
             messages.error(request, 'Unable to create order. Please try another branch/service set.')
             return redirect('price_chart', branch_id=branch.id)
 
-        order = Order.objects.create(
-            customer=customer,
-            business=branch.business,
-            service=None,
-            quantity=total_quantity,
-            notes=Order.QB_LINE_ITEMS_PREFIX + json.dumps(line_items),
-            customer_note=quick_booking_data.get('note', ''),
-            is_quick_booking=True,
-            temporary_customer=True,
-            status='pending',
-            payment_method=payment_method,
-            total_price=estimated_total,
-        )
+        request.session['quick_booking_order_ids'] = created_order_ids
+
+        if quick_email and customer_user:
+            username = customer_user.username
+            password = raw_password
+            success, error = send_customer_credentials_email(
+                customer_name=customer.name,
+                customer_email=quick_email,
+                username=username,
+                password=password,
+            )
+            request.session['quick_booking_email_status'] = {
+                'sent': success,
+                'username': username,
+                'password': password,
+                'email': quick_email,
+                'error': error,
+            }
 
         request.session.pop('quick_booking', None)
         request.session.pop('quick_booking_cart', None)
-        return redirect('order_confirmation', order_id=order.id)
+        return redirect('order_confirmation', order_id=last_order.id)
 
     if request.method == 'POST':
         selected_services = []
@@ -348,7 +393,17 @@ def create_quick_booking_order(request):
 
 def order_confirmation_view(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    context = {
+    email_status = request.session.pop('quick_booking_email_status', None)
+    order_ids = request.session.pop('quick_booking_order_ids', None)
+    if order_ids:
+        orders = list(Order.objects.filter(id__in=order_ids).order_by('id'))
+    else:
+        orders = [order]
+
+    total_amount = sum(o.total_price for o in orders)
+    return render(request, 'orders/order_confirmation.html', {
         'order': order,
-    }
-    return render(request, 'orders/order_confirmation.html', context)
+        'orders': orders,
+        'total_amount': total_amount,
+        'email_status': email_status,
+    })

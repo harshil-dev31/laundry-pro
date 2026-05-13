@@ -1188,6 +1188,12 @@ def order_receipt(request, order_id):
 
 
 @login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request, 'orders/order_detail.html', {'order': order})
+
+
+@login_required
 def fix_my_orders(request):
     # 1. Get my business
     user_profile = getattr(request.user, 'userprofile', None)
@@ -1315,14 +1321,13 @@ def customer_dashboard(request):
         return redirect('login')
 
     # --- FIX START: ROBUST STATUS CHECK ---
-    # We define a list of "Finished" statuses.
-    # We include lowercase 'delivered' and 'cancelled' to catch any database variations.
-    completed_statuses = ['Delivered', 'delivered', 'Cancelled', 'cancelled']
+    # Define finished statuses so active orders only include orders still in progress.
+    # Status values may be stored in lowercase or title case.
+    active_orders = Order.objects.filter(customer=customer).exclude(status__iexact='delivered').exclude(status__iexact='cancelled').order_by('-order_date')
 
-    # Active Orders: EXCLUDE anything that is finished
-    active_orders = Order.objects.filter( customer=customer,status__in=['Pending', 'Processing', 'Washing', 'Ironing', 'Ready for Pickup']).order_by('-order_date')    # Change it to this to show ALL recent orders:
-
-    history_orders = Order.objects.filter(customer=customer).order_by('-order_date')[:5]    # --- FIX END ---
+    # History should show delivered orders only.
+    history_orders = Order.objects.filter(customer=customer, status__iexact='delivered').order_by('-order_date')[:5]
+    # --- FIX END ---
 
     return render(request, 'orders/customer_dashboard.html', {
         'customer': customer,

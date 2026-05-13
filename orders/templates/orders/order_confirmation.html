@@ -38,57 +38,53 @@
                         <div class="text-muted small">Status</div>
                         <div class="fw-bold text-capitalize">{{ order.get_status_display }}</div>
                     </div>
-                    {% if order.line_items_data %}
                     <div class="col-12">
-                        <div class="text-muted small">Selected Services</div>
-                        <div class="card p-3 mt-2 bg-light rounded-3">
-                            {% for item in order.line_items_data %}
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div>
-                                    <div class="fw-semibold">{{ item.name }}</div>
-                                    <div class="small text-muted">{{ item.quantity }} x Rs {{ item.price }} ({{ item.unit }})</div>
-                                </div>
-                                <div class="fw-bold text-primary">Rs {{ item.line_total|floatformat:2 }}</div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted small">Total Items</div>
-                        <div class="fw-bold">{{ order.line_items_count }}</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="text-muted small">Amount</div>
-                        <div class="fw-bold text-primary">Rs {{ order.total_price|floatformat:2 }}</div>
-                    </div>
-                    {% endif %}
-                    {% if order.display_notes %}
-                    <div class="col-12">
-                        <div class="alert alert-info border-0 rounded-3 mb-0" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #1976d2;">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fa-solid fa-lightbulb text-primary" style="font-size: 1.1rem; margin-right: 10px;"></i>
-                                <span class="fw-bold text-primary">Special Instructions</span>
-                            </div>
-                            <p class="mb-0 text-secondary" style="line-height: 1.5; word-wrap: break-word; padding-left: 31px;">{{ order.display_notes }}</p>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if not order.line_items_data %}
-                    <div class="col-6">
                         <div class="text-muted small">Service</div>
-                        <div class="fw-bold">{{ order.service.name }}</div>
+                        {% if orders|length > 1 %}
+                            <div class="fw-bold">
+                                {% for item in orders %}
+                                    {{ item.service.name }} x {{ item.quantity }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="fw-bold">{{ order.service.name }}</div>
+                        {% endif %}
                     </div>
                     <div class="col-6">
                         <div class="text-muted small">Amount</div>
-                        <div class="fw-bold text-primary">Rs {{ order.total_price|floatformat:2 }}</div>
+                        <div class="fw-bold text-primary">Rs {{ total_amount|floatformat:2 }}</div>
                     </div>
-                    {% endif %}
                     <div class="col-12">
                         <div class="text-muted small">Estimated Delivery</div>
                         <div class="fw-semibold">{{ order.estimated_delivery|default:"Will be updated by branch soon" }}</div>
                     </div>
                 </div>
 
+                <div class="mt-4">
+                    {% if email_status %}
+                        {% if email_status.sent %}
+                            <div class="alert alert-success">
+                                Login details were emailed to <strong>{{ email_status.email }}</strong>.
+                                <div class="small mt-2">Your username is <strong>{{ email_status.username }}</strong>.</div>
+                                {% if email_status.password %}
+                                <div class="small">Use the password sent to your email to login.</div>
+                                {% else %}
+                                <div class="small">If you already have an account, use your existing password or reset it from the login page.</div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                We could not send the login email to <strong>{{ email_status.email }}</strong>.
+                                <div class="small mt-2">Error: {{ email_status.error|default:'Email sending failed.' }}</div>
+                                <div class="small">Your account username is <strong>{{ email_status.username }}</strong>.</div>
+                                {% if email_status.password %}
+                                <div class="small">Your password is <strong>{{ email_status.password }}</strong>.</div>
+                                {% endif %}
+                                <div class="small">Once email is configured, this page will send login credentials automatically.</div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
                 <div class="d-flex flex-wrap gap-2 mt-4">
                     <a href="{% url 'public_home' %}" class="btn btn-primary">Back to Home</a>
                     <a href="{% url 'quick_booking' %}" class="btn btn-outline-secondary">Book Another</a>
