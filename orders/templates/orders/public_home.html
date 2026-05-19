@@ -3262,6 +3262,16 @@
                             <stop offset="40%" style="stop-color:var(--shirt-color-mid, #38bdf8)" />
                             <stop offset="100%" style="stop-color:var(--shirt-color-bot, #0284c7)" />
                         </linearGradient>
+                        <linearGradient id="nav-parcel-pickup-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#a7f3d0" />
+                            <stop offset="40%" style="stop-color:#34d399" />
+                            <stop offset="100%" style="stop-color:#059669" />
+                        </linearGradient>
+                        <linearGradient id="nav-parcel-quick-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fecaca" />
+                            <stop offset="40%" style="stop-color:#f87171" />
+                            <stop offset="100%" style="stop-color:#dc2626" />
+                        </linearGradient>
                         <linearGradient id="nav-shirt-shine" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" style="stop-color:rgba(255,255,255,0.7)" />
                             <stop offset="50%" style="stop-color:rgba(255,255,255,0.2)" />
@@ -3463,18 +3473,45 @@
                             <span class="nav-svg-wrap">
                                 <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
                                     class="d-block mx-auto">
-                                    <use href="#nav-parcel-paths" />
+                                    <!-- hanger hook -->
+                                    <path d="M 60 38 L 60 22 A 10 10 0 1 0 48 16" fill="none" stroke="rgba(31,41,55,.8)"
+                                        stroke-width="2.5" stroke-linecap="round" />
+                                    <!-- hanger arms (straight support bar inside the parcel) -->
+                                    <line x1="30" y1="55" x2="90" y2="55" stroke="rgba(31,41,55,.7)" stroke-width="2.5"
+                                        stroke-linecap="round" />
+
+                                    <!-- main laundry parcel body (light green) -->
+                                    <path
+                                        d="M 45 53 C 15 65 18 102 22 118 C 28 135 60 137 60 137 C 60 137 92 135 98 118 C 102 102 105 65 75 53 Z"
+                                        fill="url(#nav-parcel-pickup-bg)" stroke="rgba(255,255,255,.6)" stroke-width="1.5" />
+
+                                    <!-- realistic soft fabric vertical gathering lines/creases -->
+                                    <path d="M 48 53 Q 32 82 42 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M 72 53 Q 88 82 78 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M 60 53 L 60 135" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2.5" stroke-dasharray="2,2" />
+
+                                    <!-- bright glossmorphism slashes / reflections -->
+                                    <path d="M 32 60 Q 25 80 28 110 L 38 110 Q 32 80 42 60 Z" fill="rgba(255, 255, 255, 0.22)" />
+                                    <path d="M 88 60 Q 95 80 92 110 L 82 110 Q 88 80 78 60 Z" fill="rgba(255, 255, 255, 0.12)" />
+
+                                    <!-- a gathered fabric neck tie (ribbon/rope) -->
+                                    <ellipse cx="60" cy="52" rx="13" ry="5" fill="rgba(31,41,55,.8)" />
+                                    
+                                    <!-- decorative ribbon flaps/tails draping down -->
+                                    <path d="M 52 52 Q 44 65 42 78 L 49 78 Q 49 65 56 52 Z" fill="rgba(31,41,55,.7)" />
+                                    <path d="M 68 52 Q 76 65 78 78 L 71 78 Q 71 65 64 52 Z" fill="rgba(31,41,55,.7)" />
+
                                     <text x="60" y="85" text-anchor="middle" dominant-baseline="middle"
                                         font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="11.5" letter-spacing="0.5" stroke="#1e3a5f" stroke-width="3"
+                                        font-size="11.5" letter-spacing="0.5" stroke="#047857" stroke-width="3"
                                         paint-order="stroke fill">SCHEDULE</text>
                                     <text x="60" y="105" text-anchor="middle" dominant-baseline="middle"
                                         font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="11.5" letter-spacing="0.5" stroke="#1e3a5f" stroke-width="3"
+                                        font-size="11.5" letter-spacing="0.5" stroke="#047857" stroke-width="3"
                                         paint-order="stroke fill">PICKUP</text>
                                 </svg>
                             </span>
-                            <span class="nav-simple-text" style="color: var(--primary) !important;">Schedule Pickup</span>
+                            <span class="nav-simple-text" style="color: #10b981 !important;">Schedule Pickup</span>
                         </a>
                     </li>
 
@@ -3485,18 +3522,45 @@
                             <span class="nav-svg-wrap">
                                 <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
                                     class="d-block mx-auto">
-                                    <use href="#nav-parcel-paths" />
+                                    <!-- hanger hook -->
+                                    <path d="M 60 38 L 60 22 A 10 10 0 1 0 48 16" fill="none" stroke="rgba(31,41,55,.8)"
+                                        stroke-width="2.5" stroke-linecap="round" />
+                                    <!-- hanger arms (straight support bar inside the parcel) -->
+                                    <line x1="30" y1="55" x2="90" y2="55" stroke="rgba(31,41,55,.7)" stroke-width="2.5"
+                                        stroke-linecap="round" />
+
+                                    <!-- main laundry parcel body (light red) -->
+                                    <path
+                                        d="M 45 53 C 15 65 18 102 22 118 C 28 135 60 137 60 137 C 60 137 92 135 98 118 C 102 102 105 65 75 53 Z"
+                                        fill="url(#nav-parcel-quick-bg)" stroke="rgba(255,255,255,.6)" stroke-width="1.5" />
+
+                                    <!-- realistic soft fabric vertical gathering lines/creases -->
+                                    <path d="M 48 53 Q 32 82 42 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M 72 53 Q 88 82 78 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M 60 53 L 60 135" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2.5" stroke-dasharray="2,2" />
+
+                                    <!-- bright glossmorphism slashes / reflections -->
+                                    <path d="M 32 60 Q 25 80 28 110 L 38 110 Q 32 80 42 60 Z" fill="rgba(255, 255, 255, 0.22)" />
+                                    <path d="M 88 60 Q 95 80 92 110 L 82 110 Q 88 80 78 60 Z" fill="rgba(255, 255, 255, 0.12)" />
+
+                                    <!-- a gathered fabric neck tie (ribbon/rope) -->
+                                    <ellipse cx="60" cy="52" rx="13" ry="5" fill="rgba(31,41,55,.8)" />
+                                    
+                                    <!-- decorative ribbon flaps/tails draping down -->
+                                    <path d="M 52 52 Q 44 65 42 78 L 49 78 Q 49 65 56 52 Z" fill="rgba(31,41,55,.7)" />
+                                    <path d="M 68 52 Q 76 65 78 78 L 71 78 Q 71 65 64 52 Z" fill="rgba(31,41,55,.7)" />
+
                                     <text x="60" y="85" text-anchor="middle" dominant-baseline="middle"
                                         font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="12" letter-spacing="0.5" stroke="#064e3b" stroke-width="3"
+                                        font-size="12" letter-spacing="0.5" stroke="#7f1d1d" stroke-width="3"
                                         paint-order="stroke fill">QUICK</text>
                                     <text x="60" y="105" text-anchor="middle" dominant-baseline="middle"
                                         font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="12" letter-spacing="0.5" stroke="#064e3b" stroke-width="3"
+                                        font-size="12" letter-spacing="0.5" stroke="#7f1d1d" stroke-width="3"
                                         paint-order="stroke fill">LAUNDRY</text>
                                 </svg>
                             </span>
-                            <span class="nav-simple-text" style="color: #10b981 !important;">Quick Laundry</span>
+                            <span class="nav-simple-text" style="color: #ef4444 !important;">Quick Laundry</span>
                         </a>
                     </li>
                 </ul>
