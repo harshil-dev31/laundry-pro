@@ -1,4 +1,5 @@
 {% extends 'orders/base.html' %}
+{% load static %}
 
 {% block content %}
 <style>
@@ -335,9 +336,8 @@
         <div class="col-12 col-lg-8">
 
             <div class="text-center register-header">
-                <a href="{% url 'public_home' %}" class="brand-logo-link" aria-label="Go to Dhobi Kaka home">
-                    <span class="brand-logo-icon"><i class="fa-solid fa-shirt"></i></span>
-                    <span class="brand-logo-text">Dhobi<span class="accent">Kaka</span></span>
+                <a href="{% url 'public_home' %}" class="brand-logo-link d-flex align-items-center justify-content-center" aria-label="Go to Dhobi Kaka home">
+                    <img src="{% static 'img/Logo.jpeg' %}" alt="Dhobi Kaka" style="width:100px; height:100px; object-fit:contain; border-radius:8px;">
                 </a>
                 <div class="register-top-badge"><i class="fa-solid fa-shield-halved me-1"></i> Secure Sign Up</div>
                 <h2 class="register-title fw-bold">Create Your Account</h2>

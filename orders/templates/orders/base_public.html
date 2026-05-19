@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -19,11 +20,8 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'public_home' %}">
-                <div class="d-flex flex-column">
-                    <span><i class="fa-solid fa-shirt"></i> Dhobi Kaka</span>
-                    <small class="text-white-50">Since 1975</small>
-                </div>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'public_home' %}">
+                <img src="{% static 'img/Logo.jpeg' %}" alt="Dhobi Kaka" style="height:85px; width:auto; object-fit:contain;" />
             </a>
         </div>
     </nav>

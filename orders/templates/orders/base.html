@@ -271,7 +271,7 @@
 
     {% if user.is_authenticated and user.userprofile.role != 'Customer' and not user.customer %}
     <div class="sidebar">
-        <h4><a href="{% url 'public_home' %}" class="text-white text-decoration-none"><i class="fa-solid fa-shirt"></i> Dhobi Kaka</a></h4>
+        <h4><a href="{% url 'public_home' %}" class="text-white text-decoration-none d-flex align-items-center"><img src="{% static 'img/Logo.jpeg' %}" alt="Dhobi Kaka" style="height:75px; width:auto; border-radius:6px; margin-right:0; object-fit:contain;"></a></h4>
 
         {% if user.is_superuser %}
         <p class="sidebar-section-title">SUPER ADMIN</p>
@@ -378,7 +378,7 @@
 
                 {% elif user.userprofile.role == 'Customer' or user.customer %} 
                     <a href="{% url 'customer_dashboard' %}" class="brand-home-link" aria-label="Go to customer dashboard">
-                        <span class="brand-home-icon"><i class="fa-solid fa-shirt"></i></span>
+                        <span class="brand-home-icon"><img src="{% static 'img/Logo.jpeg' %}" alt="Dhobi Kaka" style="width:60px; height:60px; border-radius:6px; object-fit:contain;"></span>
                         <span class="brand-home-text">Dhobi<span class="accent">Kaka</span></span>
                     </a>
                 
