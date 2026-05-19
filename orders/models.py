@@ -1,5 +1,3 @@
-import json
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -13,29 +11,6 @@ class  LaundryBusiness(models.Model):
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        # Keep owner User email and name in sync with the business contact details.
-        old_email = None
-        old_owner_name = None
-        if self.pk:
-            existing = LaundryBusiness.objects.filter(pk=self.pk).first()
-            if existing:
-                old_email = existing.contact_email
-                old_owner_name = existing.owner_name
-
-        super().save(*args, **kwargs)
-
-        if old_email != self.contact_email or old_owner_name != self.owner_name:
-            owner_profiles = UserProfile.objects.filter(business=self, role='owner')
-            for profile in owner_profiles:
-                user = profile.user
-                if old_email != self.contact_email and self.contact_email:
-                    user.email = self.contact_email
-                if old_owner_name != self.owner_name and self.owner_name:
-                    user.first_name = self.owner_name
-                user.save()
-
     def __str__(self):
         return self.name    
 
@@ -90,10 +65,20 @@ class Service(models.Model):
     ]
 
     name = models.CharField(max_length=100)
+    applicable_items = models.ManyToManyField(
+        'ClothingItem',
+        blank=True,
+        related_name='services',
+        help_text="Clothing items this service can be applied to."
+    )
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Washing')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     unit = models.CharField(max_length=50, choices=UNIT_CHOICES, default='Per Piece')
     description = models.TextField(blank=True)
+    show_on_public = models.BooleanField(
+        default=True,
+        help_text="If enabled, this service is visible on the public home pricing section."
+    )
     
     def __str__(self):
         return f"{self.name} - ₹{self.price}"
@@ -111,7 +96,6 @@ class Order(models.Model):
     quantity = models.IntegerField(default=1)
     order_date = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True, help_text="Special instructions from customer")
-    customer_note = models.TextField(blank=True, null=True, help_text="Customer note for quick booking or special instructions.")
 
     payment_collected_by = models.ForeignKey(
         User,
@@ -136,8 +120,6 @@ class Order(models.Model):
         ('Pending', 'Pending'),
     ]
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, default='Pending')
-
-    QB_LINE_ITEMS_PREFIX = '__QB_LINE_ITEMS__'
 
     # Your Custom Statuses (KEPT)
     STATUS_CHOICES = [
@@ -173,51 +155,10 @@ class Order(models.Model):
         # It calculates the price NOW and saves it to the database column.
         if not self.id and self.customer:
             self.customer_name_backup = self.customer.name
-
+        
         if self.service:
             self.total_price = self.service.price * self.quantity
-        elif self.notes and self.notes.startswith(self.QB_LINE_ITEMS_PREFIX):
-            try:
-                items = json.loads(self.notes[len(self.QB_LINE_ITEMS_PREFIX):])
-                self.total_price = sum(float(item.get('line_total', 0)) for item in items)
-            except (json.JSONDecodeError, TypeError, ValueError):
-                self.total_price = self.total_price
-
         super(Order, self).save(*args, **kwargs)
-
-    @property
-    def line_items_data(self):
-        if self.notes and self.notes.startswith(self.QB_LINE_ITEMS_PREFIX):
-            try:
-                return json.loads(self.notes[len(self.QB_LINE_ITEMS_PREFIX):])
-            except json.JSONDecodeError:
-                return []
-        return []
-
-    @property
-    def service_description(self):
-        if self.line_items_data:
-            count = sum(int(item.get('quantity', 0)) for item in self.line_items_data)
-            return f"{len(self.line_items_data)} services ({count} items)"
-        if self.service:
-            return f"{self.service.name} x{self.quantity}"
-        return "Multiple services"
-
-    @property
-    def line_items_count(self):
-        if self.line_items_data:
-            return sum(int(item.get('quantity', 0)) for item in self.line_items_data)
-        return self.quantity
-
-    @property
-    def display_notes(self):
-        if self.customer_note:
-            return self.customer_note
-
-        if self.notes and not self.notes.startswith(self.QB_LINE_ITEMS_PREFIX):
-            return self.notes
-
-        return ''
 
     def __str__(self):
         # Check if the customer exists before trying to read their name
@@ -325,3 +266,89 @@ class Branch(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ClothingItem(models.Model):
+    """Represents a type of clothing item (e.g., Shirt, Jeans, Saree)"""
+    name = models.CharField(max_length=100, unique=True)
+    icon = models.CharField(
+        max_length=50, 
+        default="fa-shirt",
+        help_text="FontAwesome icon class e.g., 'fa-shirt', 'fa-pants'"
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.name
+
+
+class OrderItem(models.Model):
+    """Represents a specific clothing item in an order"""
+    order = models.ForeignKey(
+        Order, 
+        on_delete=models.CASCADE, 
+        related_name='items'
+    )
+    clothing_item = models.ForeignKey(
+        ClothingItem, 
+        on_delete=models.PROTECT
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    services = models.ManyToManyField(
+        Service, 
+        through='OrderItemService',
+        help_text="Services assigned to this clothing item"
+    )
+    subtotal = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=0.00,
+        help_text="quantity × sum of service prices"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.clothing_item.name} (x{self.quantity}) - Order #{self.order.id}"
+    
+    def calculate_subtotal(self):
+        """Recalculate subtotal from services"""
+        if not self.pk:
+            self.subtotal = 0
+            return self.subtotal
+        total = 0
+        for item_service in self.orderitemservice_set.all():
+            total += item_service.price_at_order
+        self.subtotal = total * self.quantity
+        return self.subtotal
+    
+    def save(self, *args, **kwargs):
+        # First save creates PK; only then related services can be queried.
+        if not self.pk:
+            return super().save(*args, **kwargs)
+        self.calculate_subtotal()
+        return super().save(*args, **kwargs)
+
+
+class OrderItemService(models.Model):
+    """Through table: Links OrderItem to Service with price snapshot"""
+    order_item = models.ForeignKey(
+        OrderItem, 
+        on_delete=models.CASCADE
+    )
+    service = models.ForeignKey(
+        Service, 
+        on_delete=models.CASCADE
+    )
+    price_at_order = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        help_text="Price snapshot at time of order"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('order_item', 'service')
+    
+    def __str__(self):
+        return f"{self.order_item.clothing_item.name} - {self.service.name} (₹{self.price_at_order})"

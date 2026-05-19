@@ -1,168 +1,481 @@
 {% extends 'orders/base_public.html' %}
 
-{% block content %}
+{% block extra_css %}
 <style>
-    .quick-hero {
-        background: linear-gradient(135deg, #4e73df 0%, #1d4ed8 100%);
-        color: #fff;
-        border-radius: 18px;
-        box-shadow: 0 14px 30px rgba(29, 78, 216, 0.28);
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    :root {
+        --dk-blue: #1D60E8;
+        --dk-blue-deep: #1249C0;
+        --dk-blue-mid: #2E74F0;
+        --dk-blue-light: #EBF2FF;
+        --dk-blue-pale: #F4F8FF;
+        --dk-ink: #0D1F4E;
+        --dk-muted: #6782b7;
+        --dk-border: rgba(29, 96, 232, 0.16);
+    }
+
+    body {
+        background:
+            radial-gradient(circle at top right, rgba(29, 96, 232, 0.12), transparent 34%),
+            radial-gradient(circle at left bottom, rgba(46, 116, 240, 0.10), transparent 28%),
+            linear-gradient(180deg, #f7fbff 0%, #eef4ff 100%);
+    }
+
+    .quick-booking-shell {
         position: relative;
+        padding: 1rem 0 2rem;
         overflow: hidden;
     }
 
-    .quick-hero::after {
+    .quick-booking-shell::before,
+    .quick-booking-shell::after {
+        content: '';
+        position: fixed;
+        inset: auto;
+        border-radius: 50%;
+        filter: blur(70px);
+        opacity: 0.18;
+        pointer-events: none;
+        z-index: 0;
+        animation: floatGlow 14s ease-in-out infinite;
+    }
+
+    .quick-booking-shell::before {
+        width: 360px;
+        height: 360px;
+        right: -120px;
+        top: 60px;
+        background: var(--dk-blue);
+    }
+
+    .quick-booking-shell::after {
+        width: 260px;
+        height: 260px;
+        left: -80px;
+        bottom: 10%;
+        background: #6ea8ff;
+        animation-delay: 4s;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+        50% { transform: translate3d(18px, -22px, 0) scale(1.06); }
+    }
+
+    .quick-card {
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(29, 96, 232, 0.12);
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow:
+            0 18px 50px rgba(13, 31, 78, 0.08),
+            0 50px 100px rgba(29, 96, 232, 0.08);
+        animation: cardRise 0.9s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes cardRise {
+        from { opacity: 0; transform: translateY(28px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .hero {
+        position: relative;
+        padding: 2rem 2rem 1.4rem;
+        background: linear-gradient(135deg, #2f5de8 0%, #1d60e8 56%, #163fb8 100%);
+        color: #fff;
+        overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
         content: '';
         position: absolute;
-        right: -45px;
-        top: -60px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+    }
+
+    .hero::before {
         width: 220px;
         height: 220px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.16);
+        right: -70px;
+        top: -75px;
     }
 
-    .step-strip {
+    .hero::after {
+        width: 120px;
+        height: 120px;
+        right: 72px;
+        bottom: -45px;
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.26em;
+        font-size: 0.72rem;
+        opacity: 0.9;
+        margin-bottom: 0.75rem;
+    }
+
+    .hero-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(2.2rem, 4vw, 3.65rem);
+        line-height: 0.95;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.02em;
+        animation: titleDrift 1s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .hero-copy {
+        max-width: 64ch;
+        margin-top: 0.95rem;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 0.98rem;
+        line-height: 1.65;
+        animation: fadeUp 0.8s 0.12s ease both;
+    }
+
+    .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 1.15rem;
+        animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.6rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(6px);
+        font-size: 0.82rem;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .content-shell {
+        padding: 2rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 255, 0.98));
+    }
+
+    .section-head {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-label {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.65rem, 2.6vw, 2.3rem);
+        line-height: 1;
+        color: var(--dk-ink);
+        margin: 0;
+    }
+
+    .section-subtitle {
+        color: var(--dk-muted);
+        margin-top: 0.4rem;
+        font-size: 0.95rem;
+    }
+
+    .field-wrap {
+        position: relative;
+        margin-bottom: 1rem;
+        animation: fadeUp 0.72s ease both;
+    }
+
+    .field-wrap:nth-child(1) { animation-delay: 0.18s; }
+    .field-wrap:nth-child(2) { animation-delay: 0.24s; }
+    .field-wrap:nth-child(3) { animation-delay: 0.3s; }
+    .field-wrap:nth-child(4) { animation-delay: 0.36s; }
+    .field-wrap:nth-child(5) { animation-delay: 0.42s; }
+
+    .field-wrap label {
+        display: block;
+        color: var(--dk-ink);
+        font-weight: 600;
+        font-size: 0.94rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .field {
+        border-radius: 16px;
+        border: 1px solid rgba(29, 96, 232, 0.16);
+        background: rgba(255, 255, 255, 0.95);
+        min-height: 52px;
+        padding: 0.85rem 1rem;
+        color: var(--dk-ink);
+        box-shadow: 0 10px 18px rgba(13, 31, 78, 0.03);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .field:focus {
+        border-color: rgba(29, 96, 232, 0.45);
+        box-shadow: 0 0 0 0.2rem rgba(29, 96, 232, 0.10), 0 14px 30px rgba(29, 96, 232, 0.08);
+        transform: translateY(-1px);
+    }
+
+    .field::placeholder {
+        color: rgba(103, 130, 183, 0.7);
+    }
+
+    select.field {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: linear-gradient(45deg, transparent 50%, #6782b7 50%), linear-gradient(135deg, #6782b7 50%, transparent 50%);
+        background-position: calc(100% - 22px) calc(1.1rem + 2px), calc(100% - 16px) calc(1.1rem + 2px);
+        background-size: 6px 6px, 6px 6px;
+        background-repeat: no-repeat;
+    }
+
+    textarea.field {
+        min-height: 124px;
+        resize: vertical;
+    }
+
+    .help-text {
+        color: var(--dk-muted);
+        font-size: 0.82rem;
+        margin-top: 0.45rem;
+    }
+
+    .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.9rem;
+        margin-top: 0.75rem;
+    }
+
+    .cta-btn {
+        position: relative;
+        overflow: hidden;
+        border: 0;
+        border-radius: 16px;
+        padding: 0.95rem 1.35rem;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        background: linear-gradient(135deg, var(--dk-blue-mid), var(--dk-blue-deep));
+        box-shadow: 0 18px 36px rgba(29, 96, 232, 0.25);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .cta-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+        transform: translateX(-120%);
+        transition: transform 0.5s ease;
+    }
+
+    .cta-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 42px rgba(29, 96, 232, 0.32);
+    }
+
+    .cta-btn:hover::before {
+        transform: translateX(120%);
+    }
+
+    .cta-btn:active {
+        transform: translateY(0);
+    }
+
+    .status-line {
+        font-size: 0.84rem;
+        color: var(--dk-muted);
+    }
+
+    .progress-trace {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
+        gap: 0.75rem;
+        margin-bottom: 1.35rem;
     }
 
-    .step-tile {
-        border: 1px solid #dbeafe;
-        background: #f8fbff;
-        border-radius: 12px;
-        padding: 10px 12px;
+    .trace-card {
+        border: 1px solid rgba(29, 96, 232, 0.14);
+        background: rgba(255, 255, 255, 0.82);
+        border-radius: 18px;
+        padding: 0.9rem 1rem;
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 0.9rem;
+        gap: 0.75rem;
+        box-shadow: 0 10px 24px rgba(29, 96, 232, 0.05);
     }
 
-    .step-badge {
-        width: 28px;
-        height: 28px;
+    .trace-index {
+        width: 2rem;
+        height: 2rem;
+        min-width: 2rem;
         border-radius: 50%;
-        background: #2563eb;
+        background: linear-gradient(135deg, var(--dk-blue-mid), var(--dk-blue));
         color: #fff;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 0.82rem;
+        box-shadow: 0 8px 18px rgba(29, 96, 232, 0.22);
     }
 
-    .quick-card {
-        border: 0;
-        border-radius: 18px;
-        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    .trace-title {
+        display: block;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--dk-ink);
     }
 
-    .quick-label {
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 6px;
+    .trace-sub {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--dk-muted);
     }
 
-    .quick-control {
-        border-radius: 11px;
-        min-height: 44px;
-        border: 1px solid #dbe2ea;
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .quick-control:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2);
+    @keyframes titleDrift {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    .quick-submit {
-        border-radius: 11px;
-        padding: 10px 20px;
-        font-weight: 600;
-    }
-
-    .help-text {
-        font-size: 0.82rem;
-        color: #64748b;
-    }
-
-    @media (max-width: 768px) {
-        .step-strip {
+    @media (max-width: 992px) {
+        .progress-trace {
             grid-template-columns: 1fr;
         }
     }
+
+    @media (max-width: 768px) {
+        .hero,
+        .content-shell,
+        .progress-steps {
+            padding-left: 1.1rem;
+            padding-right: 1.1rem;
+        }
+
+        .hero {
+            padding-top: 1.6rem;
+            padding-bottom: 1.2rem;
+        }
+
+        .section-head {
+            margin-bottom: 1.2rem;
+        }
+    }
 </style>
+{% endblock %}
 
-<div class="container py-2 py-md-3">
-    <div class="quick-hero p-4 p-md-5 mb-4">
-        <h2 class="fw-bold mb-2">Quick Booking</h2>
-        <p class="mb-0 opacity-75">Book pickup in minutes without signup. We will sync the order to the selected branch dashboard automatically.</p>
-    </div>
-
-    <div class="step-strip mb-4">
-        <div class="step-tile"><span class="step-badge">1</span><span>Select Area & Branch</span></div>
-        <div class="step-tile"><span class="step-badge">2</span><span>Enter Contact Details</span></div>
-        <div class="step-tile"><span class="step-badge">3</span><span>Continue to Price Chart</span></div>
-    </div>
-
+{% block content %}
+<div class="quick-booking-shell">
     <div class="card quick-card">
-        <div class="card-body p-4 p-md-5">
+        <div class="hero">
+            <div class="eyebrow">Premium laundry pickup</div>
+            <h1 class="hero-title">Quick Booking</h1>
+            <p class="hero-copy">Book a pickup in minutes without signup. Choose your area, pick a branch, and we will sync the booking into the branch dashboard automatically.</p>
+            <div class="hero-meta">
+                <span class="meta-pill"><i class="fa-solid fa-bolt"></i> Fast start</span>
+                <span class="meta-pill"><i class="fa-solid fa-location-dot"></i> Area-aware branch routing</span>
+                <span class="meta-pill"><i class="fa-solid fa-shield-heart"></i> No signup required</span>
+            </div>
+        </div>
+
+        <div class="content-shell">
+            <div class="section-head">
+                <h2 class="section-label">Start your booking</h2>
+                <div class="section-subtitle">This is step 1 of 3. We will use your area to load the available branches.</div>
+            </div>
+
+            <div class="progress-trace">
+                <div class="trace-card">
+                    <span class="trace-index">1</span>
+                    <div>
+                        <span class="trace-title">Location setup</span>
+                        <span class="trace-sub">Select area and branch</span>
+                    </div>
+                </div>
+                <div class="trace-card">
+                    <span class="trace-index" style="opacity: 0.72;">2</span>
+                    <div>
+                        <span class="trace-title">Contact capture</span>
+                        <span class="trace-sub">Enter your details</span>
+                    </div>
+                </div>
+                <div class="trace-card">
+                    <span class="trace-index" style="opacity: 0.72;">3</span>
+                    <div>
+                        <span class="trace-title">Service selection</span>
+                        <span class="trace-sub">Move to the price chart</span>
+                    </div>
+                </div>
+            </div>
+
             <form id="quick-booking-form" method="post" action="{% url 'quick_booking_submit' %}">
                 {% csrf_token %}
 
-                <div class="row g-3">
-                    <div class="col-12 col-md-6">
-                        <label for="area" class="quick-label">Select Area</label>
-                        <select id="area" name="area" class="form-select quick-control" required>
-                            <option value="">-- Select Area --</option>
+                <div class="row g-3 g-md-4">
+                    <div class="col-12 col-lg-6 field-wrap">
+                        <label for="area">Select Area</label>
+                        <select id="area" name="area" class="form-control field" required disabled>
+                            <option value="">Loading areas...</option>
                         </select>
                     </div>
 
-                    <div class="col-12 col-md-6">
-                        <label for="branch" class="quick-label">Select Branch</label>
-                        <select id="branch" name="branch" class="form-select quick-control" required disabled>
-                            <option value="">-- Select Branch --</option>
+                    <div class="col-12 col-lg-6 field-wrap">
+                        <label for="branch">Select Branch</label>
+                        <select id="branch" name="branch" class="form-control field" required disabled>
+                            <option value="">Choose an area first</option>
                         </select>
                     </div>
 
-                    <div class="col-12 col-md-6">
-                        <label for="name" class="quick-label">Full Name</label>
-                        <input type="text" id="name" name="name" class="form-control quick-control" maxlength="100" required>
+                    <div class="col-12 col-lg-6 field-wrap">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-control field" maxlength="100" placeholder="Enter your full name" required>
                     </div>
 
-                    <div class="col-12 col-md-6">
-                        <label for="mobile" class="quick-label">Mobile Number</label>
-                        <input type="tel" id="mobile" name="mobile" class="form-control quick-control" pattern="[0-9]{10}" maxlength="10" inputmode="numeric" required>
-                        <div class="help-text mt-1">Enter 10-digit mobile number.</div>
+                    <div class="col-12 col-lg-6 field-wrap">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" class="form-control field" pattern="[0-9]{10}" maxlength="10" inputmode="numeric" placeholder="10-digit mobile number" required>
+                        <div class="help-text">We use this to reach you about pickup updates.</div>
                     </div>
 
-                    <div class="col-12 col-md-6">
-                        <label for="email" class="quick-label">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control quick-control" maxlength="150" required>
-                        <div class="help-text mt-1">We will send your login details to this email.</div>
-                    </div>
-
-                    <div class="col-12">
-                        <label for="address" class="quick-label">Pickup Address</label>
-                        <textarea id="address" name="address" class="form-control quick-control" rows="3" maxlength="300" required></textarea>
+                    <div class="col-12 field-wrap">
+                        <label for="address">Pickup Address</label>
+                        <textarea id="address" name="address" class="form-control field" rows="4" maxlength="300" placeholder="Enter your complete pickup address" required></textarea>
+                        <div class="help-text">Please include landmarks if possible for faster pickup routing.</div>
                     </div>
                 </div>
 
-                <div class="d-flex flex-wrap gap-2 align-items-center mt-4">
-                    <button type="submit" class="btn btn-primary quick-submit">
-                        Continue to Price Chart
+                <div class="cta-row">
+                    <button type="submit" class="btn cta-btn">
+                        Continue to Price Chart <i class="fa-solid fa-arrow-right ms-2"></i>
                     </button>
-                    <span class="help-text">Next: choose services, quantity, and payment mode.</span>
+                    <div class="status-line">Next: choose services, quantity, and payment mode.</div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const areaSelect = document.getElementById('area');
         const branchSelect = document.getElementById('branch');
+        const form = document.getElementById('quick-booking-form');
+
+        function setBranchPlaceholder(text) {
+            branchSelect.innerHTML = `<option value="">${text}</option>`;
+        }
+
         fetch("{% url 'get_areas' %}")
             .then(response => response.json())
             .then(data => {
@@ -170,7 +483,7 @@
                 if (!Array.isArray(data) || data.length === 0) {
                     areaSelect.innerHTML = '<option value="">No areas available right now</option>';
                     areaSelect.disabled = true;
-                    branchSelect.innerHTML = '<option value="">No branches available</option>';
+                    setBranchPlaceholder('No branches available');
                     branchSelect.disabled = true;
                     return;
                 }
@@ -186,16 +499,20 @@
             .catch(() => {
                 areaSelect.innerHTML = '<option value="">Unable to load areas</option>';
                 areaSelect.disabled = true;
+                setBranchPlaceholder('Unable to load branches');
+                branchSelect.disabled = true;
             });
-    });
 
-    document.getElementById('area').addEventListener('change', function() {
-        const areaId = this.value;
-        const branchSelect = document.getElementById('branch');
-        branchSelect.disabled = true;
-        branchSelect.innerHTML = '<option value="">-- Loading Branches --</option>';
+        areaSelect.addEventListener('change', function() {
+            const areaId = this.value;
+            branchSelect.disabled = true;
+            setBranchPlaceholder(areaId ? 'Loading branches...' : 'Choose an area first');
 
-        if (areaId) {
+            if (!areaId) {
+                branchSelect.disabled = true;
+                return;
+            }
+
             fetch(`{% url 'get_branches' %}?area_id=${encodeURIComponent(areaId)}`)
                 .then(response => response.json())
                 .then(data => {
@@ -205,6 +522,7 @@
                         branchSelect.disabled = true;
                         return;
                     }
+
                     data.forEach(branch => {
                         const option = document.createElement('option');
                         option.value = branch.id;
@@ -212,24 +530,25 @@
                         branchSelect.appendChild(option);
                     });
                     branchSelect.disabled = false;
+                })
+                .catch(() => {
+                    branchSelect.innerHTML = '<option value="">Unable to load branches</option>';
+                    branchSelect.disabled = true;
                 });
-        } else {
-            branchSelect.innerHTML = '<option value="">-- Select Branch --</option>';
-            branchSelect.disabled = true;
-        }
-    });
+        });
 
-    document.getElementById('quick-booking-form').addEventListener('submit', function(event) {
-        const branchId = document.getElementById('branch').value;
-        if (!branchId) {
-            event.preventDefault();
-            alert('Please select a branch before continuing.');
-            return;
-        }
-    });
+        form.addEventListener('submit', function(event) {
+            if (!branchSelect.value) {
+                event.preventDefault();
+                branchSelect.focus();
+                alert('Please select a branch before continuing.');
+                return;
+            }
+        });
 
-    document.getElementById('mobile').addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        document.getElementById('mobile').addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
     });
 </script>
 {% endblock %}

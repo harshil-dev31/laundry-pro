@@ -1,0 +1,1281 @@
+{% extends 'orders/base_public.html' %}
+
+{% block title %}Select Items - Quick Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+    :root {
+        --brand: #2563eb;
+        --accent: #0ea5e9;
+        --brand-soft: #eef6ff;
+        --text: #0f172a;
+        --muted: #4b7bc9;
+        --line: #dbeafe;
+        --bg: #f8fafc;
+        --card: #ffffff;
+    }
+
+    body {
+        font-family: 'Outfit', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .bg-blob {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+        animation: blobFloat 10s ease-in-out infinite;
+    }
+
+    .blob-1 { width: 400px; height: 400px; background: #dbeafe; top: -80px; right: -120px; opacity: 0.65; animation-delay: 0s; }
+    .blob-2 { width: 300px; height: 300px; background: #e0f2fe; left: -90px; bottom: 40px; opacity: 0.65; animation-delay: 4s; }
+    .blob-3 { width: 200px; height: 200px; background: #cffafe; right: 6%; top: 42%; opacity: 0.55; animation-delay: 7s; }
+
+    @keyframes blobFloat {
+        0%, 100% { border-radius: 42% 58% 64% 36% / 36% 41% 59% 64%; transform: translate(0, 0) rotate(0deg); }
+        50% { border-radius: 65% 35% 40% 60% / 62% 44% 56% 38%; transform: translate(-12px, 14px) rotate(8deg); }
+    }
+
+    .quick-booking-container {
+        max-width: 680px;
+        margin: 1.2rem auto 2rem;
+        padding: 0 0.8rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .order-header {
+        text-align: center;
+        margin-bottom: 0.9rem;
+    }
+
+    .brand-basket {
+        font-size: 40px;
+        line-height: 1;
+        display: inline-block;
+        animation: bounce2 2s infinite;
+    }
+
+    @keyframes bounce2 {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+    }
+
+    .order-header h1 {
+        margin: 0.15rem 0 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .order-header p {
+        margin: 0.2rem 0 0;
+        font-size: 13px;
+        color: var(--muted);
+    }
+
+    .progress-header {
+        background: #ffffff;
+        border-radius: 50px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        padding: 0.5rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .step-indicator {
+        display: flex;
+        gap: 0.45rem;
+    }
+
+    .step {
+        flex: 1;
+        min-height: 40px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.92rem;
+        transition: all 0.4s ease;
+    }
+
+    .step-number { display: none; }
+
+    .step.completed { background: #e8f7ee; color: #15803d; }
+
+    .step.active { background: linear-gradient(135deg, var(--brand), var(--accent)); color: #fff; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+
+    .step.idle { color: #bbb; }
+
+    .step-label { opacity: 1; }
+
+    .surface-card {
+        background: var(--card);
+        border-radius: 24px;
+        padding: 22px 24px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        margin-bottom: 16px;
+        animation: cardPop 0.58s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .surface-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    @keyframes cardPop {
+        from { opacity: 0; transform: scale(0.92) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .customer-info-box {
+        padding: 1rem;
+        margin-bottom: 0.9rem;
+        display: block;
+    }
+
+    .customer-info-title,
+    .step-2-title,
+    .summary-title,
+    .notes-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #7ea3de;
+        margin-bottom: 16px;
+    }
+
+    .customer-info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .info-item {
+        background: var(--brand-soft);
+        border-radius: 14px;
+        padding: 12px 16px;
+        border: 1.5px solid var(--line);
+    }
+
+    .info-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #7ea3de;
+        margin-bottom: 0.35rem;
+        font-weight: 600;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: var(--text);
+        line-height: 1.35;
+        font-size: 14px;
+    }
+
+    .step-card {
+        padding: 0.95rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .step-2-title { border-bottom: none; padding-bottom: 0; }
+
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .clothing-card {
+        background: var(--brand-soft);
+        border: 2.5px solid #dbeafe;
+        border-radius: 18px;
+        padding: 14px 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        position: relative;
+        user-select: none;
+    }
+
+    .clothing-card:hover {
+        border-color: #60a5fa;
+        background: #eff6ff;
+        transform: scale(1.06) rotate(1deg);
+    }
+
+    .clothing-card.selected {
+        border-color: var(--accent);
+        background: #eff6ff;
+    }
+
+    .clothing-icon {
+        font-size: 24px;
+        color: var(--brand);
+    }
+
+    .clothing-card.selected .clothing-icon {
+        animation: wiggle 0.5s;
+    }
+
+    @keyframes wiggle {
+        0% { transform: rotate(0deg); }
+        30% { transform: rotate(-10deg); }
+        65% { transform: rotate(10deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    .clothing-name {
+        font-size: 10px;
+        color: #2563eb;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .service-count-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: popIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+        0% { transform: scale(0); }
+        100% { transform: scale(1); }
+    }
+
+    
+
+    @keyframes popIn {
+        0% { transform: scale(0); }
+        100% { transform: scale(1); }
+    }
+
+    .item-list {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .selected-item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fbfdff;
+    }
+
+    .selected-item-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-weight: 600;
+        color: #1f2d45;
+        flex-wrap: wrap;
+    }
+
+    .selected-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+
+    .edit-item-btn {
+        border: 1px solid #b6caee;
+        background: #eef4ff;
+        color: #1d56aa;
+        border-radius: 8px;
+        padding: 0.25rem 0.6rem;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    .item-card {
+        background: #fbfdff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 0.9rem;
+    }
+
+    .item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.4rem;
+        padding-bottom: 0.35rem;
+        border-bottom: 1px solid #d6d6d6;
+    }
+
+    .item-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .item-icon {
+        color: #2563eb;
+        font-size: 1rem;
+    }
+
+    .remove-item-btn {
+        border: none;
+        background: #fff0f0;
+        color: #d12f4c;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .services-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.35rem;
+        display: block;
+    }
+
+    .services-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .service-pill {
+        padding: 0.35rem 0.7rem;
+        border: 1px solid #c8d4e7;
+        border-radius: 999px;
+        background: #f7f9fc;
+        color: #2f3f5e;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .service-pill:hover {
+        border-color: #8db0f6;
+        background: #eef4ff;
+    }
+
+    .service-pill.active {
+        background: #1f6feb;
+        color: white;
+        border-color: #1f6feb;
+        box-shadow: 0 2px 8px rgba(31, 111, 235, 0.24);
+    }
+
+    .service-price {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .quantity-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        flex-wrap: wrap;
+    }
+
+    .quantity-label {
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.85rem;
+    }
+
+    .quantity-stepper {
+        display: flex;
+        align-items: center;
+        border: 1px solid #c8d4e7;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .qty-btn {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: white;
+        cursor: pointer;
+        font-weight: 700;
+        color: #35507f;
+        transition: all 0.2s;
+    }
+
+    .qty-btn:hover {
+        background: #f3f4f6;
+    }
+
+    .qty-input {
+        width: 42px;
+        border: none;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #0f172a;
+    }
+
+    .qty-input:focus {
+        outline: none;
+    }
+
+    .summary-box {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 22px 24px;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .summary-title {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+    }
+
+    .summary-items {
+        margin-bottom: 0.35rem;
+        max-height: none;
+        overflow-y: visible;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 0.9rem;
+        padding: 8px 0;
+        border-bottom: 2px dashed #dbeafe;
+        color: #4d3c79;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .summary-item-name {
+        flex: 1;
+    }
+
+    .summary-item-detail {
+        text-align: right;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        border-top: none;
+        padding-top: 14px;
+        margin-top: 0.2rem;
+        align-items: baseline;
+    }
+
+    .summary-total span:first-child { font-size: 15px; font-weight: 700; color: var(--brand); }
+    .summary-total span:last-child { font-size: 26px; font-weight: 900; color: var(--accent); }
+
+    .notes-section {
+        padding: 0;
+        margin-bottom: 0.8rem;
+        border: none;
+        background: transparent;
+    }
+
+    .notes-label { display: block; margin: 0 0 10px; }
+
+    .notes-textarea {
+        width: 100%;
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        font-family: inherit;
+        font-size: 13px;
+        resize: vertical;
+        min-height: 80px;
+        background: var(--brand-soft);
+        color: var(--text);
+    }
+
+    .notes-textarea:focus { outline: none; border-color: #60a5fa; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.16); }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 16px 22px;
+        border: none;
+        border-radius: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--brand), var(--accent));
+        color: white;
+        border: none;
+        flex: 1;
+        font-size: 15px;
+        font-weight: 800;
+        box-shadow: 0 6px 24px rgba(14, 165, 233, 0.34);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 10px 28px rgba(37, 99, 235, 0.42);
+    }
+
+    .btn-primary:disabled {
+        background: #a7bce8;
+        cursor: not-allowed;
+        color: #eff4ff;
+    }
+
+    .btn-secondary {
+        background: #ffffff;
+        color: #2563eb;
+        border: 2.5px solid var(--line);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .btn-secondary:hover {
+        border-color: #60a5fa;
+        background: #fff;
+    }
+
+    .btn-icon {
+        margin-right: 0.5rem;
+    }
+
+    .btn-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 1.25rem 0.6rem;
+        color: #64748b;
+    }
+
+    .empty-state-icon {
+        font-size: 1.4rem;
+        margin-bottom: 0.4rem;
+        opacity: 0.45;
+    }
+
+    .empty-state-text {
+        font-size: 0.95rem;
+    }
+
+    .qb-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(30, 96, 201, 0.2), transparent 38%),
+            radial-gradient(circle at 80% 75%, rgba(16, 185, 129, 0.14), transparent 35%),
+            rgba(8, 15, 30, 0.45);
+        backdrop-filter: blur(5px);
+        z-index: 1050;
+    }
+
+    .qb-modal.open {
+        display: flex;
+    }
+
+    .qb-modal-panel {
+        width: min(560px, 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(173, 196, 233, 0.8);
+        background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(244, 249, 255, 0.96));
+        box-shadow:
+            0 26px 65px rgba(10, 23, 46, 0.35),
+            0 4px 14px rgba(31, 111, 235, 0.12);
+        padding: 1.15rem;
+        animation: modalBounce 420ms cubic-bezier(0.2, 0.9, 0.2, 1.05);
+    }
+
+    @keyframes modalBounce {
+        0% { transform: scale(0.84) translateY(24px) rotateX(8deg); opacity: 0; }
+        50% { transform: scale(1.04) translateY(-7px) rotateX(0deg); opacity: 1; }
+        75% { transform: scale(0.995) translateY(3px); }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .qb-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.95rem;
+        padding-bottom: 0.7rem;
+        border-bottom: 1px dashed #d8e4f8;
+    }
+
+    .qb-modal-title {
+        margin: 0;
+        font-size: 1.15rem;
+        color: #0f2144;
+        font-weight: 900;
+        letter-spacing: 0.01em;
+    }
+
+    .qb-close {
+        border: none;
+        background: linear-gradient(180deg, #fff5f7, #ffecef);
+        color: #cf2044;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        font-weight: 700;
+        line-height: 1;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .qb-close:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(207, 32, 68, 0.2);
+    }
+
+    .qb-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.55rem;
+        margin-top: 1.1rem;
+    }
+
+    .qb-qty-card {
+        margin-top: 0.9rem;
+        border: 1px solid #dbe7fa;
+        background: linear-gradient(145deg, #fafdff, #f2f7ff);
+        border-radius: 14px;
+        padding: 0.75rem;
+    }
+
+    .qb-qty-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+    }
+
+    .qb-remove-btn {
+        min-width: 92px;
+    }
+
+    #itemModalServices .service-pill {
+        padding: 0.45rem 0.78rem;
+        font-size: 0.82rem;
+        border-color: #b9ceef;
+        background: linear-gradient(180deg, #f8fbff, #eef4ff);
+        color: #28426a;
+        box-shadow: inset 0 -1px 0 rgba(31, 111, 235, 0.08);
+    }
+
+    #itemModalServices .service-pill.active {
+        background: linear-gradient(135deg, #1f6feb, #1c55c8);
+        border-color: #1e5dcc;
+        color: #fff;
+        box-shadow: 0 10px 18px rgba(31, 111, 235, 0.32);
+    }
+
+    #itemModal .quantity-stepper {
+        border-radius: 12px;
+        border: 1px solid #a8c2ec;
+        box-shadow: 0 4px 12px rgba(33, 77, 146, 0.12);
+    }
+
+    #itemModal .qty-btn {
+        width: 34px;
+        height: 34px;
+        background: linear-gradient(180deg, #ffffff, #edf4ff);
+    }
+
+    #itemModal .qty-input {
+        height: 34px;
+        width: 52px;
+    }
+
+    #itemModal .btn-primary {
+        background: linear-gradient(135deg, #1f6feb, #1a58cd);
+        border: 1px solid #1a58cd;
+        box-shadow: 0 10px 22px rgba(31, 111, 235, 0.25);
+    }
+
+    #itemModal .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 24px rgba(31, 111, 235, 0.3);
+    }
+
+    @media (max-width: 992px) {`r`n        .customer-info-grid {`r`n            grid-template-columns: repeat(2, minmax(0, 1fr));`r`n        }`r`n`r`n        .items-grid {`r`n            grid-template-columns: repeat(4, minmax(0, 1fr));`r`n        }`r`n    }
+
+    @media (max-width: 768px) {`r`n        .quick-booking-container {`r`n            margin-top: 0.8rem;`r`n        }`r`n`r`n        .order-header h1 {`r`n            font-size: 1.35rem;`r`n        }`r`n`r`n        .customer-info-grid {`r`n            grid-template-columns: 1fr;`r`n        }`r`n`r`n        .items-grid {`r`n            grid-template-columns: repeat(3, minmax(0, 1fr));`r`n            gap: 8px;`r`n        }`r`n`r`n        .button-group { flex-direction: column; }`r`n    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-blob blob-1"></div>
+<div class="bg-blob blob-2"></div>
+<div class="bg-blob blob-3"></div>
+<div class="quick-booking-container">
+    <div class="order-header">
+        <div class="brand-basket">&#129530;</div>
+        <h1>Dhobi Kaka</h1>
+        <p>Making clothes happy since 1975 &#10024;</p>
+    </div>
+
+    <div class="progress-header">
+        <div class="step-indicator">
+            <div class="step completed">
+                <div class="step-number">1</div>
+                <div class="step-label">✓ Pickup Info</div>
+            </div>
+            <div class="step active">
+                <div class="step-number">2</div>
+                <div class="step-label">🎯 Select Items</div>
+            </div>
+            <div class="step idle">
+                <div class="step-number">3</div>
+                <div class="step-label">⬜ Confirm</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="surface-card customer-info-box">
+        <div class="customer-info-title">
+            <i class="fa-solid fa-user"></i> Pickup Details
+        </div>
+        <div class="customer-info-grid">
+            <div class="info-item">
+                <div class="info-label">Name</div>
+                <div class="info-value">{{ quick_booking_data.name }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Phone</div>
+                <div class="info-value">{{ quick_booking_data.mobile }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Address</div>
+                <div class="info-value">{{ quick_booking_data.address|truncatewords:5 }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Branch</div>
+                <div class="info-value">{{ branch.name }}</div>
+            </div>
+        </div>
+    </div>
+
+    <form id="itemsForm">
+        {% csrf_token %}
+        <div class="surface-card step-card">
+            <div class="step-2-title">
+                👕 Pick Your Clothes
+            </div>
+            <div class="items-grid" id="clothingGrid">
+            </div>
+        </div>
+
+        <div class="surface-card step-card">
+            <div class="step-2-title">
+                🧴 Services & Quantity
+            </div>
+            <div id="itemServices" class="item-list">
+            </div>
+        </div>
+
+        <div class="surface-card notes-section">
+            <label class="notes-label">
+                📝 Special Instructions
+            </label>
+            <textarea id="specialNote" class="notes-textarea" placeholder="✍️ No bleach, handle with care..."></textarea>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-title">
+                🧾 Order Summary
+            </div>
+            <div class="summary-items" id="summaryItems"></div>
+            <div class="summary-total">
+                <span>Total 🎉</span>
+                <span id="totalPrice">₹0.00</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{% url 'quick_booking' %}" class="btn btn-secondary">
+                Reset
+            </a>
+            <button type="button" id="submitBtn" class="btn btn-primary" disabled onclick="submitOrder()">
+                Place Order 🚀
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="qb-modal" id="itemModal" aria-hidden="true">
+    <div class="qb-modal-panel">
+        <div class="qb-modal-header">
+            <h3 class="qb-modal-title" id="itemModalTitle">Select Service</h3>
+            <button type="button" class="qb-close" onclick="closeItemModal()">x</button>
+        </div>
+        <div>
+            <div class="services-label">Choose services</div>
+            <div class="services-pills" id="itemModalServices"></div>
+        </div>
+        <div class="qb-qty-card">
+            <div class="qb-qty-row">
+                <div class="quantity-label">Qty (pieces)</div>
+                <div class="quantity-stepper">
+                    <button type="button" class="qty-btn" onclick="modalAdjQty(-1)">-</button>
+                    <input type="number" class="qty-input" min="1" id="itemModalQty" onchange="modalQtyInput(this.value)">
+                    <button type="button" class="qty-btn" onclick="modalAdjQty(1)">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="qb-modal-footer">
+            <button type="button" id="itemModalRemoveBtn" class="btn btn-secondary qb-remove-btn" onclick="removeCurrentModalItem()">Remove</button>
+            <button type="button" id="itemModalPrimaryBtn" class="btn btn-primary" onclick="saveItemModal()">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const state = {
+        clothingItems: [],
+        services: [],
+        selected: {}, // { clothing_item_id: { qty, service_ids: Set } }
+        modalClothId: null,
+        modalDraft: null,
+        modalIsEdit: false,
+    };
+
+    const R = String.fromCharCode(8377);
+
+    function csrfToken() {
+        const hidden = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (hidden && hidden.value) return hidden.value;
+        const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : '';
+    }
+
+    async function initializeForm() {
+        try {
+            const response = await fetch('{% url "quick_booking_form_data" %}');
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Unable to load data');
+            }
+            state.clothingItems = Array.isArray(data.clothing_items) ? data.clothing_items : [];
+            state.services = Array.isArray(data.services) ? data.services : [];
+            if (state.services.length === 0) {
+                alert('No active services found for this branch. Please ask the owner to add services in Manage Services.');
+            }
+            renderAll();
+        } catch (err) {
+            console.error('Error loading data:', err);
+            alert(err.message || 'Failed to load items. Please refresh the page.');
+        }
+    }
+
+    function servicesForCloth(clothId) {
+        return state.services.filter(service =>
+            Array.isArray(service.clothing_item_ids) && service.clothing_item_ids.includes(clothId)
+        );
+    }
+
+    function getDefaultServiceIds(clothId) {
+        const options = servicesForCloth(clothId);
+        return options.length > 0 ? [options[0].id] : [];
+    }
+
+    function selectedIds() {
+        return Object.keys(state.selected).map(id => parseInt(id, 10));
+    }
+
+    function calcItemCost(clothId) {
+        const row = state.selected[clothId];
+        if (!row) return 0;
+        let serviceTotal = 0;
+        row.service_ids.forEach(serviceId => {
+            const service = state.services.find(s => s.id === serviceId);
+            if (service) serviceTotal += parseFloat(service.price);
+        });
+        return row.qty * serviceTotal;
+    }
+
+    function calcTotal() {
+        return selectedIds().reduce((sum, id) => sum + calcItemCost(id), 0);
+    }
+
+    function normalizeSelectedServices(clothId, rowRef = null) {
+        const row = rowRef || state.selected[clothId];
+        if (!row) return;
+        const relevantServices = servicesForCloth(clothId);
+        const validSelected = new Set(
+            Array.from(row.service_ids).filter(sid => relevantServices.some(s => s.id === sid))
+        );
+        if (validSelected.size === 0 && relevantServices.length > 0) {
+            validSelected.add(relevantServices[0].id);
+        }
+        row.service_ids = validSelected;
+    }
+
+    function toggleCloth(id) {
+        openItemModal(id, !!state.selected[id]);
+    }
+
+    function toggleService(clothId, serviceId, event) {
+        event.preventDefault();
+        const row = state.modalDraft;
+        if (!row) return;
+
+        if (row.service_ids.has(serviceId)) {
+            if (row.service_ids.size === 1) return;
+            row.service_ids.delete(serviceId);
+        } else {
+            row.service_ids.add(serviceId);
+        }
+        renderItemModal();
+    }
+
+    function adjQty(clothId, delta) {
+        const row = state.selected[clothId];
+        if (!row) return;
+        row.qty = Math.max(1, row.qty + delta);
+        renderAll();
+    }
+
+    function removeItem(clothId) {
+        delete state.selected[clothId];
+        if (state.modalClothId === clothId) {
+            closeItemModal();
+        }
+        renderAll();
+    }
+
+    function onQtyInput(clothId, value) {
+        const row = state.selected[clothId];
+        if (!row) return;
+        const next = parseInt(value, 10);
+        row.qty = Number.isFinite(next) && next > 0 ? next : 1;
+        renderAll();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('clothingGrid');
+        grid.innerHTML = state.clothingItems.map(item => {
+            const selected = !!state.selected[item.id];
+            const svcCount = selected ? state.selected[item.id].service_ids.size : 0;
+            return `
+                <div class="clothing-card ${selected ? 'selected' : ''}" onclick="toggleCloth(${item.id})">
+                    <i class="fa-solid ${item.icon || 'fa-shirt'} clothing-icon"></i>
+                    <div class="clothing-name">${item.name}</div>
+                    ${selected ? `<div class="service-count-badge">${svcCount}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderItems() {
+        const container = document.getElementById('itemServices');
+        const ids = selectedIds();
+
+        if (ids.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fa-solid fa-shirt"></i></div>
+                    <div class="empty-state-text">Select clothing items above to assign services</div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = ids.map(clothId => {
+            normalizeSelectedServices(clothId);
+            const cloth = state.clothingItems.find(c => c.id === clothId);
+            const row = state.selected[clothId];
+            const serviceNames = Array.from(row.service_ids)
+                .map(id => state.services.find(s => s.id === id))
+                .filter(Boolean)
+                .map(s => s.name)
+                .join(', ');
+
+            return `
+                <div class="selected-item-row" id="detail-${clothId}">
+                    <div class="selected-item-meta">
+                        <i class="fa-solid ${cloth?.icon || 'fa-shirt'} item-icon"></i>
+                        <span>${cloth?.name || 'Item'} x${row.qty}</span>
+                        <span class="text-muted small">${serviceNames || 'No service selected'}</span>
+                    </div>
+                    <div class="selected-item-actions">
+                        <button type="button" class="edit-item-btn" onclick="openItemModal(${clothId}, true)">Edit</button>
+                        <div style="font-weight:700;color:#1e5fb3;">${R}${calcItemCost(clothId).toFixed(0)}</div>
+                        <button type="button" class="remove-item-btn" onclick="removeItem(${clothId})" aria-label="Remove item">x</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openItemModal(clothId, isEdit = true) {
+        const existing = state.selected[clothId];
+        const draft = existing
+            ? { qty: existing.qty, service_ids: new Set(existing.service_ids) }
+            : { qty: 1, service_ids: new Set(getDefaultServiceIds(clothId)) };
+        normalizeSelectedServices(clothId, draft);
+
+        const cloth = state.clothingItems.find(c => c.id === clothId);
+        state.modalClothId = clothId;
+        state.modalDraft = draft;
+        state.modalIsEdit = !!existing && isEdit;
+
+        renderItemModal(cloth);
+    }
+
+    function renderItemModal(clothRef = null) {
+        if (!state.modalClothId || !state.modalDraft) return;
+        const clothId = state.modalClothId;
+        const draft = state.modalDraft;
+        normalizeSelectedServices(clothId, draft);
+        const cloth = clothRef || state.clothingItems.find(c => c.id === clothId);
+        const relevantServices = servicesForCloth(clothId);
+
+        document.getElementById('itemModalTitle').textContent = `${cloth?.name || 'Item'} - Select Services`;
+        document.getElementById('itemModalQty').value = draft.qty;
+        document.getElementById('itemModalServices').innerHTML = relevantServices.length === 0
+            ? '<span class="text-muted small">No services available for this clothing item.</span>'
+            : relevantServices.map(service => `
+                <button type="button"
+                        class="service-pill ${draft.service_ids.has(service.id) ? 'active' : ''}"
+                        onclick="toggleService(${clothId}, ${service.id}, event)">
+                    ${service.name} ${R}${parseFloat(service.price).toFixed(0)}
+                </button>
+            `).join('');
+        const primaryBtn = document.getElementById('itemModalPrimaryBtn');
+        const removeBtn = document.getElementById('itemModalRemoveBtn');
+        primaryBtn.textContent = state.modalIsEdit ? 'Update Item' : 'Add to Cart';
+        removeBtn.style.display = state.modalIsEdit ? 'inline-flex' : 'none';
+
+        const modal = document.getElementById('itemModal');
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeItemModal() {
+        const modal = document.getElementById('itemModal');
+        state.modalClothId = null;
+        state.modalDraft = null;
+        state.modalIsEdit = false;
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function saveItemModal() {
+        if (!state.modalClothId || !state.modalDraft) return;
+        if (state.modalDraft.service_ids.size === 0) {
+            alert('Please select at least one service.');
+            return;
+        }
+        state.selected[state.modalClothId] = {
+            qty: state.modalDraft.qty,
+            service_ids: new Set(state.modalDraft.service_ids),
+        };
+        renderAll();
+        closeItemModal();
+    }
+
+    function modalAdjQty(delta) {
+        if (!state.modalDraft) return;
+        state.modalDraft.qty = Math.max(1, state.modalDraft.qty + delta);
+        document.getElementById('itemModalQty').value = state.modalDraft.qty;
+    }
+
+    function modalQtyInput(value) {
+        if (!state.modalDraft) return;
+        const next = parseInt(value, 10);
+        state.modalDraft.qty = Number.isFinite(next) && next > 0 ? next : 1;
+        document.getElementById('itemModalQty').value = state.modalDraft.qty;
+    }
+
+    function removeCurrentModalItem() {
+        if (!state.modalClothId || !state.modalIsEdit) {
+            closeItemModal();
+            return;
+        }
+        const clothId = state.modalClothId;
+        closeItemModal();
+        removeItem(clothId);
+    }
+
+    function renderSummary() {
+        const ids = selectedIds();
+        const summaryItems = document.getElementById('summaryItems');
+        if (ids.length === 0) {
+            summaryItems.innerHTML = '<div class="text-muted small">No items selected yet.</div>';
+            document.getElementById('totalPrice').textContent = `${R}0.00`;
+            return;
+        }
+
+        summaryItems.innerHTML = ids.map(clothId => {
+            const cloth = state.clothingItems.find(c => c.id === clothId);
+            const row = state.selected[clothId];
+            const services = Array.from(row.service_ids)
+                .map(id => state.services.find(s => s.id === id))
+                .filter(Boolean)
+                .map(s => s.name)
+                .join(', ');
+            return `
+                <div class="summary-item">
+                    <span class="summary-item-name">${cloth?.name || 'Item'} x${row.qty} - ${services}</span>
+                    <span class="summary-item-detail">${R}${calcItemCost(clothId).toFixed(2)}</span>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('totalPrice').textContent = `${R}${calcTotal().toFixed(2)}`;
+    }
+
+    function updatePlaceOrderBtn() {
+        const btn = document.getElementById('submitBtn');
+        const valid = selectedIds().length > 0 && Object.values(state.selected).every(row => row.service_ids.size > 0);
+        btn.disabled = !valid;
+    }
+
+    function renderAll() {
+        renderGrid();
+        renderItems();
+        renderSummary();
+        updatePlaceOrderBtn();
+    }
+
+    async function submitOrder() {
+        const items = selectedIds().map(clothId => ({
+            clothing_item_id: clothId,
+            quantity: state.selected[clothId].qty,
+            service_ids: Array.from(state.selected[clothId].service_ids),
+        }));
+
+        if (items.length === 0 || items.some(i => i.service_ids.length === 0)) {
+            alert('Please select at least one item with one service.');
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-spinner"></span>Processing...';
+
+        try {
+            const response = await fetch('{% url "quick_booking_submit_items" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken(),
+                },
+                body: JSON.stringify({
+                    special_note: document.getElementById('specialNote').value || '',
+                    items: items,
+                }),
+            });
+            const contentType = response.headers.get('content-type') || '';
+            let data = null;
+            if (contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                const htmlSnippet = (await response.text()).slice(0, 180);
+                throw new Error(`Server returned non-JSON response (${response.status}). ${htmlSnippet}`);
+            }
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Unable to place order');
+            }
+            window.location.href = `/orders/order-confirmation/${data.order_id}/`;
+        } catch (err) {
+            alert(err.message || 'Failed to submit order');
+            btn.disabled = false;
+            btn.innerHTML = 'Place Order 🚀';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeForm();
+        const modal = document.getElementById('itemModal');
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeItemModal();
+            }
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeItemModal();
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

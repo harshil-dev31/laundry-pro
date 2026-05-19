@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f3f4f6;
             overflow-x: hidden;
         }
@@ -24,34 +24,91 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #1e293b;
-            padding-top: 20px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            padding: 18px 14px;
             color: white;
             z-index: 1000;
+            border-right: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 10px 0 30px rgba(2, 6, 23, 0.24);
+            overflow-y: auto;
         }
 
         .sidebar h4 {
-            text-align: center;
-            color: #60a5fa;
-            margin-bottom: 30px;
+            margin-bottom: 18px;
+        }
+
+        .sidebar h4 a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: #f8fafc !important;
+            font-family: 'Syne', sans-serif;
+            font-size: 1.35rem;
+            letter-spacing: 0.2px;
         }
 
         .sidebar a {
-            padding: 15px 25px;
+            padding: 12px 14px;
             text-decoration: none;
-            color: #cbd5e1;
-            display: block;
-            transition: 0.3s;
+            color: #dbe5f2;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            border-left: 3px solid transparent;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            font-weight: 500;
+            margin-bottom: 4px;
         }
 
         .sidebar a:hover {
-            color: white;
-            background-color: #334155;
-            border-left: 4px solid #60a5fa;
+            color: #ffffff;
+            background: rgba(59, 130, 246, 0.16);
+            border-left-color: #60a5fa;
+            transform: translateX(2px);
         }
 
         .sidebar i {
-            width: 30px;
+            width: 24px;
+            text-align: center;
+            color: #93c5fd;
+            margin-right: 8px;
+        }
+
+        .sidebar-section-title {
+            padding: 6px 12px 8px;
+            margin: 12px 0 8px;
+            font-size: 11px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .sidebar-bottom-divider {
+            border-top: 1px solid rgba(148, 163, 184, 0.28);
+            margin: 18px 8px 8px;
+        }
+
+        .sidebar-logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #fecaca;
+            padding: 12px 14px;
+            width: 100%;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-weight: 600;
+        }
+
+        .sidebar-logout-btn:hover {
+            background: rgba(239, 68, 68, 0.22);
+            color: #ffffff;
         }
 
         .main-content {
@@ -217,7 +274,7 @@
         <h4><a href="{% url 'public_home' %}" class="text-white text-decoration-none"><i class="fa-solid fa-shirt"></i> Dhobi Kaka</a></h4>
 
         {% if user.is_superuser %}
-        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">SUPER ADMIN</p>
+        <p class="sidebar-section-title">SUPER ADMIN</p>
         <a href="{% url 'super_admin_dashboard' %}"><i class="fa-solid fa-earth-americas"></i> Manage Branches</a>
         <a href="{% url 'manage_roles' %}" class="nav-link text-white"><i class="fa-solid fa-user-shield me-2"></i>Manage Roles</a>
         <a class="nav-link" href="{% url 'admin_user_list' %}"><i class="fas fa-users-cog"></i> User Permissions</a>
@@ -228,7 +285,7 @@
 
 
         {% elif user|has_group:"Laundry Owner" %}
-        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">MANAGER CONTROL</p>
+        <p class="sidebar-section-title">MANAGER CONTROL</p>
         <a href="{% url 'order_list' %}"><i class="fa-solid fa-chart-line"></i> MANAGER Dashboard</a>
         {% comment %} <a href="{% url 'my_branches' %}"><i class="fa-solid fa-store"></i> My Branches</a> {% endcomment %}
         <a href="{% url 'manage_services' %}"><i class="fa-solid fa-tags"></i> Service Prices</a>
@@ -245,7 +302,7 @@
         <a href="{% url 'manage_stock_requests' %}"><i class="fa-solid fa-boxes-stacked"></i> Manage Stock</a>
 
         {% elif user|has_group:"Branch Manager" %}
-        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">SHOP MANAGER</p>
+        <p class="sidebar-section-title">SHOP MANAGER</p>
         <a href="{% url 'order_list' %}"><i class="fa-solid fa-shop"></i> Branch Dashboard</a>
         <a href="{% url 'branch_reports' %}"><i class="fa-solid fa-chart-line"></i> Branch Reports</a>
         <a href="{% url 'task_list' %}"><i class="fa-solid fa-list-check"></i> Daily Tasks</a>
@@ -271,7 +328,7 @@
         <a href="{% url 'complaint_list' %}"><i class="fa-solid fa-triangle-exclamation"></i> Complaints</a>
 
         {% else %}
-        <p style="padding-left: 25px; font-size: 12px; color: #94a3b8; margin-top: 10px;">STAFF PANEL</p>
+        <p class="sidebar-section-title">STAFF PANEL</p>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'order_list' %}">
                 <i class="fas fa-home"></i> Dashboard
@@ -286,12 +343,11 @@
         </a>
         {% endif %} {% endif %}
 
-        <div style="border-top: 1px solid #475569; margin: 20px 20px 10px 20px;"></div>
+        <div class="sidebar-bottom-divider"></div>
         <form action="{% url 'logout' %}" method="post" style="padding: 0;">
             {% csrf_token %}
-            <button type="submit"
-                style="background:none; border:none; color:#cbd5e1; padding: 15px 25px; width:100%; text-align:left; cursor:pointer;">
-                <i class="fa-solid fa-right-from-bracket" style="width:30px;"></i> Logout
+            <button type="submit" class="sidebar-logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
         </form>
 

@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Order, LaundryBusiness, Customer, Service, UserProfile, Task, StockRequest, PlatformSettings, Complaint, Shift
+from .models import (
+    Order, LaundryBusiness, Customer, Service, UserProfile, Task, StockRequest, 
+    PlatformSettings, Complaint, Shift, ClothingItem, OrderItem, OrderItemService
+)
 from .forms import OrderForm, RoleForm, CustomerForm, StaffCreationForm, LaundryBusinessForm, ServiceForm, StaffCreationForm, TaskForm, StockRequestForm, PlatformSettingsForm, ComplaintForm, ShiftForm, CustomerRegistrationForm,CustomerOrderForm, ReviewForm, StaffEditForm
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 import json
-from django.db.models import Count, Sum, Q, Avg
+from django.db.models import Sum, Q
 from django.db.models.functions import ExtractMonth
 from django.contrib.auth.models import User, Group
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib import messages
 from django.utils import timezone
 from django import forms  
@@ -18,6 +21,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.conf import settings
 import re
+from django.http import JsonResponse
 from .email_utils import send_branch_credentials_email
 
 
@@ -670,7 +674,64 @@ def manage_services(request):
         return render(request, 'orders/error_page.html', {'message': 'You are not Linked to a Laundry Business.'})
     my_business = user_profile.business
 
+    clothing_items = list(ClothingItem.objects.filter(is_active=True).order_by('name'))
+
     if request.method == 'POST':
+        # --- QUICK TOGGLE: SHOW/HIDE ON PUBLIC DASHBOARD ---
+        if 'toggle_public_service_id' in request.POST:
+            service_id = request.POST.get('toggle_public_service_id')
+            service = get_object_or_404(Service, id=service_id, business=my_business)
+            service.show_on_public = request.POST.get('show_on_public') == 'on'
+            service.save(update_fields=['show_on_public'])
+            messages.success(request, f"{service.name} visibility updated.")
+            return redirect('manage_services')
+
+        # --- CLOTHING ITEM DELETE (soft delete) ---
+        if 'delete_clothing_id' in request.POST:
+            cloth_id = request.POST.get('delete_clothing_id')
+            cloth = get_object_or_404(ClothingItem, id=cloth_id, is_active=True)
+            cloth.is_active = False
+            cloth.save(update_fields=['is_active'])
+            messages.success(request, "Clothing option removed successfully.")
+            return redirect('manage_services')
+
+        # --- CLOTHING ITEM EDIT ---
+        if request.POST.get('edit_clothing_id'):
+            cloth = get_object_or_404(ClothingItem, id=request.POST.get('edit_clothing_id'))
+            cloth_name = (request.POST.get('cloth_name') or '').strip()
+            cloth_icon = (request.POST.get('cloth_icon') or 'fa-shirt').strip()
+            if not cloth_name:
+                messages.error(request, "Clothing name is required.")
+                return redirect('manage_services')
+            if ClothingItem.objects.filter(name__iexact=cloth_name).exclude(id=cloth.id).exists():
+                messages.error(request, "This clothing name already exists.")
+                return redirect('manage_services')
+            cloth.name = cloth_name
+            cloth.icon = cloth_icon or 'fa-shirt'
+            cloth.save(update_fields=['name', 'icon'])
+            messages.success(request, "Clothing option updated successfully.")
+            return redirect('manage_services')
+
+        # --- CLOTHING ITEM ADD ---
+        if request.POST.get('add_clothing_item') == '1':
+            cloth_name = (request.POST.get('cloth_name') or '').strip()
+            cloth_icon = (request.POST.get('cloth_icon') or 'fa-shirt').strip()
+            if not cloth_name:
+                messages.error(request, "Clothing name is required.")
+                return redirect('manage_services')
+            existing = ClothingItem.objects.filter(name__iexact=cloth_name).first()
+            if existing and existing.is_active:
+                messages.error(request, "This clothing option already exists.")
+                return redirect('manage_services')
+            if existing and not existing.is_active:
+                existing.is_active = True
+                existing.icon = cloth_icon or existing.icon or 'fa-shirt'
+                existing.save(update_fields=['is_active', 'icon'])
+            else:
+                ClothingItem.objects.create(name=cloth_name, icon=cloth_icon or 'fa-shirt')
+            messages.success(request, "Clothing option added successfully.")
+            return redirect('manage_services')
+
         # --- DELETE LOGIC ---
         if 'delete_service_id' in request.POST:
             service_id = request.POST.get('delete_service_id')
@@ -681,33 +742,54 @@ def manage_services(request):
                 service.delete()
             return redirect('manage_services')
 
+        # --- EDIT LOGIC ---
+        if request.POST.get('service_id'):
+            service_id = request.POST.get('service_id')
+            service = get_object_or_404(Service, id=service_id, business=my_business)
+            service.name = (request.POST.get('name') or '').strip()
+            service.price = request.POST.get('price')
+            service.unit = request.POST.get('unit')
+            service.category = request.POST.get('category')
+            service.description = request.POST.get('description')
+            service.show_on_public = request.POST.get('show_on_public') == 'on'
+            service.save()
+
+            selected_ids = request.POST.getlist('applicable_items')
+            service.applicable_items.set(
+                ClothingItem.objects.filter(id__in=selected_ids, is_active=True)
+            )
+            messages.success(request, "Service updated successfully.")
+            return redirect('manage_services')
+
         # --- ADD/EDIT LOGIC ---
         form = ServiceForm(request.POST)
         if form.is_valid():
             service = form.save(commit=False)
             service.business = my_business
-            
             selected_category = request.POST.get('category')
-        if selected_category:
-            service.category = selected_category
-
-            # 2. Capture Unit (The New Fix)
+            if selected_category:
+                service.category = selected_category
             selected_unit = request.POST.get('unit')
             if selected_unit:
                 service.unit = selected_unit
-            # --- FORCE FIX END ---
-            
+            service.show_on_public = request.POST.get('show_on_public') == 'on'
             service.save()
+            selected_ids = request.POST.getlist('applicable_items')
+            service.applicable_items.set(
+                ClothingItem.objects.filter(id__in=selected_ids, is_active=True)
+            )
+            messages.success(request, "Service added successfully.")
             return redirect ('manage_services')
 
     else:
         form = ServiceForm()
     
-    services = Service.objects.filter(business=my_business)
+    services = Service.objects.filter(business=my_business).prefetch_related('applicable_items')
     context = {
         'services':services,
         'form':form,
-        'business_name':my_business.name
+        'business_name':my_business.name,
+        'clothing_items': clothing_items,
     }
     return render (request, 'orders/manage_services.html', context)
 @login_required
@@ -722,6 +804,7 @@ def edit_service(request, service_id):
         service.unit = request.POST.get('unit')
         service.category = request.POST.get('category')
         service.description = request.POST.get('description')
+        service.show_on_public = request.POST.get('show_on_public') == 'on'
         
         # 3. Save
         service.save()
@@ -2435,20 +2518,26 @@ def public_home(request):
     branches_data = []
 
     for branch in active_branches:
-        services_query = Service.objects.filter(
-            business=branch
-        ).values('name', 'unit', 'category').annotate(avg_price=Avg('price')).order_by('avg_price')[:5]
+        services_query = (
+            Service.objects
+            .filter(business=branch, show_on_public=True)
+            .prefetch_related('applicable_items')
+            .order_by('price', 'name')[:5]
+        )
 
         branch_services = []
         for s in services_query:
-            short_unit = str(s['unit']).replace('Per ', '').replace('Piece', 'pc').lower()
-            avg_price = s['avg_price'] if s['avg_price'] is not None else 0
+            short_unit = str(s.unit).replace('Per ', '').replace('Piece', 'pc').lower()
+            applicable_names = [item.name for item in s.applicable_items.all()]
+            applicable_label = ", ".join(applicable_names) if applicable_names else None
 
             branch_services.append({
-                'name': s['name'].title(),
-                'category': s['category'],
-                'price': int(avg_price),
-                'unit': short_unit
+                'name': s.name.title(),
+                'category': s.category,
+                'price': int(s.price),
+                'unit': short_unit,
+                # None means "All clothes" -> hidden in subtitle line on public home.
+                'applicable_clothes': applicable_label,
             })
 
         branches_data.append({
@@ -2549,3 +2638,200 @@ class CustomLoginView(LoginView):
 
         # 2. Continue logging them in normally
         return super().form_valid(form)
+
+
+# ════════════════════════════════════════════════════════════════
+# PLACE ORDER FLOW - NEW VIEWS
+# ════════════════════════════════════════════════════════════════
+
+@login_required
+@require_http_methods(["GET"])
+def place_order(request):
+    """
+    Render the place order form page.
+    GET only — displays the interactive order form template
+    """
+    try:
+        customer = request.user.customer
+    except Customer.DoesNotExist:
+        messages.error(request, "You must have a customer profile to place orders.")
+        return redirect('customer_register')
+    
+    return render(request, 'orders/place_order.html', {'customer': customer})
+
+
+@login_required
+@require_http_methods(["GET"])
+def order_form_data(request):
+    """
+    API endpoint that returns JSON with clothing items and services.
+    Used by the frontend JS to populate the order form.
+    """
+    # Get all active clothing items
+    clothing_items = ClothingItem.objects.filter(is_active=True).values('id', 'name', 'icon')
+    
+    # Get all active services
+    services = Service.objects.filter(is_active=True).values('id', 'name', 'price')
+    
+    return JsonResponse({
+        'success': True,
+        'clothing_items': list(clothing_items),
+        'services': list(services)
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def submit_order(request):
+    """
+    Process the submitted order form.
+    Expects JSON body with items array and optional special_note.
+    """
+    try:
+        customer = request.user.customer
+    except Customer.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Customer profile not found.'
+        }, status=400)
+    
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON in request body.'
+        }, status=400)
+    
+    # Extract fields
+    items = data.get('items', [])
+    special_note = data.get('special_note', '').strip()
+    
+    # Validate: at least 1 item with at least 1 service
+    if not items:
+        return JsonResponse({
+            'success': False,
+            'error': 'Please add at least one clothing item to your order.'
+        }, status=400)
+    
+    # Validate each item has at least 1 service
+    for item in items:
+        service_ids = item.get('service_ids', [])
+        if not service_ids:
+            return JsonResponse({
+                'success': False,
+                'error': f'Item {item.get("clothing_item_id")} must have at least one service.'
+            }, status=400)
+    
+    try:
+        # Create Order
+        order = Order.objects.create(
+            customer=customer,
+            business=customer.business,
+            status='pending',
+            payment_status='Unpaid',
+            is_approved=False,
+            notes=special_note if special_note else None,
+            total_price=0  # Will be calculated from items
+        )
+        
+        total_order_price = 0
+        
+        # Process each item
+        for item_data in items:
+            clothing_item_id = item_data.get('clothing_item_id')
+            quantity = item_data.get('quantity', 1)
+            service_ids = item_data.get('service_ids', [])
+            
+            # Validate clothing item exists
+            try:
+                clothing_item = ClothingItem.objects.get(id=clothing_item_id, is_active=True)
+            except ClothingItem.DoesNotExist:
+                order.delete()
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Clothing item {clothing_item_id} not found or inactive.'
+                }, status=400)
+            
+            # Create OrderItem
+            order_item = OrderItem.objects.create(
+                order=order,
+                clothing_item=clothing_item,
+                quantity=quantity,
+                subtotal=0  # Will be calculated below
+            )
+            
+            item_service_total = 0
+            
+            # Add services to the order item
+            for service_id in service_ids:
+                try:
+                    service = Service.objects.get(id=service_id, is_active=True)
+                except Service.DoesNotExist:
+                    order.delete()
+                    return JsonResponse({
+                        'success': False,
+                        'error': f'Service {service_id} not found or inactive.'
+                    }, status=400)
+                
+                # Create OrderItemService with price snapshot
+                OrderItemService.objects.create(
+                    order_item=order_item,
+                    service=service,
+                    price_at_order=service.price
+                )
+                item_service_total += service.price
+            
+            # Calculate and save subtotal
+            order_item.subtotal = item_service_total * quantity
+            order_item.save()
+            
+            total_order_price += order_item.subtotal
+        
+        # Update order total price
+        order.total_price = total_order_price
+        order.save()
+        
+        return JsonResponse({
+            'success': True,
+            'order_id': order.id
+        })
+    
+    except Exception as e:
+        if 'order' in locals() and order.id:
+            order.delete()
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'error': f'An error occurred: {str(e)}'
+        }, status=500)
+
+
+@login_required
+@require_http_methods(["GET"])
+def place_order_detail(request, pk):
+    """
+    Display detailed view of a specific order with all items and services.
+    """
+    try:
+        customer = request.user.customer
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer profile required.")
+        return redirect('customer_register')
+    
+    # Get order and ensure customer owns it
+    order = get_object_or_404(Order, id=pk, customer=customer)
+    
+    # Prefetch related items and services for efficiency
+    order_items = order.items.prefetch_related(
+        'clothing_item',
+        'orderitemservice_set__service'
+    )
+    
+    context = {
+        'order': order,
+        'order_items': order_items,
+    }
+    
+    return render(request, 'orders/place_order_confirmation.html', context)

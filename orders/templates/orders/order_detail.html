@@ -1,14 +1,102 @@
 {% extends 'orders/base.html' %}
 
 {% block content %}
+<style>
+    .od-wrap { max-width: 1320px; }
+    .od-main-card {
+        border: 1px solid #dbe7fb;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+    }
+    .od-header {
+        background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+        border-bottom: 1px solid #dbe7fb;
+        padding: 1rem 1.2rem;
+    }
+    .od-title { margin: 0; font-weight: 800; color: #12284d; }
+    .od-sub { margin: 0.35rem 0 0; color: #5f6f89; }
+    .od-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 0.32rem 0.7rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 1px solid #ccdffd;
+        background: #f4f8ff;
+        color: #214f9a;
+    }
+    .od-soft-card {
+        border: 1px solid #d9e6fb;
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 8px 18px rgba(30, 64, 131, 0.05);
+    }
+    .od-soft-card .card-body { padding: 1rem 1.05rem; }
+    .od-label { color: #60708a; font-size: 0.82rem; margin: 0; }
+    .od-value {
+        color: #12284d;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 0.1rem 0 0;
+        word-break: break-word;
+    }
+    .od-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+    .od-total-card {
+        border-radius: 14px;
+        border: 1px solid #bcd3fb;
+        background: linear-gradient(135deg, #2a74ea, #1f63dd);
+        color: #fff;
+        padding: 0.95rem 1rem;
+    }
+    .od-total-card .small { opacity: 0.88; letter-spacing: 0.02em; }
+    .od-amount { font-size: 1.55rem; font-weight: 800; margin-top: 0.2rem; }
+    .od-table th {
+        color: #4f617f;
+        font-size: 0.82rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        border-bottom: 1px solid #dae6fb;
+    }
+    .od-table td { vertical-align: middle; }
+    .od-status {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.2rem 0.58rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+    .od-status.processing { background: #fff6e8; color: #9a6406; border-color: #f2d6a1; }
+    .od-status.delivered { background: #ecfdf3; color: #106b43; border-color: #b9efcf; }
+    .od-status.cancelled { background: #fff1f1; color: #9f1c1c; border-color: #f6bcbc; }
+    .od-status.default { background: #eef4ff; color: #1b4c9c; border-color: #c9dcff; }
+
+    @media (max-width: 767px) {
+        .od-meta-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
 <div class="container-fluid py-4">
-    <div class="row">
+    <div class="row od-wrap mx-auto">
         <div class="col-12">
-            <div class="card shadow-sm rounded-4">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <div class="card od-main-card">
+                <div class="od-header d-flex justify-content-between align-items-start gap-3 flex-wrap">
                     <div>
-                        <h3 class="mb-0">Order Details</h3>
-                        <p class="text-muted mb-0">Order #{{ order.id }} details with customer information and delivery address.</p>
+                        <h3 class="od-title">Order Details</h3>
+                        <p class="od-sub">Order #{{ order.id }} details with customer information and delivery address.</p>
+                        <div class="d-flex gap-2 mt-2 flex-wrap">
+                            <span class="od-pill"><i class="fa-solid fa-hashtag"></i> #{{ order.id }}</span>
+                            <span class="od-pill"><i class="fa-solid fa-calendar-day"></i> {{ order.order_date|date:"d M Y" }}</span>
+                            <span class="od-pill"><i class="fa-solid fa-clock"></i> {{ order.order_date|date:"h:i A" }}</span>
+                        </div>
                     </div>
                     <div>
                         <a href="{% url 'order_list' %}" class="btn btn-outline-secondary">
@@ -16,45 +104,91 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+
+                <div class="card-body p-3 p-lg-4">
                     <div class="row gy-4">
                         <div class="col-lg-6">
-                            <div class="card border-0 mb-3">
-                                <div class="card-body p-4">
-                                    <h5 class="mb-3">Customer Information</h5>
-                                    <p class="mb-2"><strong>Name:</strong> {% if order.customer %}{{ order.customer.name }}{% else %}{{ order.customer_name_backup }}{% endif %}</p>
-                                    <p class="mb-2"><strong>Phone:</strong> {% if order.customer %}{{ order.customer.phone }}{% else %}-{% endif %}</p>
-                                    <p class="mb-2"><strong>Email:</strong> {% if order.customer %}{{ order.customer.email }}{% else %}-{% endif %}</p>
-                                    <p class="mb-2"><strong>Address:</strong> {% if order.customer %}{{ order.customer.address }}{% else %}-{% endif %}</p>
+                            <div class="card od-soft-card mb-3">
+                                <div class="card-body">
+                                    <h5 class="mb-3 fw-bold text-primary">Customer Information</h5>
+                                    <div class="od-meta-grid">
+                                        <div>
+                                            <p class="od-label">Name</p>
+                                            <p class="od-value">{% if order.customer %}{{ order.customer.name }}{% else %}{{ order.customer_name_backup }}{% endif %}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Phone</p>
+                                            <p class="od-value">{% if order.customer %}{{ order.customer.phone }}{% else %}-{% endif %}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Email</p>
+                                            <p class="od-value">{% if order.customer %}{{ order.customer.email }}{% else %}-{% endif %}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Address</p>
+                                            <p class="od-value">{% if order.customer %}{{ order.customer.address }}{% else %}-{% endif %}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="card border-0">
-                                <div class="card-body p-4">
-                                    <h5 class="mb-3">Order Summary</h5>
-                                    <p class="mb-2"><strong>Order ID:</strong> #{{ order.id }}</p>
-                                    <p class="mb-2"><strong>Date:</strong> {{ order.order_date|date:"d M Y, h:i A" }}</p>
-                                    <p class="mb-2"><strong>Status:</strong> {{ order.get_status_display }}</p>
-                                    <p class="mb-2"><strong>Payment Status:</strong> {{ order.payment_status }}</p>
-                                    <p class="mb-2"><strong>Payment Method:</strong> {{ order.payment_method }}</p>
-                                    <p class="mb-2"><strong>Pickup:</strong> {% if order.pickup_date %}{{ order.pickup_date|date:"d M Y" }}{% else %}-{% endif %} {% if order.pickup_time %}{{ order.pickup_time|time:"h:i A" }}{% endif %}</p>
-                                    {% if order.estimated_delivery %}
-                                    <p class="mb-2"><strong>Estimated Delivery:</strong> {{ order.estimated_delivery|date:"d M Y, h:i A" }}</p>
-                                    {% endif %}
+
+                            <div class="card od-soft-card">
+                                <div class="card-body">
+                                    <h5 class="mb-3 fw-bold text-primary">Order Summary</h5>
+                                    <div class="od-meta-grid">
+                                        <div>
+                                            <p class="od-label">Order ID</p>
+                                            <p class="od-value">#{{ order.id }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Date</p>
+                                            <p class="od-value">{{ order.order_date|date:"d M Y, h:i A" }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Status</p>
+                                            {% with st=order.status|lower %}
+                                                <span class="od-status {% if st == 'processing' %}processing{% elif st == 'delivered' %}delivered{% elif st == 'cancelled' %}cancelled{% else %}default{% endif %}">{{ order.get_status_display }}</span>
+                                            {% endwith %}
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Payment Status</p>
+                                            <p class="od-value">{{ order.payment_status }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Payment Method</p>
+                                            <p class="od-value">{{ order.payment_method }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="od-label">Pickup</p>
+                                            <p class="od-value">{% if order.pickup_date %}{{ order.pickup_date|date:"d M Y" }}{% else %}-{% endif %} {% if order.pickup_time %}{{ order.pickup_time|time:"h:i A" }}{% endif %}</p>
+                                        </div>
+                                        {% if order.estimated_delivery %}
+                                        <div>
+                                            <p class="od-label">Estimated Delivery</p>
+                                            <p class="od-value">{{ order.estimated_delivery|date:"d M Y, h:i A" }}</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-lg-6">
-                            <div class="card border-0">
-                                <div class="card-body p-4">
-                                    <h5 class="mb-3">Service Details</h5>
+                            <div class="od-total-card mb-3">
+                                <div class="small">TOTAL AMOUNT</div>
+                                <div class="od-amount">{{ order.total_price|floatformat:2 }}</div>
+                            </div>
+
+                            <div class="card od-soft-card">
+                                <div class="card-body">
+                                    <h5 class="mb-3 fw-bold text-primary">Service Details</h5>
                                     <div class="table-responsive">
-                                        <table class="table mb-0">
+                                        <table class="table od-table mb-0">
                                             <thead>
                                                 <tr>
-                                                    <th class="border-bottom-0">Service</th>
-                                                    <th class="text-center border-bottom-0">Qty</th>
-                                                    <th class="text-end border-bottom-0">Amount</th>
+                                                    <th>Service</th>
+                                                    <th class="text-center">Qty</th>
+                                                    <th class="text-end">Amount</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -63,19 +197,19 @@
                                                     <tr>
                                                         <td>{{ item.name }}</td>
                                                         <td class="text-center">{{ item.quantity }}</td>
-                                                        <td class="text-end">₹{{ item.line_total|floatformat:2 }}</td>
+                                                        <td class="text-end">{{ item.line_total|floatformat:2 }}</td>
                                                     </tr>
                                                     {% endfor %}
                                                 {% else %}
                                                     <tr>
                                                         <td>{% if order.service %}{{ order.service.name }}{% else %}-{% endif %}</td>
                                                         <td class="text-center">{{ order.quantity }}</td>
-                                                        <td class="text-end">₹{{ order.total_price|floatformat:2 }}</td>
+                                                        <td class="text-end">{{ order.total_price|floatformat:2 }}</td>
                                                     </tr>
                                                 {% endif %}
                                                 <tr>
                                                     <td colspan="2" class="fw-bold">Total</td>
-                                                    <td class="text-end fw-bold">₹{{ order.total_price|floatformat:2 }}</td>
+                                                    <td class="text-end fw-bold">{{ order.total_price|floatformat:2 }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -84,9 +218,9 @@
                             </div>
 
                             {% if order.notes and '__QB_LINE_ITEMS__' not in order.notes %}
-                            <div class="card border-0 mt-3">
-                                <div class="card-body p-4">
-                                    <h5 class="mb-3">Customer Notes</h5>
+                            <div class="card od-soft-card mt-3">
+                                <div class="card-body">
+                                    <h5 class="mb-3 fw-bold text-primary">Customer Notes</h5>
                                     <p class="mb-0">{{ order.notes }}</p>
                                 </div>
                             </div>

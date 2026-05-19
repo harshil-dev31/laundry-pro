@@ -1,0 +1,401 @@
+{% extends 'orders/base.html' %}
+
+{% block title %}Order Placed - Dhobi Kaka{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-placed-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .order-success-header {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .success-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .success-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .success-message {
+        font-size: 1rem;
+        opacity: 0.95;
+    }
+
+    .order-header-box {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .order-id {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .order-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .meta-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .meta-label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+        margin-bottom: 0.25rem;
+    }
+
+    .meta-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* ORDER ITEMS */
+    /* ═════════════════════════════════════════ */
+    .items-section {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .items-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 1rem;
+    }
+
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: #fafaf9;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .item-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .item-icon {
+        font-size: 1.5rem;
+        color: #2563eb;
+    }
+
+    .item-services {
+        font-size: 0.9rem;
+        color: #64748b;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .service-tag {
+        background: #e0f2fe;
+        color: #0369a1;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .item-qty {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .item-price {
+        text-align: right;
+        min-width: 150px;
+    }
+
+    .item-subtotal {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2563eb;
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* PRICING SUMMARY */
+    /* ═════════════════════════════════════════ */
+    .pricing-section {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 2px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .pricing-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #bfdbfe;
+        padding-bottom: 1rem;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        color: #475569;
+        font-size: 1rem;
+    }
+
+    .price-row.total {
+        border-top: 2px solid #bfdbfe;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #2563eb;
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* SPECIAL INSTRUCTIONS */
+    /* ═════════════════════════════════════════ */
+    .notes-section {
+        background: #fffbeb;
+        border: 1px solid #fcd34d;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .notes-title {
+        font-weight: 700;
+        color: #92400e;
+        margin-bottom: 0.5rem;
+    }
+
+    .notes-content {
+        color: #b45309;
+        font-style: italic;
+        line-height: 1.6;
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* ACTION BUTTONS */
+    /* ═════════════════════════════════════════ */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #2563eb;
+        border: 2px solid #2563eb;
+    }
+
+    .btn-secondary:hover {
+        background: #f0f9ff;
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* RESPONSIVE */
+    /* ═════════════════════════════════════════ */
+    @media (max-width: 768px) {
+        .item-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .item-price {
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .order-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .success-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="order-placed-container">
+    <!-- Success Header -->
+    <div class="order-success-header">
+        <i class="fa-solid fa-check-circle success-icon"></i>
+        <div class="success-title">Order Placed Successfully!</div>
+        <div class="success-message">Your laundry order has been submitted and will be processed soon.</div>
+    </div>
+
+    <!-- Order Details Header -->
+    <div class="order-header-box">
+        <div class="order-id">Order Number</div>
+        <div class="order-number">#{{ order.id }}</div>
+        <div class="order-meta">
+            <div class="meta-item">
+                <div class="meta-label">Order Date</div>
+                <div class="meta-value">{{ order.order_date|date:"d M, Y H:i" }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Status</div>
+                <div class="meta-value">Pending</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Payment Status</div>
+                <div class="meta-value">{{ order.payment_status }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Total Amount</div>
+                <div class="meta-value">₹{{ order.total_price|floatformat:2 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    {% if order_items %}
+    <div class="items-section">
+        <div class="items-title">Order Items</div>
+        {% for item in order_items %}
+        <div class="item-row">
+            <div class="item-details">
+                <div class="item-name">
+                    <i class="fa-solid {{ item.clothing_item.icon }} item-icon"></i>
+                    {{ item.clothing_item.name }}
+                </div>
+                {% if item.orderitemservice_set.all %}
+                <div class="item-services">
+                    {% for item_service in item.orderitemservice_set.all %}
+                    <div class="service-tag">
+                        {{ item_service.service.name }} - ₹{{ item_service.price_at_order|floatformat:2 }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="item-qty">
+                    Quantity: <strong>{{ item.quantity }}</strong> piece(s)
+                </div>
+            </div>
+            <div class="item-price">
+                <div class="item-subtotal">₹{{ item.subtotal|floatformat:2 }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Pricing Summary -->
+    <div class="pricing-section">
+        <div class="pricing-title">Order Summary</div>
+        <div class="price-row">
+            <span>Subtotal</span>
+            <span>₹{{ order.total_price|floatformat:2 }}</span>
+        </div>
+        <div class="price-row total">
+            <span>Total Amount</span>
+            <span>₹{{ order.total_price|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    <!-- Special Instructions -->
+    {% if order.notes %}
+    <div class="notes-section">
+        <div class="notes-title"><i class="fa-solid fa-sticky-note"></i> Special Instructions</div>
+        <div class="notes-content">
+            {{ order.notes }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'customer_dashboard' %}" class="btn btn-primary">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{% url 'place_order' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-plus"></i> Place Another Order
+        </a>
+    </div>
+</div>
+{% endblock %}

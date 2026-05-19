@@ -1,0 +1,23 @@
+{% extends 'orders/base.html' %}
+
+{% block title %}Order Confirmation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-placed-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .order-success-header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; }
+    .success-title { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="order-placed-container">
+    <div class="order-success-header">
+        <span class="success-title">Order Confirmed</span>
+        <p class="success-message">Thank you — your order has been received and is being processed.</p>
+    </div>
+    <div class="items-section">
+        <p>If you see this page, the fallback confirmation template is being used because the original template could not be read due to file permissions.</p>
+    </div>
+</div>
+{% endblock %}

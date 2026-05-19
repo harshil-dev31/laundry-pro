@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dhobi Kaka | Premium Laundry & Dry Cleaning</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%230ea5e9' offset='0'/%3E%3Cstop stop-color='%232563eb' offset='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='28'%3E%F0%9F%91%95%3C/text%3E%3C/svg%3E">
-    <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%230ea5e9' offset='0'/%3E%3Cstop stop-color='%232563eb' offset='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='28'%3E%F0%9F%91%95%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230ea5e9'/%3E%3Cstop offset='100%25' stop-color='%232563eb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Cpath d='M18%2020%20L27%2014%20C29%2018%2031%2020%2032%2020%20C33%2020%2035%2018%2037%2014%20L46%2020%20L42%2032%20L38%2030%20V50%20C38%2053%2036%2055%2033%2055%20H31%20C28%2055%2026%2053%2026%2050%20V30%20L22%2032%20Z' fill='white'/%3E%3C/svg%3E">
+    <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%230ea5e9'/%3E%3Cstop offset='100%25' stop-color='%232563eb'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='url(%23g)'/%3E%3Cpath d='M18%2020%20L27%2014%20C29%2018%2031%2020%2032%2020%20C33%2020%2035%2018%2037%2014%20L46%2020%20L42%2032%20L38%2030%20V50%20C38%2053%2036%2055%2033%2055%20H31%20C28%2055%2026%2053%2026%2050%20V30%20L22%2032%20Z' fill='white'/%3E%3C/svg%3E">
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -191,15 +191,95 @@
         }
 
         .brand-mark {
-            width: 42px;
-            height: 42px;
+            position: relative;
+            min-width: 176px;
+            height: 56px;
             border-radius: 14px;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            gap: 8px;
+            padding: 8px 13px;
+            background: linear-gradient(135deg, #2f7ff1 0%, #1f6feb 55%, #1b5fd5 100%);
             color: white;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+            box-shadow:
+                0 10px 24px rgba(31, 111, 235, 0.24),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+        }
+
+        .brand-mark svg {
+            position: relative;
+            z-index: 2;
+            width: 28px;
+            height: 28px;
+            display: block;
+            flex: 0 0 auto;
+        }
+
+        .brand-mark-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.05;
+        }
+
+        .brand-main {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.9rem;
+            letter-spacing: -0.015em;
+        }
+
+        .brand-sub {
+            color: #d5e6ff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            margin-top: 3px;
+        }
+
+        .navbar-brand {
+            transition: transform 0.25s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-1px);
+        }
+
+        .glass-nav .navbar-nav .nav-link {
+            font-weight: 600;
+            color: #1f2937 !important;
+            border-radius: 999px;
+            transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .glass-nav .navbar-nav .nav-link:hover {
+            color: #1d4ed8 !important;
+            background: rgba(59, 130, 246, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .glass-nav .navbar-nav .nav-link.nav-rate-card {
+            font-weight: 700;
+            background: linear-gradient(100deg, #1d4ed8 18%, #38bdf8 42%, #ffffff 50%, #2563eb 58%, #1e40af 82%);
+            background-size: 220% auto;
+            color: transparent !important;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: rateCardShine 3s linear infinite;
+        }
+
+        .glass-nav .navbar-nav .nav-link.nav-rate-card:hover {
+            color: transparent !important;
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        @keyframes rateCardShine {
+            0% {
+                background-position: 200% center;
+            }
+            100% {
+                background-position: -20% center;
+            }
         }
 
         .section-kicker {
@@ -1315,6 +1395,12 @@
                 margin-top: 8px;
             }
 
+            .glass-nav .navbar-nav .nav-link.nav-rate-card {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
             .hero-copy h1 {
                 font-size: clamp(2rem, 10vw, 2.85rem);
             }
@@ -2140,6 +2226,12 @@
             white-space: nowrap;
         }
 
+        #pricing .service-applicable {
+            font-size: 0.72rem;
+            line-height: 1.25;
+            color: #64748b;
+        }
+
         #pricing .price-value {
             display: flex;
             flex-direction: column;
@@ -2308,8 +2400,16 @@
     <nav class="navbar navbar-expand-lg glass-nav fixed-top py-3">
         <div class="container">
             <a class="navbar-brand fw-bold fs-3 d-flex align-items-center gap-2" href="#home">
-                <span class="brand-mark"><i class="fa-solid fa-shirt"></i></span>
-                <span><span class="text-dark">Dhobi</span><span class="text-primary">Kaka</span></span>
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Shirt logo">
+                        <path d="M9 21 L22 12 L28 18 H36 L42 12 L55 21 L50 34 L44 31 V52 C44 56.5 40.5 60 36 60 H28 C23.5 60 20 56.5 20 52 V31 L14 34 Z" fill="#ffffff"/>
+                        <path d="M22 12 C24.8 16 28.2 17.9 32 17.9 C35.8 17.9 39.2 16 42 12" fill="none" stroke="#d6e6ff" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="brand-mark-text">
+                        <span class="brand-main">Dhobi Kaka</span>
+                        <span class="brand-sub">Since 1975</span>
+                    </span>
+                </span>
             </a>
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <i class="fa-solid fa-bars fs-2 text-dark"></i>
@@ -2317,10 +2417,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center fw-medium">
                     <li class="nav-item"><a class="nav-link text-dark px-3" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark px-3 nav-rate-card" href="#pricing">Rate Card</a></li>
                     <li class="nav-item"><a class="nav-link text-dark px-3 hover-text-primary" href="#services">Services</a></li>
                     <li class="nav-item"><a class="nav-link text-dark px-3" href="#how-it-works">How it Works</a></li>
                     <li class="nav-item"><a class="nav-link text-dark px-3" href="#reviews">Reviews</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark px-3" href="#pricing">Price</a></li>
                     {% comment %} <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
                         <a href="{% url 'login' %}" class="btn btn-outline-dark px-4 py-2 rounded-pill me-2 fw-semibold">Sign In</a>
                     </li> {% endcomment %}
@@ -2328,7 +2428,7 @@
                         <a href="{% url 'login' %}" class="btn btn-brand px-4 py-2 rounded-pill fw-bold">Schedule Pickup</a>
                     </li>
                     <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <a href="{% url 'quick_booking' %}" class="btn btn-success px-4 py-2 rounded-pill fw-bold" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">Quick Booking</a>
+                        <a href="{% url 'quick_booking' %}" class="btn btn-success px-4 py-2 rounded-pill fw-bold" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">Quick Laundry</a>
                     </li>
                 </ul>
             </div>
@@ -2356,8 +2456,8 @@
                     </div>
                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start hero-buttons">
                         <a href="{% url 'login' %}" class="btn hero-btn hero-btn-primary btn-lg rounded-pill fw-bold fs-5">Book Now <span class="btn-icon"><i class="fa-solid fa-arrow-right"></i></span></a>
-                        <a href="{% url 'quick_booking' %}" class="btn hero-btn hero-btn-secondary btn-lg rounded-pill fw-bold fs-5">Quick Booking <span class="btn-icon"><i class="fa-solid fa-bolt"></i></span></a>
-                        <a href="#pricing" class="btn hero-btn hero-btn-tertiary btn-lg rounded-pill fw-bold fs-5">See Prices</a>
+                        <a href="{% url 'quick_booking' %}" class="btn hero-btn hero-btn-secondary btn-lg rounded-pill fw-bold fs-5">Quick Laundry <span class="btn-icon"><i class="fa-solid fa-bolt"></i></span></a>
+                        <a href="#pricing" class="btn hero-btn hero-btn-tertiary btn-lg rounded-pill fw-bold fs-5">See Rate Card</a>
                     </div>
                     <div class="mt-4 text-muted small fw-medium">
                         <i class="fa-solid fa-truck-fast text-success me-1"></i> Free pickup & delivery on orders over ₹500
@@ -2613,7 +2713,7 @@
                     Schedule Pickup
                 </a>
                 <a href="{% url 'quick_booking' %}" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold fs-4 shadow-lg" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">
-                    Quick Booking <i class="fa-solid fa-bolt ms-2"></i>
+                    Quick Laundry <i class="fa-solid fa-bolt ms-2"></i>
                 </a>
             </div>
         </div>
@@ -2691,7 +2791,8 @@
                                             <div class="price-main">
                                                 <i class="fa-solid fa-check-circle text-primary opacity-75"></i>
                                                 <div class="price-copy">
-                                                    <span class="service-name">{{ item.name }}</span>
+                                                    <span class="service-name">{{ item.applicable_clothes|default:item.name }}</span>
+                                                    
                                                     <span class="service-category">{{ item.category }}</span>
                                                 </div>
                                             </div>
@@ -2708,7 +2809,7 @@
                                         </div>
                                     {% endfor %}
                                         <div class="text-center mt-5">
-                                            <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill fw-bold px-4">See Full Price List</a>
+                                            <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill fw-bold px-4">See Full Rate Card</a>
                                         </div>
                                     </div>
                                 </div>

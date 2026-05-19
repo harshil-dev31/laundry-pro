@@ -1,0 +1,814 @@
+{% extends 'orders/base.html' %}
+{% load static %}
+
+{% block title %}Place Order - Dhobi Kaka{% endblock %}
+
+{% block extra_css %}
+<style>
+    .place-order-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .order-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .order-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /* STEP 1: CLOTHES GRID */
+    /* ═══════════════════════════════════════ */
+    .clothes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .clothing-card {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        user-select: none;
+    }
+
+    .clothing-card:hover {
+        border-color: #2563eb;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    }
+
+    .clothing-card.selected {
+        background: #eff6ff;
+        border: 2px solid #2563eb;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .clothing-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        color: #2563eb;
+    }
+
+    .clothing-card.selected .clothing-icon {
+        color: #1d4ed8;
+    }
+
+    .clothing-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .service-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #2563eb;
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /* STEP 2: ITEM DETAIL CARDS */
+    /* ═══════════════════════════════════════ */
+    .selected-items {
+        margin-bottom: 3rem;
+    }
+
+    .item-detail-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 1rem;
+    }
+
+    .item-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .item-icon {
+        font-size: 2rem;
+        color: #2563eb;
+    }
+
+    .remove-item-btn {
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .remove-item-btn:hover {
+        background: #fecaca;
+    }
+
+    .services-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .services-label {
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    .services-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .service-pill {
+        background: white;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        padding: 0.6rem 1rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .service-pill:hover {
+        border-color: #2563eb;
+        background: #f0f9ff;
+    }
+
+    .service-pill.active {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+    }
+
+    .service-price {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    .qty-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .qty-label {
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .qty-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .qty-btn {
+        background: #e2e8f0;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #334155;
+        transition: all 0.2s;
+    }
+
+    .qty-btn:hover:not(:disabled) {
+        background: #cbd5e1;
+    }
+
+    .qty-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .qty-display {
+        width: 50px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #1e293b;
+    }
+
+    .item-subtotal {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2563eb;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /* ORDER SUMMARY */
+    /* ═══════════════════════════════════════ */
+    .order-summary-box {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 2px solid #bfdbfe;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        color: #475569;
+        margin-bottom: 0.75rem;
+    }
+
+    .summary-item.total {
+        border-top: 2px solid #bfdbfe;
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #2563eb;
+    }
+
+    .summary-services {
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /* SPECIAL INSTRUCTIONS */
+    /* ═══════════════════════════════════════ */
+    .instructions-section {
+        background: #fafaf9;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .instructions-label {
+        display: block;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .instructions-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        min-height: 100px;
+        resize: vertical;
+        transition: all 0.2s;
+    }
+
+    .instructions-textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* ═══════════════════════════════════════ */
+    /* ACTION BUTTONS */
+    /* ═══════════════════════════════════════ */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-place-order {
+        flex: 1;
+        padding: 1rem;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-place-order:hover:not(:disabled) {
+        background: #1d4ed8;
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-place-order:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-cancel {
+        padding: 1rem 2rem;
+        background: white;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: #f8fafc;
+        color: #334155;
+    }
+
+    /* ═══════════════════════════════════════ */
+    /* EMPTY STATE */
+    /* ═══════════════════════════════════════ */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #64748b;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #cbd5e1;
+    }
+
+    .empty-text {
+        font-size: 1.1rem;
+        color: #475569;
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* LOADING & FEEDBACK */
+    /* ═════════════════════════════════════════ */
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: none;
+    }
+
+    .alert.show {
+        display: block;
+    }
+
+    .alert.alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .alert.alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ═════════════════════════════════════════ */
+    /* RESPONSIVE */
+    /* ═════════════════════════════════════════ */
+    @media (max-width: 768px) {
+        .clothes-grid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .clothing-icon {
+            font-size: 2rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .order-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="place-order-container">
+    <div class="order-header">
+        <h1>Place Your Order</h1>
+        <p>Select clothing items and assign services</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alert" class="alert"></div>
+
+    <!-- STEP 1: SELECT CLOTHES -->
+    <div class="mb-4">
+        <h2 style="font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem;">
+            Step 1: Select Clothing Items
+        </h2>
+        <div class="clothes-grid" id="clothesGrid">
+            <!-- Populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- STEP 2: ASSIGN SERVICES (conditional display) -->
+    <div id="step2Section" style="display: none;">
+        <h2 style="font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem;">
+            Step 2: Assign Services & Quantities
+        </h2>
+        <div class="selected-items" id="selectedItems">
+            <!-- Populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <div id="summarySection" style="display: none;">
+        <div class="order-summary-box">
+            <div class="summary-title">Order Summary</div>
+            <div id="summaryItems"></div>
+        </div>
+    </div>
+
+    <!-- SPECIAL INSTRUCTIONS -->
+    <div class="instructions-section">
+        <label class="instructions-label">Special Instructions (Optional)</label>
+        <textarea 
+            id="specialNotes" 
+            class="instructions-textarea"
+            placeholder="e.g., No bleach, gentle wash, etc.">
+        </textarea>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-buttons">
+        <button class="btn-place-order" id="placeOrderBtn" disabled>
+            Place Order
+        </button>
+        <a href="{% url 'customer_dashboard' %}" class="btn-cancel">Cancel</a>
+    </div>
+</div>
+
+<script>
+    // ═════════════════════════════════════════════════════════════
+    // STATE MANAGEMENT
+    // ═════════════════════════════════════════════════════════════
+    const state = {
+        clothingItems: [],
+        services: [],
+        selected: {},  // { clothing_item_id: { qty, service_ids: Set } }
+    };
+
+    // ═════════════════════════════════════════════════════════════
+    // INITIALIZATION
+    // ═════════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadFormData();
+        renderGrid();
+        attachEventListeners();
+    });
+
+    async function loadFormData() {
+        try {
+            const response = await fetch('{% url "order_form_data" %}');
+            const data = await response.json();
+            state.clothingItems = data.clothing_items;
+            state.services = data.services;
+        } catch (error) {
+            showAlert('Failed to load form data', 'error');
+            console.error(error);
+        }
+    }
+
+    // ═════════════════════════════════════════════════════════════
+    // RENDERING
+    // ═════════════════════════════════════════════════════════════
+    function renderGrid() {
+        const grid = document.getElementById('clothesGrid');
+        grid.innerHTML = '';
+
+        state.clothingItems.forEach(item => {
+            const isSelected = item.id in state.selected;
+            const serviceCount = isSelected ? state.selected[item.id].service_ids.size : 0;
+
+            const card = document.createElement('div');
+            card.className = `clothing-card ${isSelected ? 'selected' : ''}`;
+            card.onclick = () => toggleCloth(item.id);
+            card.innerHTML = `
+                <i class="fa-solid ${item.icon} clothing-icon"></i>
+                <div class="clothing-name">${item.name}</div>
+                ${isSelected ? `<div class="service-badge">${serviceCount} svcs</div>` : ''}
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function renderItems() {
+        const container = document.getElementById('selectedItems');
+        container.innerHTML = '';
+
+        Object.keys(state.selected).forEach(clothingId => {
+            const data = state.selected[clothingId];
+            const clothingItem = state.clothingItems.find(c => c.id == clothingId);
+            const itemServices = Array.from(data.service_ids).map(sid => 
+                state.services.find(s => s.id == sid)
+            );
+            const itemTotal = itemServices.reduce((sum, s) => sum + parseFloat(s.price), 0) * data.qty;
+
+            const card = document.createElement('div');
+            card.className = 'item-detail-card';
+            card.innerHTML = `
+                <div class="item-header">
+                    <div class="item-title">
+                        <i class="fa-solid ${clothingItem.icon} item-icon"></i>
+                        <span>${clothingItem.name}</span>
+                    </div>
+                    <button class="remove-item-btn" onclick="removeItem(${clothingId})">
+                        <i class="fa-solid fa-trash"></i> Remove
+                    </button>
+                </div>
+
+                <div class="services-section">
+                    <label class="services-label">Select Services:</label>
+                    <div class="services-pills" id="services-${clothingId}">
+                        ${state.services.map(service => `
+                            <button 
+                                class="service-pill ${data.service_ids.has(service.id) ? 'active' : ''}"
+                                onclick="toggleService(${clothingId}, ${service.id}, event)">
+                                ${service.name}
+                                <span class="service-price">₹${parseFloat(service.price).toFixed(2)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="qty-section">
+                    <label class="qty-label">Quantity (pieces)</label>
+                    <div class="qty-control">
+                        <button class="qty-btn" onclick="adjQty(${clothingId}, -1)" ${data.qty <= 1 ? 'disabled' : ''}>−</button>
+                        <div class="qty-display">${data.qty}</div>
+                        <button class="qty-btn" onclick="adjQty(${clothingId}, 1)">+</button>
+                    </div>
+                    <div class="item-subtotal">₹${itemTotal.toFixed(2)}</div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function renderSummary() {
+        const summaryItems = document.getElementById('summaryItems');
+        summaryItems.innerHTML = '';
+        let total = 0;
+
+        Object.keys(state.selected).forEach(clothingId => {
+            const data = state.selected[clothingId];
+            const clothingItem = state.clothingItems.find(c => c.id == clothingId);
+            const itemServices = Array.from(data.service_ids).map(sid => 
+                state.services.find(s => s.id == sid)
+            );
+            const serviceNames = itemServices.map(s => s.name).join(', ');
+            const itemTotal = itemServices.reduce((sum, s) => sum + parseFloat(s.price), 0) * data.qty;
+            total += itemTotal;
+
+            const row = document.createElement('div');
+            row.className = 'summary-item';
+            row.innerHTML = `
+                <span>${clothingItem.name} ×${data.qty} · <span class="summary-services">${serviceNames}</span></span>
+                <span>₹${itemTotal.toFixed(2)}</span>
+            `;
+            summaryItems.appendChild(row);
+        });
+
+        const totalRow = document.createElement('div');
+        totalRow.className = 'summary-item total';
+        totalRow.innerHTML = `
+            <span>Total</span>
+            <span>₹${total.toFixed(2)}</span>
+        `;
+        summaryItems.appendChild(totalRow);
+    }
+
+    // ═════════════════════════════════════════════════════════════
+    // INTERACTIONS
+    // ═════════════════════════════════════════════════════════════
+    function toggleCloth(id) {
+        if (id in state.selected) {
+            delete state.selected[id];
+        } else {
+            state.selected[id] = { qty: 1, service_ids: new Set() };
+        }
+        renderGrid();
+        updateStep2();
+        updateSummary();
+    }
+
+    function removeItem(clothingId) {
+        delete state.selected[clothingId];
+        renderGrid();
+        updateStep2();
+        updateSummary();
+    }
+
+    function toggleService(clothingId, serviceId, event) {
+        event.preventDefault();
+        const data = state.selected[clothingId];
+        if (data.service_ids.has(serviceId)) {
+            // Prevent deselecting all services
+            if (data.service_ids.size > 1) {
+                data.service_ids.delete(serviceId);
+            }
+        } else {
+            data.service_ids.add(serviceId);
+        }
+        renderItems();
+        updateSummary();
+    }
+
+    function adjQty(clothingId, delta) {
+        const data = state.selected[clothingId];
+        const newQty = data.qty + delta;
+        if (newQty >= 1) {
+            data.qty = newQty;
+            renderItems();
+            updateSummary();
+        }
+    }
+
+    function updateStep2() {
+        const hasSelected = Object.keys(state.selected).length > 0;
+        document.getElementById('step2Section').style.display = hasSelected ? 'block' : 'none';
+        if (hasSelected) renderItems();
+    }
+
+    function updateSummary() {
+        const hasSelected = Object.keys(state.selected).length > 0;
+        document.getElementById('summarySection').style.display = hasSelected ? 'block' : 'none';
+        if (hasSelected) renderSummary();
+        updatePlaceOrderBtn();
+    }
+
+    function updatePlaceOrderBtn() {
+        const btn = document.getElementById('placeOrderBtn');
+        const isValid = Object.keys(state.selected).length > 0 &&
+            Object.values(state.selected).every(d => d.service_ids.size > 0);
+        btn.disabled = !isValid;
+    }
+
+    // ═════════════════════════════════════════════════════════════
+    // FORM SUBMISSION
+    // ═════════════════════════════════════════════════════════════
+    async function submitOrder() {
+        const btn = document.getElementById('placeOrderBtn');
+        const originalText = btn.innerHTML;
+
+        // Validate
+        if (Object.keys(state.selected).length === 0) {
+            showAlert('Please select at least one item', 'error');
+            return;
+        }
+
+        const items = Object.entries(state.selected).map(([clothingId, data]) => ({
+            clothing_item_id: parseInt(clothingId),
+            quantity: data.qty,
+            service_ids: Array.from(data.service_ids)
+        }));
+
+        const payload = {
+            items: items,
+            special_note: document.getElementById('specialNotes').value
+        };
+
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Placing Order...';
+
+            const response = await fetch('{% url "submit_order" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showAlert('Order placed successfully! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = `{% url 'place_order_detail' 1 %}`.replace('1', data.order_id);
+                }, 1500);
+            } else {
+                showAlert(data.error || 'Failed to place order', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        } catch (error) {
+            showAlert(`Error: ${error.message}`, 'error');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            console.error(error);
+        }
+    }
+
+    // ═════════════════════════════════════════════════════════════
+    // UTILITIES
+    // ═════════════════════════════════════════════════════════════
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showAlert(message, type) {
+        const alertEl = document.getElementById('alert');
+        alertEl.textContent = message;
+        alertEl.className = `alert alert-${type} show`;
+        setTimeout(() => alertEl.classList.remove('show'), 5000);
+    }
+
+    function attachEventListeners() {
+        document.getElementById('placeOrderBtn').addEventListener('click', submitOrder);
+    }
+</script>
+{% endblock %}
