@@ -168,6 +168,53 @@ class Order(models.Model):
         # Fallback if the customer was deleted
         return f"Order #{self.id} - Deleted/Unknown Customer"
 
+
+    @property
+    def line_items_data(self):
+        """
+        Dynamically returns structured data for item-based quick bookings,
+        matching the existing template keys.
+        """
+        items_qs = self.items.all()
+        if not items_qs.exists():
+            return None
+        
+        data = []
+        for item in items_qs:
+            services_names = ", ".join(s.name for s in item.services.all())
+            label = f"{item.clothing_item.name}"
+            if services_names:
+                label += f" ({services_names})"
+                
+            unit_price = 0
+            if item.quantity > 0:
+                unit_price = float(item.subtotal) / item.quantity
+                
+            data.append({
+                'name': label,
+                'quantity': item.quantity,
+                'price': unit_price,
+                'unit': 'pc',
+                'line_total': float(item.subtotal)
+            })
+        return data
+
+    @property
+    def service_description(self):
+        """Returns a human-readable summary of the services in this order. """
+        if self.service:
+            return self.service.name
+        
+        items_qs = self.items.all()
+        if items_qs.exists():
+            parts = []
+            for item in items_qs:
+                services_names = ", ".join(s.name for s in item.services.all())
+                parts.append(f"{item.clothing_item.name} ({services_names})")
+            return ", ".join(parts)
+            
+        return "-"
+
     is_quick_booking = models.BooleanField(default=False, help_text="Indicates if the order was placed via Quick Booking.")
     temporary_customer = models.BooleanField(default=True, help_text="Marks if the customer is temporary (Quick Booking).")
 
