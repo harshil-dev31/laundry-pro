@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, Group
 from .models import Area, Branch, Service, Order, Customer, LaundryBusiness, ClothingItem, OrderItem, OrderItemService
-from .email_utils import send_customer_credentials_email
+from .email_utils import send_customer_credentials_email, send_customer_credentials_email_async
 from django.contrib import messages
 from django.db.models import Count
 from django.db import transaction
@@ -284,19 +284,36 @@ def payment_view(request):
         if quick_email and customer_user:
             username = customer_user.username
             password = raw_password
-            success, error = send_customer_credentials_email(
-                customer_name=customer.name,
-                customer_email=quick_email,
-                username=username,
-                password=password,
+            
+            from django.conf import settings
+            email_configured = bool(
+                getattr(settings, 'EMAIL_HOST_USER', None) and
+                getattr(settings, 'EMAIL_HOST_PASSWORD', None) and
+                settings.EMAIL_BACKEND != 'django.core.mail.backends.console.EmailBackend'
             )
-            request.session['quick_booking_email_status'] = {
-                'sent': success,
-                'username': username,
-                'password': password,
-                'email': quick_email,
-                'error': error,
-            }
+            
+            if email_configured:
+                send_customer_credentials_email_async(
+                    customer_name=customer.name,
+                    customer_email=quick_email,
+                    username=username,
+                    password=password,
+                )
+                request.session['quick_booking_email_status'] = {
+                    'sent': True,
+                    'username': username,
+                    'password': password,
+                    'email': quick_email,
+                    'error': None,
+                }
+            else:
+                request.session['quick_booking_email_status'] = {
+                    'sent': False,
+                    'username': username,
+                    'password': password,
+                    'email': quick_email,
+                    'error': 'SMTP credentials are not configured.',
+                }
 
         request.session.pop('quick_booking', None)
         request.session.pop('quick_booking_cart', None)
@@ -613,7 +630,7 @@ def quick_booking_submit_items(request):
 
             if quick_email and customer_user:
                 try:
-                    send_customer_credentials_email(
+                    send_customer_credentials_email_async(
                         customer_name=customer.name,
                         customer_email=quick_email,
                         username=customer_user.username,

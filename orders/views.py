@@ -22,7 +22,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.conf import settings
 import re
 from django.http import JsonResponse
-from .email_utils import send_branch_credentials_email
+from .email_utils import send_branch_credentials_email, send_branch_credentials_email_async
 
 
 def is_manager(user):
@@ -140,24 +140,22 @@ def add_business(request):
                     )
 
                     if email_configured and o_email:
-                        email_sent, email_error = send_branch_credentials_email(
+                        send_branch_credentials_email_async(
                             owner_name=o_name,
                             owner_email=o_email,
                             username=username,
                             password=raw_password,
                             branch_name=business.name
                         )
-                        if email_sent:
-                            messages.success(request, f"Branch '{business.name}' created! 🎉 Login credentials emailed to {o_email}")
-                        else:
-                            messages.warning(request, (
-                                f"Branch '{business.name}' created, but email could not be sent. "
-                                f"Reason: {email_error}. Username: {username} | Password: {raw_password}"
-                            ))
+                        messages.success(request, (
+                            f"Branch '{business.name}' created! 🎉 "
+                            f"Login credentials are being emailed to {o_email}. "
+                            f"Username: {username} | Password: {raw_password}"
+                        ))
                     else:
                         messages.warning(request, (
                             f"Branch '{business.name}' created, but email is not configured or the owner's email is unavailable. "
-                            f"Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in your deployment environment to send credentials by email."
+                            f"Username: {username} | Password: {raw_password}"
                         ))
                 else:
                     # SCENARIO B: Existing owner
