@@ -3099,7 +3099,127 @@
                 font-size: 0.72rem;
             }
         }
-    </style>
+    
+        /* --- Premium Scrolled / Sticky Navbar Transition Styles --- */
+        .glass-nav.scrolled {
+            background: rgba(255, 255, 255, 0.9) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border-bottom: 1px solid rgba(229, 238, 252, 0.8) !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
+            padding: 8px 0 !important;
+        }
+
+        .glass-nav .brand-text-logo {
+            display: none;
+        }
+
+        .glass-nav.scrolled .brand-logo-img {
+            display: none !important;
+        }
+
+        .glass-nav.scrolled .brand-text-logo {
+            display: inline-block !important;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            color: var(--primary) !important;
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+            text-shadow: none !important;
+            animation: navFadeIn 0.4s ease forwards;
+        }
+
+        .glass-nav .nav-simple-text {
+            display: none;
+        }
+
+        .glass-nav.scrolled .navbar-nav::before {
+            display: none !important; /* Hide the hanging rope in scrolled state */
+        }
+
+        .glass-nav.scrolled .nav-svg-wrap {
+            display: none !important;
+        }
+
+        .glass-nav.scrolled .navbar-nav .nav-link {
+            animation: none !important;
+            transform: none !important;
+            padding: 6px 12px !important;
+        }
+
+        .glass-nav.scrolled .nav-simple-text {
+            display: inline-block !important;
+            color: var(--dark) !important;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 6px 0;
+        }
+
+        .glass-nav.scrolled .nav-simple-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--primary);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .glass-nav.scrolled .navbar-nav .nav-link:hover .nav-simple-text {
+            color: var(--primary) !important;
+        }
+
+        .glass-nav.scrolled .navbar-nav .nav-link:hover .nav-simple-text::after {
+            width: 100%;
+        }
+
+        /* Float Scroll-to-Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white !important;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .scroll-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .scroll-to-top:hover {
+            background: #1d4ed8;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.4);
+        }
+
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+</style>
 </head>
 
 <body class="page-foam">
@@ -3121,8 +3241,9 @@
     <nav class="navbar navbar-expand-lg glass-nav fixed-top py-3">
         <div class="container">
             <a class="navbar-brand fw-bold fs-3 d-flex align-items-center gap-2" href="#home">
-                <img src="{% static 'img/Logo.jpeg' %}" alt="Dhobi Kaka"
-                    style="height:100px; width:auto; border-radius:10px; object-fit:contain;">
+                <img class="brand-logo-img" src="{% static 'img/Logo.jpeg' %}" alt="Dhobi Kaka"
+                    style="height:135px; width:auto; border-radius:15px; object-fit:contain; transition: all 0.3s ease;">
+                <span class="brand-text-logo">Dhobi Kaka</span>
             </a>
             <!-- Mobile-only toggler (hidden on lg+) -->
             <button class="navbar-toggler border-0 shadow-none d-lg-none" type="button" data-bs-toggle="collapse"
@@ -3170,7 +3291,32 @@
                             <!-- inner collar shadow for 3D realism -->
                             <path d="M 40 40 Q 60 55 80 40 Q 60 48 40 40 Z" fill="rgba(0,0,0,0.15)" />
                         </g>
-                    </defs>
+                    
+                        <g id="nav-towel-paths">
+                            <!-- hook -->
+                            <path d="M 60 38 L 60 22 A 10 10 0 1 0 48 16" fill="none" stroke="rgba(31,41,55,.8)"
+                                stroke-width="2.5" stroke-linecap="round" />
+                            <!-- hanger arms (straight bar for towel) -->
+                            <line x1="15" y1="55" x2="105" y2="55" stroke="rgba(31,41,55,.8)" stroke-width="2.5"
+                                stroke-linecap="round" />
+
+                            <!-- glass towel body hanging from the bar -->
+                            <path
+                                d="M 22 55 L 98 55 L 96 130 Q 60 137 24 130 Z"
+                                fill="url(#nav-shirt-bg)" stroke="rgba(255,255,255,.6)" stroke-width="1.5" />
+
+                            <!-- diagonal bright glass reflection slashes -->
+                            <path d="M 35 56 L 47 56 L 35 129 L 24 129 Z" fill="rgba(255, 255, 255, 0.22)" />
+                            <path d="M 60 56 L 66 56 L 56 132 L 50 132 Z" fill="rgba(255, 255, 255, 0.12)" />
+
+                            <!-- hotel-style decorative horizontal double stripes near bottom of towel -->
+                            <rect x="25" y="112" width="70" height="3" fill="rgba(255, 255, 255, 0.45)" rx="1" />
+                            <rect x="25" y="118" width="70" height="3" fill="rgba(255, 255, 255, 0.45)" rx="1" />
+
+                            <!-- towel inner shadow overlay at the hanging fold top -->
+                            <path d="M 22 55 L 98 55 L 95 68 Q 60 72 25 68 Z" fill="rgba(0,0,0,0.12)" />
+                        </g>
+</defs>
                 </svg>
 
                 <!-- ── Mobile-only 3D menu (hidden on lg+) ── -->
@@ -3217,88 +3363,134 @@
                     <li class="nav-item mx-3"
                         style="--shirt-color-top: #7dd3fc; --shirt-color-mid: #38bdf8; --shirt-color-bot: #0284c7;">
                         <a class="nav-link p-0" href="#home" title="Home">
-                            <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                class="d-block mx-auto">
-                                <use href="#nav-shirt-paths" />
-                                <text x="60" y="100" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="15" letter-spacing="2" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">HOME</text>
-                            </svg>
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-shirt-paths" />
+                                    <text x="60" y="100" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="15" letter-spacing="2" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">HOME</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text">Home</span>
                         </a>
                     </li>
                     <li class="nav-item mx-3"
                         style="--shirt-color-top: #7dd3fc; --shirt-color-mid: #38bdf8; --shirt-color-bot: #0284c7;">
                         <a class="nav-link p-0" href="#pricing" title="Rate Card">
-                            <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                class="d-block mx-auto">
-                                <use href="#nav-shirt-paths" />
-                                <text x="60" y="89" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="15" letter-spacing="2" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">RATE</text>
-                                <text x="60" y="109" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="15" letter-spacing="2" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">CARD</text>
-                            </svg>
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-shirt-paths" />
+                                    <text x="60" y="89" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="15" letter-spacing="2" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">RATE</text>
+                                    <text x="60" y="109" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="15" letter-spacing="2" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">CARD</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text">Rate Card</span>
                         </a>
                     </li>
                     <li class="nav-item mx-3"
                         style="--shirt-color-top: #7dd3fc; --shirt-color-mid: #38bdf8; --shirt-color-bot: #0284c7;">
                         <a class="nav-link p-0" href="#services" title="Services">
-                            <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                class="d-block mx-auto">
-                                <use href="#nav-shirt-paths" />
-                                <text x="60" y="100" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="13.5" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">SERVICES</text>
-                            </svg>
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-shirt-paths" />
+                                    <text x="60" y="100" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="13.5" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">SERVICES</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text">Services</span>
                         </a>
                     </li>
                     <li class="nav-item mx-3"
                         style="--shirt-color-top: #7dd3fc; --shirt-color-mid: #38bdf8; --shirt-color-bot: #0284c7;">
                         <a class="nav-link p-0" href="#how-it-works" title="How it Works">
-                            <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                class="d-block mx-auto">
-                                <use href="#nav-shirt-paths" />
-                                <text x="60" y="89" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="14" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">HOW IT</text>
-                                <text x="60" y="109" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="14" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">WORKS</text>
-                            </svg>
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-shirt-paths" />
+                                    <text x="60" y="89" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="14" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">HOW IT</text>
+                                    <text x="60" y="109" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="14" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">WORKS</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text">How It Works</span>
                         </a>
                     </li>
                     <li class="nav-item mx-3"
                         style="--shirt-color-top: #7dd3fc; --shirt-color-mid: #38bdf8; --shirt-color-bot: #0284c7;">
                         <a class="nav-link p-0" href="#reviews" title="Reviews">
-                            <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                class="d-block mx-auto">
-                                <use href="#nav-shirt-paths" />
-                                <text x="60" y="100" text-anchor="middle" dominant-baseline="middle"
-                                    font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                    font-size="14" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
-                                    paint-order="stroke fill">REVIEWS</text>
-                            </svg>
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-shirt-paths" />
+                                    <text x="60" y="100" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="14" letter-spacing="1" stroke="#1e3a5f" stroke-width="4"
+                                        paint-order="stroke fill">REVIEWS</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text">Reviews</span>
                         </a>
                     </li>
-                    {% comment %} <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
-                        <a href="{% url 'login' %}"
-                            class="btn btn-outline-dark px-4 py-2 rounded-pill me-2 fw-semibold">Sign In</a>
-                    </li> {% endcomment %}
-                    <li class="nav-item mt-2 mt-lg-0 d-none d-lg-flex align-items-center">
-                        <a href="{% url 'login' %}" class="btn btn-brand px-4 py-2 rounded-pill fw-bold">Schedule
-                            Pickup</a>
+                    
+                    <!-- Hanger-Towel Option: Schedule Pickup (Deep Blue Gradient) -->
+                    <li class="nav-item mx-3"
+                        style="--shirt-color-top: #60a5fa; --shirt-color-mid: #2563eb; --shirt-color-bot: #1d4ed8;">
+                        <a class="nav-link p-0" href="{% url 'login' %}" title="Schedule Pickup">
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-towel-paths" />
+                                    <text x="60" y="85" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="11.5" letter-spacing="0.5" stroke="#1e3a5f" stroke-width="3"
+                                        paint-order="stroke fill">SCHEDULE</text>
+                                    <text x="60" y="105" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="11.5" letter-spacing="0.5" stroke="#1e3a5f" stroke-width="3"
+                                        paint-order="stroke fill">PICKUP</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text" style="color: var(--primary) !important;">Schedule Pickup</span>
+                        </a>
                     </li>
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0 d-none d-lg-flex align-items-center">
-                        <a href="{% url 'quick_booking' %}" class="btn btn-success px-4 py-2 rounded-pill fw-bold"
-                            style="background: linear-gradient(135deg, #10b981, #059669); border: none;">Quick
-                            Laundry</a>
+
+                    <!-- Hanger-Towel Option: Quick Laundry (Emerald Green Gradient) -->
+                    <li class="nav-item mx-3"
+                        style="--shirt-color-top: #34d399; --shirt-color-mid: #10b981; --shirt-color-bot: #047857;">
+                        <a class="nav-link p-0" href="{% url 'quick_booking' %}" title="Quick Laundry">
+                            <span class="nav-svg-wrap">
+                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
+                                    class="d-block mx-auto">
+                                    <use href="#nav-towel-paths" />
+                                    <text x="60" y="85" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="12" letter-spacing="0.5" stroke="#064e3b" stroke-width="3"
+                                        paint-order="stroke fill">QUICK</text>
+                                    <text x="60" y="105" text-anchor="middle" dominant-baseline="middle"
+                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
+                                        font-size="12" letter-spacing="0.5" stroke="#064e3b" stroke-width="3"
+                                        paint-order="stroke fill">LAUNDRY</text>
+                                </svg>
+                            </span>
+                            <span class="nav-simple-text" style="color: #10b981 !important;">Quick Laundry</span>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -4146,7 +4338,42 @@
             finderNoResult.hidden = false;
             finderNoResult.textContent = 'Type a location to see related branches.';
         }
-    </script>
+    
+        // ── Sticky Navbar and Scroll-to-Top Button ──
+        window.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.querySelector('.glass-nav');
+            const scrollTopBtn = document.createElement('button');
+            scrollTopBtn.id = 'scrollToTop';
+            scrollTopBtn.className = 'scroll-to-top';
+            scrollTopBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+            scrollTopBtn.setAttribute('aria-label', 'Scroll to Top');
+            document.body.appendChild(scrollTopBtn);
+
+            const handleScroll = () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            };
+
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            handleScroll(); // Trigger initially in case page is already scrolled
+
+            scrollTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+</script>
 </body>
 
 </html>
