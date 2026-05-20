@@ -345,11 +345,11 @@
 
         /* Single Clean Rope - Connected between shirts only (Desktop) */
         @media (min-width: 999px) {
-            .glass-nav .nav-item:not(.nav-item-scooter):not(.nav-item-cyclone) {
+            .glass-nav .nav-item:not(.nav-item-scooter):not(.nav-item-iron) {
                 position: relative;
             }
 
-            .glass-nav .nav-item:not(.nav-item-scooter):not(.nav-item-cyclone)::before {
+            .glass-nav .nav-item:not(.nav-item-scooter):not(.nav-item-iron)::before {
                 content: "";
                 position: absolute;
                 top: 10px;
@@ -3443,6 +3443,12 @@
             padding: 6px 12px !important;
         }
 
+        .glass-nav.scrolled .nav-item-scooter .nav-link,
+        .glass-nav.scrolled .nav-item-iron .nav-link {
+            margin-top: 0 !important;
+            display: block !important;
+        }
+
         .glass-nav.scrolled .nav-simple-text {
             display: inline-block !important;
             color: var(--dark) !important;
@@ -3530,9 +3536,9 @@
             transform: none !important;
         }
 
-        /* ── Scooter & Cyclone items: no swing, no rope, aligned properly ── */
+        /* ── Scooter & Iron items: no swing, no rope, aligned properly ── */
         .nav-item-scooter .nav-link,
-        .nav-item-cyclone .nav-link {
+        .nav-item-iron .nav-link {
             animation: none !important;
             transform: none !important;
             display: flex !important;
@@ -3542,8 +3548,16 @@
             margin-top: 18px !important;
         }
 
+        .nav-item-scooter .nav-svg-wrap,
+        .nav-item-iron .nav-svg-wrap {
+            display: flex !important;
+            align-items: flex-end;
+            justify-content: center;
+            height: 92px;
+        }
+
         .nav-item-scooter .nav-link:hover,
-        .nav-item-cyclone .nav-link:hover {
+        .nav-item-iron .nav-link:hover {
             animation: none !important;
             filter: none !important;
         }
@@ -3715,18 +3729,90 @@
             animation-delay: 0.32s;
         }
 
-        /* ── CYCLONE: real tornado spin with shear ── */
-        .tornado-canvas {
-            display: block;
-            margin: 0 auto;
-        }
-
-        .cyclone-wrapper {
+        /* ── STEAM IRON: 3D Iron with Steam Animations ── */
+        .iron-wrapper {
             position: relative;
             display: inline-block;
+            width: 100px;
+            height: 92px;
         }
 
-        /* ── LABELS below scooter / cyclone ── */
+        .iron-svg-anim {
+            width: 100%;
+            height: 100%;
+            transform-origin: center bottom;
+            padding-bottom: 12px;
+        }
+
+        @keyframes ironSlide {
+            0% {
+                transform: translateX(0px);
+            }
+
+            45% {
+                transform: translateX(35px) rotate(3deg);
+            }
+
+            55% {
+                transform: translateX(35px) rotate(-1deg);
+            }
+
+            100% {
+                transform: translateX(0px);
+            }
+        }
+
+        .iron-moving-group {
+            animation: ironSlide 2.5s ease-in-out infinite;
+        }
+
+        .nav-item-iron .nav-link:hover .iron-moving-group {
+            animation: ironSlide 1.2s ease-in-out infinite;
+        }
+
+        /* Steam Puffs */
+        .steam-puff {
+            transform-origin: center;
+        }
+
+        .puff-1 {
+            animation: steamRiseCloth 1.2s ease-out infinite 0s;
+        }
+
+        .puff-2 {
+            animation: steamRiseCloth 1.5s ease-out infinite 0.3s;
+        }
+
+        .puff-3 {
+            animation: steamRiseCloth 1.1s ease-out infinite 0.6s;
+        }
+
+        .puff-4 {
+            animation: steamRiseCloth 1.4s ease-out infinite 0.9s;
+        }
+
+        @keyframes steamRiseCloth {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.8;
+            }
+
+            60% {
+                transform: translateY(-25px) scale(1.6);
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: translateY(-40px) scale(2.2);
+                opacity: 0;
+            }
+        }
+
+        /* ── LABELS below scooter / iron ── */
         .nav-img-label {
             font-family: 'Poppins', sans-serif;
             font-weight: 800;
@@ -4024,12 +4110,157 @@
                         </a>
                     </li>
 
-                    <!-- ── Quick Laundry: CSS 3D tornado ── -->
-                    <li class="nav-item mx-2 nav-item-cyclone">
+                    <!-- ── Quick Laundry: CSS 3D Steam Iron ── -->
+                    <li class="nav-item mx-2 nav-item-iron">
                         <a class="nav-link p-0" href="{% url 'quick_booking' %}" title="Quick Laundry">
                             <span class="nav-svg-wrap d-block" style="position:relative; text-align:center;">
-                                <span class="cyclone-wrapper">
-                                    <canvas class="tornado-canvas" width="70" height="92"></canvas>
+                                <span class="iron-wrapper">
+                                    <svg width="100%" height="100%" viewBox="0 15 160 145" class="iron-svg-anim">
+                                        <defs>
+                                            <!-- Iron Baseplate (Metallic) -->
+                                            <linearGradient id="real-iron-base" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#cbd5e1" />
+                                                <stop offset="50%" style="stop-color:#f1f5f9" />
+                                                <stop offset="100%" style="stop-color:#94a3b8" />
+                                            </linearGradient>
+                                            <linearGradient id="real-iron-sole" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" style="stop-color:#e2e8f0" />
+                                                <stop offset="100%" style="stop-color:#f8fafc" />
+                                            </linearGradient>
+
+                                            <!-- Iron Body (Glossy Deep Red/Crimson) -->
+                                            <linearGradient id="real-iron-body" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#f87171" />
+                                                <stop offset="30%" style="stop-color:#dc2626" />
+                                                <stop offset="100%" style="stop-color:#7f1d1d" />
+                                            </linearGradient>
+
+                                            <!-- Iron Water Tank (Translucent Cyan/Blue) -->
+                                            <linearGradient id="real-iron-tank" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#7dd3fc" />
+                                                <stop offset="50%" style="stop-color:#38bdf8" />
+                                                <stop offset="100%" style="stop-color:#0284c7" />
+                                            </linearGradient>
+
+                                            <!-- Iron Handle (Dark Premium Grey/Black) -->
+                                            <linearGradient id="real-iron-handle" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#475569" />
+                                                <stop offset="100%" style="stop-color:#0f172a" />
+                                            </linearGradient>
+
+                                            <!-- Reflection / Gloss -->
+                                            <linearGradient id="real-iron-gloss" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%" style="stop-color:rgba(255,255,255,0.8)" />
+                                                <stop offset="100%" style="stop-color:rgba(255,255,255,0)" />
+                                            </linearGradient>
+
+                                            <linearGradient id="board-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#cbd5e1" />
+                                                <stop offset="100%" style="stop-color:#94a3b8" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <!-- Ironing Board & Cloth -->
+                                        <g class="ironing-station">
+                                            <!-- Board Legs -->
+                                            <path
+                                                d="M 35 138 L 15 158 M 125 138 L 145 158 M 115 138 L 55 158 M 45 138 L 105 158"
+                                                stroke="#64748b" stroke-width="5" stroke-linecap="round" />
+
+                                            <!-- Board Top (Thicker) -->
+                                            <path
+                                                d="M 5 128 L 155 128 C 160 128 160 138 155 138 L 5 138 C -5 138 -5 128 5 128 Z"
+                                                fill="url(#board-grad)" />
+
+                                            <!-- Cloth/Shirt (Draped over the board) -->
+                                            <path
+                                                d="M 25 125 L 135 125 C 150 125 150 148 135 158 C 120 162 115 145 105 145 C 95 145 85 160 75 160 C 65 160 55 145 45 145 C 35 145 25 155 15 145 L 15 125 Z"
+                                                fill="#bae6fd" />
+
+                                            <!-- Cloth Folds/Shadows -->
+                                            <path
+                                                d="M 130 125 C 140 135 135 155 130 158 M 105 145 C 105 150 95 160 95 160 M 75 160 C 75 150 65 145 65 145 M 45 145 C 45 150 35 155 35 155"
+                                                stroke="#7dd3fc" stroke-width="3" fill="none" />
+                                        </g>
+
+                                        <!-- Moving Iron -->
+                                        <g class="iron-moving-group">
+                                            <!-- Steam Puffs -->
+                                            <g class="iron-steam">
+                                                <circle cx="50" cy="120" r="8" fill="#f8fafc" opacity="0"
+                                                    class="steam-puff puff-1" />
+                                                <circle cx="80" cy="120" r="12" fill="#f8fafc" opacity="0"
+                                                    class="steam-puff puff-2" />
+                                                <circle cx="110" cy="120" r="7" fill="#f8fafc" opacity="0"
+                                                    class="steam-puff puff-3" />
+                                                <circle cx="65" cy="120" r="10" fill="#f8fafc" opacity="0"
+                                                    class="steam-puff puff-4" />
+                                            </g>
+
+                                            <!-- Iron Chassis -->
+                                            <g class="iron-chassis" transform="translate(15, 30)">
+                                                <!-- Drop shadow on cloth -->
+                                                <ellipse cx="65" cy="98" rx="45" ry="6" fill="rgba(0,0,0,0.2)" />
+
+                                                <!-- 1. Metallic Baseplate -->
+                                                <path
+                                                    d="M 5 92 L 110 92 C 120 92 125 95 125 98 L 10 98 C 0 98 0 92 5 92 Z"
+                                                    fill="url(#real-iron-base)" />
+                                                <path d="M 10 98 L 125 98 L 122 100 L 10 100 Z"
+                                                    fill="url(#real-iron-sole)" />
+
+                                                <!-- 2. Water Tank / Middle Body -->
+                                                <path d="M 5 92 L 110 92 C 95 70 70 50 35 50 L 15 50 C 5 50 0 75 5 92 Z"
+                                                    fill="url(#real-iron-tank)" opacity="0.9" />
+
+                                                <!-- 3. Top Main Body (Red) -->
+                                                <path d="M 5 82 L 95 82 C 85 65 65 50 35 50 L 15 50 C 5 50 0 70 5 82 Z"
+                                                    fill="url(#real-iron-body)" />
+
+                                                <!-- Gloss curve on the body -->
+                                                <path d="M 10 77 L 85 77 C 75 60 55 52 35 52 L 10 52 Z"
+                                                    fill="url(#real-iron-gloss)" opacity="0.3" />
+
+                                                <!-- 4. The Handle -->
+                                                <!-- Back column -->
+                                                <path
+                                                    d="M 15 50 L 15 15 C 35 10 75 20 95 75 L 80 75 C 65 40 45 25 25 25 L 25 50 Z"
+                                                    fill="url(#real-iron-handle)" />
+
+                                                <!-- Gloss highlight on handle -->
+                                                <path
+                                                    d="M 17 45 L 17 22 C 35 15 65 25 80 62 L 72 62 C 60 38 43 28 28 30 L 28 45 Z"
+                                                    fill="url(#real-iron-gloss)" opacity="0.2" />
+
+                                                <!-- Handle grip details (texture lines) -->
+                                                <path
+                                                    d="M 38 22 L 42 20 M 46 24 L 50 22 M 55 26 L 59 24 M 64 30 L 68 28"
+                                                    stroke="#94a3b8" stroke-width="2" stroke-linecap="round" />
+
+                                                <!-- 5. Temperature Dial -->
+                                                <ellipse cx="38" cy="50" rx="14" ry="5" fill="#0f172a" />
+                                                <ellipse cx="38" cy="48" rx="10" ry="3" fill="#cbd5e1" />
+                                                <circle cx="43" cy="48" r="1.5" fill="#dc2626" />
+
+                                                <!-- 6. Water Spray Button -->
+                                                <path d="M 22 28 L 29 28 C 29 23 22 23 22 28 Z" fill="#64748b" />
+                                                <path d="M 30 28 L 37 28 C 37 24 30 24 30 28 Z" fill="#94a3b8" />
+
+                                                <!-- 7. Spray Nozzle -->
+                                                <path d="M 90 75 L 100 75 L 94 80 Z" fill="#1e293b" />
+                                                <circle cx="100" cy="75" r="1" fill="#38bdf8" />
+
+                                                <!-- 8. Indicator Light -->
+                                                <circle cx="15" cy="70" r="3" fill="#fcd34d" />
+                                                <circle cx="15" cy="70" r="1.5" fill="#fff" />
+
+                                                <!-- 9. Power Cord Attachment (Back) -->
+                                                <path d="M 5 70 C -15 70 -15 95 -25 95" stroke="#475569"
+                                                    stroke-width="4" fill="none" stroke-linecap="round" />
+                                                <path d="M 0 65 L 8 65 L 8 80 L 0 80 Z" fill="#334155" />
+                                            </g>
+                                        </g>
+                                    </svg>
                                 </span>
                             </span>
                             <span class="nav-img-label nav-img-label-red">Quick Laundry</span>
@@ -4462,8 +4693,10 @@
                                             <div class="price-main">
                                                 <i class="fa-solid fa-check-circle text-primary opacity-75"></i>
                                                 <div class="price-copy">
-                                                    <span class="service-name">{{
-                                                        item.applicable_clothes|default:item.name }}</span>
+                                                    <span class="service-name">
+                                                        {% if item.applicable_clothes %}{{ item.applicable_clothes }}{%
+                                                        else %}{{ item.name }}{% endif %}
+                                                    </span>
 
                                                     <span class="service-category">{{ item.category }}</span>
                                                 </div>
@@ -4916,226 +5149,6 @@
                 });
             });
         });
-        // ── 3D Spinning Tornado Canvas ──
-        const tornadoCanvas = document.querySelector('.tornado-canvas');
-        if (tornadoCanvas) {
-            const ctx = tornadoCanvas.getContext('2d');
-            // Explicitly constrain CSS display size to keep navbar layout tidy
-            tornadoCanvas.style.width = '90px';
-            tornadoCanvas.style.height = '92px';
-            // Increase canvas internal resolution so nothing clips on the edges
-            tornadoCanvas.width = 180;
-            tornadoCanvas.height = 184;
-            const W = 180, H = 184;
-            let time = 0;
-
-            // Ribbons defining the cyclone (Red, Blue, Purple)
-            const ribbons = [
-                { color: '#ef4444', offset: 0 },
-                { color: '#3b82f6', offset: Math.PI * 0.7 },
-                { color: '#a855f7', offset: Math.PI * 1.4 }
-            ];
-
-            // Floating bubbles/sparkles (constrained inside canvas bounds to avoid clipping)
-            const bubbles = Array.from({ length: 15 }, () => ({
-                x: 25 + Math.random() * (W - 50),
-                y: Math.random() * H,
-                size: Math.random() * 4 + 2,
-                speed: Math.random() * 2 + 1.5,
-                w: Math.random() * Math.PI * 2,
-                isSparkle: Math.random() > 0.7
-            }));
-
-            // Floating clothes (like the reference image)
-            const clothes = [
-                { y: 40, xOffset: 35, speed: 0.05, angle: 0, scale: 0.8 },
-                { y: 130, xOffset: 20, speed: 0.07, angle: Math.PI, scale: 0.55 }
-            ];
-
-            function drawTornado(t) {
-                ctx.clearRect(0, 0, W, H);
-
-                // Add a magical glow base
-                const bgGlow = ctx.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, 80);
-                bgGlow.addColorStop(0, 'rgba(168, 85, 247, 0.15)');
-                bgGlow.addColorStop(0.5, 'rgba(59, 130, 246, 0.1)');
-                bgGlow.addColorStop(1, 'transparent');
-                ctx.fillStyle = bgGlow;
-                ctx.fillRect(0, 0, W, H);
-
-                let points = [];
-                const steps = 90; // High resolution for smooth ribbon
-
-                ribbons.forEach(r => {
-                    for (let i = 0; i < steps; i++) {
-                        const tNorm = i / (steps - 1); // 0 at top, 1 at bottom
-                        // Flared top, pinched bottom
-                        const radius = 55 * Math.pow(1 - tNorm, 1.5) + 3;
-                        const y = 20 + tNorm * 140; // 20 to 160
-
-                        // Swirl angle
-                        const angle = t * -4 + tNorm * 12 + r.offset;
-
-                        const x = W / 2 + Math.cos(angle) * radius;
-                        const z = Math.sin(angle) * radius;
-
-                        points.push({ x, y, z, r, tNorm, radius });
-                    }
-                });
-
-                // Sort points by Z to draw back to front
-                points.sort((a, b) => a.z - b.z);
-
-                points.forEach(p => {
-                    // Size of the brush
-                    const size = 18 * Math.pow(1 - p.tNorm, 1.2) + 3;
-                    const isBack = p.z < 0;
-
-                    ctx.beginPath();
-                    // Draw horizontal ellipses for smooth blending
-                    ctx.ellipse(p.x, p.y, size, size * 0.45, 0, 0, Math.PI * 2);
-
-                    // Create gradient for a rounded 3D look
-                    const grd = ctx.createRadialGradient(
-                        p.x - size * 0.3, p.y - size * 0.1, 0,
-                        p.x, p.y, size
-                    );
-
-                    if (p.r.color === '#ef4444') { // Red
-                        grd.addColorStop(0, isBack ? '#b91c1c' : '#fca5a5');
-                        grd.addColorStop(1, isBack ? '#7f1d1d' : '#ef4444');
-                    } else if (p.r.color === '#3b82f6') { // Blue
-                        grd.addColorStop(0, isBack ? '#1d4ed8' : '#93c5fd');
-                        grd.addColorStop(1, isBack ? '#1e3a8a' : '#3b82f6');
-                    } else { // Purple
-                        grd.addColorStop(0, isBack ? '#7e22ce' : '#d8b4fe');
-                        grd.addColorStop(1, isBack ? '#581c87' : '#a855f7');
-                    }
-
-                    ctx.fillStyle = grd;
-                    // Outer glow/shadow
-                    ctx.shadowColor = p.r.color;
-                    ctx.shadowBlur = isBack ? 2 : 15;
-                    ctx.fill();
-
-                    // Front highlight sparkle
-                    if (!isBack && Math.random() > 0.96) {
-                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                        ctx.shadowBlur = 5;
-                        ctx.shadowColor = '#fff';
-                        ctx.beginPath();
-                        ctx.arc(p.x - size * 0.3, p.y - size * 0.1, size * 0.15, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                });
-
-                // Reset shadow
-                ctx.shadowBlur = 0;
-
-                // Draw floating clothes (behind bubbles)
-                clothes.forEach(c => {
-                    c.angle += c.speed;
-                    // Simulate orbit
-                    const isBack = Math.sin(c.angle) < 0;
-                    if (isBack) return; // Only draw when in front for simplicity
-
-                    const cx = W / 2 + Math.cos(c.angle) * c.xOffset;
-                    const cy = c.y + Math.sin(c.angle * 2) * 5;
-
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    // Tumble around
-                    ctx.rotate(c.angle * 2);
-                    ctx.scale(c.scale, c.scale);
-
-                    // Simple white shirt shape
-                    ctx.beginPath();
-                    ctx.moveTo(-10, -15);
-                    ctx.lineTo(10, -15); // neck
-                    ctx.lineTo(25, -5);  // right shoulder/sleeve
-                    ctx.lineTo(20, 5);   // under right sleeve
-                    ctx.lineTo(12, 0);   // armpit right
-                    ctx.lineTo(12, 20);  // right body
-                    ctx.lineTo(-12, 20); // bottom
-                    ctx.lineTo(-12, 0);  // left body
-                    ctx.lineTo(-20, 5);  // under left sleeve
-                    ctx.lineTo(-25, -5); // left shoulder/sleeve
-                    ctx.closePath();
-
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                    ctx.shadowColor = 'rgba(0,0,0,0.2)';
-                    ctx.shadowBlur = 10;
-                    ctx.fill();
-
-                    // Simple collar/details
-                    ctx.beginPath();
-                    ctx.moveTo(-5, -15);
-                    ctx.lineTo(0, -5);
-                    ctx.lineTo(5, -15);
-                    ctx.strokeStyle = '#e2e8f0';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-
-                    ctx.restore();
-                });
-
-                // Draw bubbles and sparkles
-                bubbles.forEach(b => {
-                    b.y -= b.speed;
-                    b.w += 0.05;
-                    const bx = b.x + Math.sin(b.w) * 20;
-                    if (b.y < -10) { b.y = H + 10; b.x = Math.random() * W; }
-
-                    if (b.isSparkle) {
-                        // Draw a star/sparkle
-                        ctx.save();
-                        ctx.translate(bx, b.y);
-                        ctx.rotate(t * 2);
-                        ctx.beginPath();
-                        for (let i = 0; i < 4; i++) {
-                            ctx.lineTo(0, -b.size * 1.5);
-                            ctx.lineTo(b.size * 0.3, -b.size * 0.3);
-                            ctx.rotate(Math.PI / 2);
-                        }
-                        ctx.closePath();
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                        ctx.shadowColor = '#fff';
-                        ctx.shadowBlur = 8;
-                        ctx.fill();
-                        ctx.restore();
-                    } else {
-                        // Draw a bubble
-                        ctx.beginPath();
-                        ctx.arc(bx, b.y, b.size, 0, Math.PI * 2);
-                        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-                        ctx.lineWidth = 1.5;
-                        ctx.stroke();
-                        ctx.fillStyle = 'rgba(255,255,255,0.2)';
-                        ctx.fill();
-
-                        // Bubble shine
-                        ctx.beginPath();
-                        ctx.arc(bx - b.size * 0.3, b.y - b.size * 0.3, b.size * 0.25, 0, Math.PI * 2);
-                        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                        ctx.fill();
-                    }
-                });
-            }
-
-            // Hover: spin faster
-            const cycloneLink = tornadoCanvas.closest('.nav-link');
-            if (cycloneLink) {
-                cycloneLink.addEventListener('mouseenter', () => { window._tornadoSpeed = 0.06; });
-                cycloneLink.addEventListener('mouseleave', () => { window._tornadoSpeed = 0.02; });
-            }
-
-            // Use dynamic speed
-            (function reAnimate() {
-                time += (window._tornadoSpeed || 0.02);
-                drawTornado(time);
-                requestAnimationFrame(reAnimate);
-            })();
-        }
     </script>
 </body>
 
