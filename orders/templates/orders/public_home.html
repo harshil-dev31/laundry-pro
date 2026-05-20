@@ -320,10 +320,11 @@
             border-top: none;
             box-shadow: none;
             transition: all 0.3s ease;
-            position: sticky !important;
+            position: fixed !important;
+            width: 100%;
             top: 0 !important;
             z-index: 1030 !important;
-            padding: 30px 0 !important;
+            padding: 2px !important;
         }
 
         .navbar-brand {
@@ -342,20 +343,42 @@
             justify-content: center;
         }
 
-        /* Single Clean Rope */
-        .glass-nav .navbar-nav::before {
-            content: "";
-            position: absolute;
-            top: 6px;
-            /* Adjusted to meet the hanger hooks */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 1000px;
-            height: 2px;
-            background: #1f2937;
-            border-radius: 1px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        /* Single Clean Rope - Connected between shirts only (Desktop) */
+        @media (min-width: 999px) {
+            .glass-nav .nav-item:not(.nav-item-scooter):not(.nav-item-cyclone) {
+                position: relative;
+            }
+
+            .glass-nav .nav-item:not(.nav-item-scooter):not(.nav-item-cyclone)::before {
+                content: "";
+                position: absolute;
+                top: 10px;
+                /* Adjusted to rest perfectly inside the top of the hook */
+                height: 2px;
+                background: #1f2937;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                z-index: -1;
+            }
+
+            /* First item: extend slightly to the left */
+            .glass-nav .nav-item:nth-child(1)::before {
+                left: calc(50% - 25px);
+                width: calc(50% + 1rem + 25px);
+            }
+
+            /* Middle items: span full width + margin gap */
+            .glass-nav .nav-item:nth-child(2)::before,
+            .glass-nav .nav-item:nth-child(3)::before,
+            .glass-nav .nav-item:nth-child(4)::before {
+                left: -1rem;
+                width: calc(100% + 2rem);
+            }
+
+            /* Last shirt item: extend slightly to the right */
+            .glass-nav .nav-item:nth-child(5)::before {
+                left: -1rem;
+                width: calc(50% + 1rem + 25px);
+            }
         }
 
         .glass-nav .navbar-nav .nav-link {
@@ -439,6 +462,271 @@
             50% {
                 transform: rotate(5.5deg);
             }
+        }
+
+        /* --- Scooter Engine Vibration & Driving Animations --- */
+        @keyframes rumblingScooter {
+
+            0%,
+            100% {
+                transform: translate(10px, 68px) translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(10px, 68px) translateY(-1px) rotate(-0.5deg);
+            }
+
+            50% {
+                transform: translate(10px, 68px) translateY(0.5px) rotate(0deg);
+            }
+
+            75% {
+                transform: translate(10px, 68px) translateY(-0.8px) rotate(0.5deg);
+            }
+        }
+
+        .scooter-body {
+            animation: rumblingScooter 0.16s ease-in-out infinite;
+            transform-origin: 50% 100%;
+        }
+
+        @keyframes spinningWheels {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .scooter-wheel {
+            animation: spinningWheels 0.35s linear infinite;
+        }
+
+        .wheel-front {
+            transform-origin: 74px 45px;
+        }
+
+        .wheel-rear {
+            transform-origin: 25px 45px;
+        }
+
+        .wheel-side {
+            transform-origin: 50px 48px;
+            animation-duration: 0.32s;
+        }
+
+        @keyframes exhaustSmoke {
+            0% {
+                transform: translate(0, 0) scale(0.4);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.9;
+            }
+
+            80% {
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: translate(-20px, -12px) scale(1.6);
+                opacity: 0;
+            }
+        }
+
+        .smoke-puff {
+            transform-origin: -2px 36px;
+            animation: exhaustSmoke 1.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        .puff-1 {
+            animation-delay: 0s;
+        }
+
+        .puff-2 {
+            animation-delay: 0.4s;
+        }
+
+        .puff-3 {
+            animation-delay: 0.8s;
+        }
+
+        @keyframes speedLines {
+            0% {
+                stroke-dashoffset: 0;
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 0.7;
+            }
+
+            70% {
+                opacity: 0.7;
+            }
+
+            100% {
+                stroke-dashoffset: -30;
+                opacity: 0;
+            }
+        }
+
+        .scooter-wind {
+            stroke-dasharray: 12, 12;
+            animation: speedLines 0.8s linear infinite;
+        }
+
+        .wind-1 {
+            animation-delay: 0s;
+        }
+
+        .wind-2 {
+            animation-delay: 0.3s;
+        }
+
+        /* --- Cyclone vortex and washing animations --- */
+        @keyframes wobblyCyclone {
+
+            0%,
+            100% {
+                transform: translate(60px, 95px) rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: translate(60px, 95px) rotate(3deg) scale(1.05);
+            }
+        }
+
+        .cyclone-container {
+            animation: wobblyCyclone 1.8s ease-in-out infinite;
+            transform-origin: 0 0;
+        }
+
+        @keyframes vortexSpin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .vortex-layer-1 {
+            animation: vortexSpin 1.4s linear infinite;
+            transform-origin: 0 0;
+        }
+
+        .vortex-layer-2 {
+            animation: vortexSpin 0.9s linear infinite reverse;
+            transform-origin: 0 0;
+        }
+
+        .vortex-layer-3 {
+            animation: vortexSpin 0.6s linear infinite;
+            transform-origin: 0 0;
+        }
+
+        @keyframes washingShirtTumble {
+            0% {
+                transform: translate(2px, -12px) rotate(0deg) scale(0.95);
+            }
+
+            50% {
+                transform: translate(-3px, -16px) rotate(180deg) scale(1.1);
+            }
+
+            100% {
+                transform: translate(2px, -12px) rotate(360deg) scale(0.95);
+            }
+        }
+
+        .washing-shirt {
+            animation: washingShirtTumble 2.2s linear infinite;
+            transform-origin: 0 0;
+        }
+
+        @keyframes bubbleRiseAndPop {
+            0% {
+                transform: translateY(12px) scale(0.4);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.9;
+            }
+
+            90% {
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateY(-24px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .bubble {
+            animation: bubbleRiseAndPop 1.6s ease-out infinite;
+        }
+
+        .bubble-a {
+            animation-delay: 0s;
+            transform-origin: -16px -28px;
+        }
+
+        .bubble-b {
+            animation-delay: 0.3s;
+            transform-origin: 22px -14px;
+        }
+
+        .bubble-c {
+            animation-delay: 0.7s;
+            transform-origin: -25px 5px;
+        }
+
+        .bubble-d {
+            animation-delay: 1.1s;
+            transform-origin: 15px 18px;
+        }
+
+        .bubble-e {
+            animation-delay: 0.5s;
+            transform-origin: -5px -35px;
+        }
+
+        @keyframes sparklePulse {
+
+            0%,
+            100% {
+                transform: scale(0.85);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        .sparkles path {
+            animation: sparklePulse 1.5s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .sparkles path:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .sparkles path:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .sparkles path:nth-child(3) {
+            animation-delay: 0.8s;
         }
 
         .section-kicker {
@@ -3101,7 +3389,7 @@
                 font-size: 0.72rem;
             }
         }
-    
+
         /* --- Premium Scrolled / Sticky Navbar Transition Styles --- */
         .glass-nav.scrolled {
             background: rgba(255, 255, 255, 0.9) !important;
@@ -3135,12 +3423,18 @@
             display: none;
         }
 
-        .glass-nav.scrolled .navbar-nav::before {
-            display: none !important; /* Hide the hanging rope in scrolled state */
+        .glass-nav.scrolled .nav-item::before {
+            display: none !important;
+            /* Hide the hanging rope in scrolled state */
         }
 
-        .glass-nav.scrolled .nav-svg-wrap {
+        .glass-nav.scrolled .nav-svg-wrap,
+        .glass-nav.scrolled .nav-img-label {
             display: none !important;
+        }
+
+        .glass-nav.scrolled .nav-simple-text {
+            display: block !important;
         }
 
         .glass-nav.scrolled .navbar-nav .nav-link {
@@ -3218,10 +3512,249 @@
         }
 
         @keyframes navFadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-</style>
+
+        /* ── ROPE: shorten so it only covers the 5 shirt items ── */
+        .glass-nav .navbar-nav::before {
+            left: 14% !important;
+            width: 58% !important;
+            transform: none !important;
+        }
+
+        /* ── Scooter & Cyclone items: no swing, no rope, aligned properly ── */
+        .nav-item-scooter .nav-link,
+        .nav-item-cyclone .nav-link {
+            animation: none !important;
+            transform: none !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            padding: 0 !important;
+            margin-top: 18px !important;
+        }
+
+        .nav-item-scooter .nav-link:hover,
+        .nav-item-cyclone .nav-link:hover {
+            animation: none !important;
+            filter: none !important;
+        }
+
+        /* ── SCOOTER: engine vibration + road bounce ── */
+        @keyframes scooterEngineVibe {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            12% {
+                transform: translateY(-2.5px) rotate(-1deg);
+            }
+
+            25% {
+                transform: translateY(1px) rotate(0.4deg);
+            }
+
+            37% {
+                transform: translateY(-3px) rotate(-1.2deg);
+            }
+
+            50% {
+                transform: translateY(0.5px) rotate(0.2deg);
+            }
+
+            62% {
+                transform: translateY(-2px) rotate(-0.8deg);
+            }
+
+            75% {
+                transform: translateY(1.5px) rotate(0.6deg);
+            }
+
+            87% {
+                transform: translateY(-1.5px) rotate(-0.5deg);
+            }
+        }
+
+        @keyframes scooterHoverFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .scooter-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .scooter-img-anim {
+            display: block;
+            height: 92px;
+            width: auto;
+            animation: scooterEngineVibe 0.14s linear infinite,
+                scooterHoverFloat 1.4s ease-in-out infinite;
+            transform-origin: 50% 100%;
+            filter: drop-shadow(4px 6px 12px rgba(16, 185, 129, 0.32)) drop-shadow(-1px 2px 5px rgba(0, 0, 0, 0.18));
+        }
+
+        .nav-item-scooter .nav-link:hover .scooter-img-anim {
+            filter: drop-shadow(0 0 22px rgba(16, 185, 129, 0.75)) drop-shadow(4px 6px 12px rgba(16, 185, 129, 0.32)) !important;
+        }
+
+        /* Exhaust smoke puffs */
+        @keyframes smokeRise {
+            0% {
+                transform: translate(0, 0) scale(0.3);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.85;
+            }
+
+            55% {
+                transform: translate(10px, -22px) scale(1.4);
+                opacity: 0.45;
+            }
+
+            100% {
+                transform: translate(18px, -45px) scale(2.2);
+                opacity: 0;
+            }
+        }
+
+        /* Smoke position: rear-left exhaust */
+        .scooter-smoke {
+            position: absolute;
+            bottom: 2px;
+            right: 3px;
+            /* ← push much further right/back */
+            left: auto;
+            width: 23px;
+            height: 23px;
+            border-radius: 50%;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(170, 170, 170, 0.9) 0%, rgba(220, 220, 220, 0.3) 100%);
+        }
+
+        .scooter-smoke.s1 {
+            animation: smokeRise 1.0s ease-out infinite 0s;
+        }
+
+        .scooter-smoke.s2 {
+            animation: smokeRise 1.0s ease-out infinite 0.33s;
+        }
+
+        .scooter-smoke.s3 {
+            animation: smokeRise 1.0s ease-out infinite 0.66s;
+        }
+
+        /* Speed streaks */
+        @keyframes speedStreak {
+            0% {
+                opacity: 0;
+                transform: scaleX(0.4) translateX(4px);
+            }
+
+            35% {
+                opacity: 0.75;
+            }
+
+            100% {
+                opacity: 0;
+                transform: scaleX(1) translateX(-12px);
+            }
+        }
+
+        .scooter-speed-lines {
+            position: absolute;
+            top: 42%;
+            right: -22px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            pointer-events: none;
+        }
+
+        .speed-line {
+            height: 2px;
+            border-radius: 1px;
+            background: linear-gradient(90deg, transparent 0%, #10b981 40%, transparent 100%);
+            animation: speedStreak 0.48s linear infinite;
+            transform-origin: right center;
+        }
+
+        .speed-line:nth-child(1) {
+            width: 20px;
+            animation-delay: 0s;
+        }
+
+        .speed-line:nth-child(2) {
+            width: 14px;
+            animation-delay: 0.16s;
+            opacity: 0.8;
+        }
+
+        .speed-line:nth-child(3) {
+            width: 18px;
+            animation-delay: 0.32s;
+        }
+
+        /* ── CYCLONE: real tornado spin with shear ── */
+        .tornado-canvas {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .cyclone-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* ── LABELS below scooter / cyclone ── */
+        .nav-img-label {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 0.66rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 4px 11px;
+            border-radius: 999px;
+            white-space: nowrap;
+            margin-top: 6px;
+            display: block;
+        }
+
+        .nav-img-label-green {
+            color: #065f46;
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border: 1.5px solid #34d399;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.28);
+        }
+
+        .nav-img-label-red {
+            color: #7f1d1d;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border: 1.5px solid #f87171;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.28);
+        }
+    </style>
 </head>
 
 <body class="page-foam">
@@ -3303,8 +3836,8 @@
                             <!-- inner collar shadow for 3D realism -->
                             <path d="M 40 40 Q 60 55 80 40 Q 60 48 40 40 Z" fill="rgba(0,0,0,0.15)" />
                         </g>
-                    
-                                <g id="nav-parcel-paths">
+
+                        <g id="nav-parcel-paths">
                             <!-- hanger hook -->
                             <path d="M 60 38 L 60 22 A 10 10 0 1 0 48 16" fill="none" stroke="rgba(31,41,55,.8)"
                                 stroke-width="2.5" stroke-linecap="round" />
@@ -3318,22 +3851,27 @@
                                 fill="url(#nav-shirt-bg)" stroke="rgba(255,255,255,.6)" stroke-width="1.5" />
 
                             <!-- realistic soft fabric vertical gathering lines/creases -->
-                            <path d="M 48 53 Q 32 82 42 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
-                            <path d="M 72 53 Q 88 82 78 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
-                            <path d="M 60 53 L 60 135" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2.5" stroke-dasharray="2,2" />
+                            <path d="M 48 53 Q 32 82 42 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2"
+                                stroke-linecap="round" />
+                            <path d="M 72 53 Q 88 82 78 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2"
+                                stroke-linecap="round" />
+                            <path d="M 60 53 L 60 135" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2.5"
+                                stroke-dasharray="2,2" />
 
                             <!-- bright glossmorphism slashes / reflections -->
-                            <path d="M 32 60 Q 25 80 28 110 L 38 110 Q 32 80 42 60 Z" fill="rgba(255, 255, 255, 0.22)" />
-                            <path d="M 88 60 Q 95 80 92 110 L 82 110 Q 88 80 78 60 Z" fill="rgba(255, 255, 255, 0.12)" />
+                            <path d="M 32 60 Q 25 80 28 110 L 38 110 Q 32 80 42 60 Z"
+                                fill="rgba(255, 255, 255, 0.22)" />
+                            <path d="M 88 60 Q 95 80 92 110 L 82 110 Q 88 80 78 60 Z"
+                                fill="rgba(255, 255, 255, 0.12)" />
 
                             <!-- a gathered fabric neck tie (ribbon/rope) -->
                             <ellipse cx="60" cy="52" rx="13" ry="5" fill="rgba(31,41,55,.8)" />
-                            
+
                             <!-- decorative ribbon flaps/tails draping down -->
                             <path d="M 52 52 Q 44 65 42 78 L 49 78 Q 49 65 56 52 Z" fill="rgba(31,41,55,.7)" />
                             <path d="M 68 52 Q 76 65 78 78 L 71 78 Q 71 65 64 52 Z" fill="rgba(31,41,55,.7)" />
                         </g>
-</defs>
+                    </defs>
                 </svg>
 
                 <!-- ── Mobile-only 3D menu (hidden on lg+) ── -->
@@ -3464,103 +4002,38 @@
                             </span>
                             <span class="nav-simple-text">Reviews</span>
                         </a>
-                    </li>
-                    
-                    <!-- Hanger-Towel Option: Schedule Pickup (Deep Blue Gradient) -->
-                    <li class="nav-item mx-3"
-                        style="--shirt-color-top: #60a5fa; --shirt-color-mid: #2563eb; --shirt-color-bot: #1d4ed8;">
+                        <!-- ── Schedule Pickup: running scooter, no rope ── -->
+                    <li class="nav-item mx-2 nav-item-scooter">
                         <a class="nav-link p-0" href="{% url 'login' %}" title="Schedule Pickup">
-                            <span class="nav-svg-wrap">
-                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                    class="d-block mx-auto">
-                                    <!-- hanger hook -->
-                                    <path d="M 60 38 L 60 22 A 10 10 0 1 0 48 16" fill="none" stroke="rgba(31,41,55,.8)"
-                                        stroke-width="2.5" stroke-linecap="round" />
-                                    <!-- hanger arms (straight support bar inside the parcel) -->
-                                    <line x1="30" y1="55" x2="90" y2="55" stroke="rgba(31,41,55,.7)" stroke-width="2.5"
-                                        stroke-linecap="round" />
-
-                                    <!-- main laundry parcel body (light green) -->
-                                    <path
-                                        d="M 45 53 C 15 65 18 102 22 118 C 28 135 60 137 60 137 C 60 137 92 135 98 118 C 102 102 105 65 75 53 Z"
-                                        fill="url(#nav-parcel-pickup-bg)" stroke="rgba(255,255,255,.6)" stroke-width="1.5" />
-
-                                    <!-- realistic soft fabric vertical gathering lines/creases -->
-                                    <path d="M 48 53 Q 32 82 42 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
-                                    <path d="M 72 53 Q 88 82 78 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
-                                    <path d="M 60 53 L 60 135" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2.5" stroke-dasharray="2,2" />
-
-                                    <!-- bright glossmorphism slashes / reflections -->
-                                    <path d="M 32 60 Q 25 80 28 110 L 38 110 Q 32 80 42 60 Z" fill="rgba(255, 255, 255, 0.22)" />
-                                    <path d="M 88 60 Q 95 80 92 110 L 82 110 Q 88 80 78 60 Z" fill="rgba(255, 255, 255, 0.12)" />
-
-                                    <!-- a gathered fabric neck tie (ribbon/rope) -->
-                                    <ellipse cx="60" cy="52" rx="13" ry="5" fill="rgba(31,41,55,.8)" />
-                                    
-                                    <!-- decorative ribbon flaps/tails draping down -->
-                                    <path d="M 52 52 Q 44 65 42 78 L 49 78 Q 49 65 56 52 Z" fill="rgba(31,41,55,.7)" />
-                                    <path d="M 68 52 Q 76 65 78 78 L 71 78 Q 71 65 64 52 Z" fill="rgba(31,41,55,.7)" />
-
-                                    <text x="60" y="85" text-anchor="middle" dominant-baseline="middle"
-                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="11.5" letter-spacing="0.5" stroke="#047857" stroke-width="3"
-                                        paint-order="stroke fill">SCHEDULE</text>
-                                    <text x="60" y="105" text-anchor="middle" dominant-baseline="middle"
-                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="11.5" letter-spacing="0.5" stroke="#047857" stroke-width="3"
-                                        paint-order="stroke fill">PICKUP</text>
-                                </svg>
+                            <span class="nav-svg-wrap d-block" style="position:relative; text-align:center;">
+                                <span class="scooter-wrapper">
+                                    <span class="scooter-speed-lines">
+                                        <span class="speed-line"></span>
+                                        <span class="speed-line"></span>
+                                        <span class="speed-line"></span>
+                                    </span>
+                                    <img src="{% static 'img/nav_scooter.png' %}" alt="Schedule Pickup"
+                                        class="scooter-img-anim">
+                                    <span class="scooter-smoke s1"></span>
+                                    <span class="scooter-smoke s2"></span>
+                                    <span class="scooter-smoke s3"></span>
+                                </span>
                             </span>
-                            <span class="nav-simple-text" style="color: #10b981 !important;">Schedule Pickup</span>
+                            <span class="nav-img-label nav-img-label-green">Schedule Pickup</span>
+                            <span class="nav-simple-text" style="color:#10b981!important;">Schedule Pickup</span>
                         </a>
                     </li>
 
-                    <!-- Hanger-Towel Option: Quick Laundry (Emerald Green Gradient) -->
-                    <li class="nav-item mx-3"
-                        style="--shirt-color-top: #34d399; --shirt-color-mid: #10b981; --shirt-color-bot: #047857;">
+                    <!-- ── Quick Laundry: CSS 3D tornado ── -->
+                    <li class="nav-item mx-2 nav-item-cyclone">
                         <a class="nav-link p-0" href="{% url 'quick_booking' %}" title="Quick Laundry">
-                            <span class="nav-svg-wrap">
-                                <svg width="100" height="116" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"
-                                    class="d-block mx-auto">
-                                    <!-- hanger hook -->
-                                    <path d="M 60 38 L 60 22 A 10 10 0 1 0 48 16" fill="none" stroke="rgba(31,41,55,.8)"
-                                        stroke-width="2.5" stroke-linecap="round" />
-                                    <!-- hanger arms (straight support bar inside the parcel) -->
-                                    <line x1="30" y1="55" x2="90" y2="55" stroke="rgba(31,41,55,.7)" stroke-width="2.5"
-                                        stroke-linecap="round" />
-
-                                    <!-- main laundry parcel body (light red) -->
-                                    <path
-                                        d="M 45 53 C 15 65 18 102 22 118 C 28 135 60 137 60 137 C 60 137 92 135 98 118 C 102 102 105 65 75 53 Z"
-                                        fill="url(#nav-parcel-quick-bg)" stroke="rgba(255,255,255,.6)" stroke-width="1.5" />
-
-                                    <!-- realistic soft fabric vertical gathering lines/creases -->
-                                    <path d="M 48 53 Q 32 82 42 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
-                                    <path d="M 72 53 Q 88 82 78 120" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round" />
-                                    <path d="M 60 53 L 60 135" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="2.5" stroke-dasharray="2,2" />
-
-                                    <!-- bright glossmorphism slashes / reflections -->
-                                    <path d="M 32 60 Q 25 80 28 110 L 38 110 Q 32 80 42 60 Z" fill="rgba(255, 255, 255, 0.22)" />
-                                    <path d="M 88 60 Q 95 80 92 110 L 82 110 Q 88 80 78 60 Z" fill="rgba(255, 255, 255, 0.12)" />
-
-                                    <!-- a gathered fabric neck tie (ribbon/rope) -->
-                                    <ellipse cx="60" cy="52" rx="13" ry="5" fill="rgba(31,41,55,.8)" />
-                                    
-                                    <!-- decorative ribbon flaps/tails draping down -->
-                                    <path d="M 52 52 Q 44 65 42 78 L 49 78 Q 49 65 56 52 Z" fill="rgba(31,41,55,.7)" />
-                                    <path d="M 68 52 Q 76 65 78 78 L 71 78 Q 71 65 64 52 Z" fill="rgba(31,41,55,.7)" />
-
-                                    <text x="60" y="85" text-anchor="middle" dominant-baseline="middle"
-                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="12" letter-spacing="0.5" stroke="#7f1d1d" stroke-width="3"
-                                        paint-order="stroke fill">QUICK</text>
-                                    <text x="60" y="105" text-anchor="middle" dominant-baseline="middle"
-                                        font-family="Arial Black,Arial,sans-serif" font-weight="900" fill="#ffffff"
-                                        font-size="12" letter-spacing="0.5" stroke="#7f1d1d" stroke-width="3"
-                                        paint-order="stroke fill">LAUNDRY</text>
-                                </svg>
+                            <span class="nav-svg-wrap d-block" style="position:relative; text-align:center;">
+                                <span class="cyclone-wrapper">
+                                    <canvas class="tornado-canvas" width="70" height="92"></canvas>
+                                </span>
                             </span>
-                            <span class="nav-simple-text" style="color: #ef4444 !important;">Quick Laundry</span>
+                            <span class="nav-img-label nav-img-label-red">Quick Laundry</span>
+                            <span class="nav-simple-text" style="color:#ef4444!important;">Quick Laundry</span>
                         </a>
                     </li>
                 </ul>
@@ -3867,7 +4340,8 @@
                             <div>
                                 <h6 class="fw-bold mb-0 text-dark">{{ review.customer.name }}</h6>
                                 <small class="text-muted"><i
-                                        class="fa-solid fa-location-dot me-1 text-primary opacity-50"></i> {{ review.business.address }}</small>
+                                        class="fa-solid fa-location-dot me-1 text-primary opacity-50"></i> {{
+                                    review.business.address }}</small>
                             </div>
                         </div>
                     </div>
@@ -3988,7 +4462,8 @@
                                             <div class="price-main">
                                                 <i class="fa-solid fa-check-circle text-primary opacity-75"></i>
                                                 <div class="price-copy">
-                                                    <span class="service-name">{{ item.applicable_clothes|default:item.name }}</span>
+                                                    <span class="service-name">{{
+                                                        item.applicable_clothes|default:item.name }}</span>
 
                                                     <span class="service-category">{{ item.category }}</span>
                                                 </div>
@@ -4072,7 +4547,9 @@
             </div>
             <hr class="mt-4 mb-3 text-muted opacity-25">
             <div class="text-center text-muted small py-2">
-                <span>&copy; COPYRIGHT 2026 | Dhobi Kaka | All Rights Reserved | Developed & Maintain by <a href="https://www.technoadviser.com" target="_blank" rel="noopener noreferrer" class="text-dark text-decoration-none fw-semibold">TechnoAdviser</a></span>
+                <span>&copy; COPYRIGHT 2026 | Dhobi Kaka | All Rights Reserved | Developed & Maintain by <a
+                        href="https://www.technoadviser.com" target="_blank" rel="noopener noreferrer"
+                        class="text-dark text-decoration-none fw-semibold">TechnoAdviser</a></span>
             </div>
         </div>
     </footer>
@@ -4404,7 +4881,7 @@
             finderNoResult.hidden = false;
             finderNoResult.textContent = 'Type a location to see related branches.';
         }
-    
+
         // ── Sticky Navbar and Scroll-to-Top Button ──
         window.addEventListener('DOMContentLoaded', () => {
             const navbar = document.querySelector('.glass-nav');
@@ -4439,7 +4916,227 @@
                 });
             });
         });
-</script>
+        // ── 3D Spinning Tornado Canvas ──
+        const tornadoCanvas = document.querySelector('.tornado-canvas');
+        if (tornadoCanvas) {
+            const ctx = tornadoCanvas.getContext('2d');
+            // Explicitly constrain CSS display size to keep navbar layout tidy
+            tornadoCanvas.style.width = '90px';
+            tornadoCanvas.style.height = '92px';
+            // Increase canvas internal resolution so nothing clips on the edges
+            tornadoCanvas.width = 180;
+            tornadoCanvas.height = 184;
+            const W = 180, H = 184;
+            let time = 0;
+
+            // Ribbons defining the cyclone (Red, Blue, Purple)
+            const ribbons = [
+                { color: '#ef4444', offset: 0 },
+                { color: '#3b82f6', offset: Math.PI * 0.7 },
+                { color: '#a855f7', offset: Math.PI * 1.4 }
+            ];
+
+            // Floating bubbles/sparkles (constrained inside canvas bounds to avoid clipping)
+            const bubbles = Array.from({ length: 15 }, () => ({
+                x: 25 + Math.random() * (W - 50),
+                y: Math.random() * H,
+                size: Math.random() * 4 + 2,
+                speed: Math.random() * 2 + 1.5,
+                w: Math.random() * Math.PI * 2,
+                isSparkle: Math.random() > 0.7
+            }));
+
+            // Floating clothes (like the reference image)
+            const clothes = [
+                { y: 40, xOffset: 35, speed: 0.05, angle: 0, scale: 0.8 },
+                { y: 130, xOffset: 20, speed: 0.07, angle: Math.PI, scale: 0.55 }
+            ];
+
+            function drawTornado(t) {
+                ctx.clearRect(0, 0, W, H);
+
+                // Add a magical glow base
+                const bgGlow = ctx.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, 80);
+                bgGlow.addColorStop(0, 'rgba(168, 85, 247, 0.15)');
+                bgGlow.addColorStop(0.5, 'rgba(59, 130, 246, 0.1)');
+                bgGlow.addColorStop(1, 'transparent');
+                ctx.fillStyle = bgGlow;
+                ctx.fillRect(0, 0, W, H);
+
+                let points = [];
+                const steps = 90; // High resolution for smooth ribbon
+
+                ribbons.forEach(r => {
+                    for (let i = 0; i < steps; i++) {
+                        const tNorm = i / (steps - 1); // 0 at top, 1 at bottom
+                        // Flared top, pinched bottom
+                        const radius = 55 * Math.pow(1 - tNorm, 1.5) + 3;
+                        const y = 20 + tNorm * 140; // 20 to 160
+
+                        // Swirl angle
+                        const angle = t * -4 + tNorm * 12 + r.offset;
+
+                        const x = W / 2 + Math.cos(angle) * radius;
+                        const z = Math.sin(angle) * radius;
+
+                        points.push({ x, y, z, r, tNorm, radius });
+                    }
+                });
+
+                // Sort points by Z to draw back to front
+                points.sort((a, b) => a.z - b.z);
+
+                points.forEach(p => {
+                    // Size of the brush
+                    const size = 18 * Math.pow(1 - p.tNorm, 1.2) + 3;
+                    const isBack = p.z < 0;
+
+                    ctx.beginPath();
+                    // Draw horizontal ellipses for smooth blending
+                    ctx.ellipse(p.x, p.y, size, size * 0.45, 0, 0, Math.PI * 2);
+
+                    // Create gradient for a rounded 3D look
+                    const grd = ctx.createRadialGradient(
+                        p.x - size * 0.3, p.y - size * 0.1, 0,
+                        p.x, p.y, size
+                    );
+
+                    if (p.r.color === '#ef4444') { // Red
+                        grd.addColorStop(0, isBack ? '#b91c1c' : '#fca5a5');
+                        grd.addColorStop(1, isBack ? '#7f1d1d' : '#ef4444');
+                    } else if (p.r.color === '#3b82f6') { // Blue
+                        grd.addColorStop(0, isBack ? '#1d4ed8' : '#93c5fd');
+                        grd.addColorStop(1, isBack ? '#1e3a8a' : '#3b82f6');
+                    } else { // Purple
+                        grd.addColorStop(0, isBack ? '#7e22ce' : '#d8b4fe');
+                        grd.addColorStop(1, isBack ? '#581c87' : '#a855f7');
+                    }
+
+                    ctx.fillStyle = grd;
+                    // Outer glow/shadow
+                    ctx.shadowColor = p.r.color;
+                    ctx.shadowBlur = isBack ? 2 : 15;
+                    ctx.fill();
+
+                    // Front highlight sparkle
+                    if (!isBack && Math.random() > 0.96) {
+                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                        ctx.shadowBlur = 5;
+                        ctx.shadowColor = '#fff';
+                        ctx.beginPath();
+                        ctx.arc(p.x - size * 0.3, p.y - size * 0.1, size * 0.15, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                // Reset shadow
+                ctx.shadowBlur = 0;
+
+                // Draw floating clothes (behind bubbles)
+                clothes.forEach(c => {
+                    c.angle += c.speed;
+                    // Simulate orbit
+                    const isBack = Math.sin(c.angle) < 0;
+                    if (isBack) return; // Only draw when in front for simplicity
+
+                    const cx = W / 2 + Math.cos(c.angle) * c.xOffset;
+                    const cy = c.y + Math.sin(c.angle * 2) * 5;
+
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    // Tumble around
+                    ctx.rotate(c.angle * 2);
+                    ctx.scale(c.scale, c.scale);
+
+                    // Simple white shirt shape
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -15);
+                    ctx.lineTo(10, -15); // neck
+                    ctx.lineTo(25, -5);  // right shoulder/sleeve
+                    ctx.lineTo(20, 5);   // under right sleeve
+                    ctx.lineTo(12, 0);   // armpit right
+                    ctx.lineTo(12, 20);  // right body
+                    ctx.lineTo(-12, 20); // bottom
+                    ctx.lineTo(-12, 0);  // left body
+                    ctx.lineTo(-20, 5);  // under left sleeve
+                    ctx.lineTo(-25, -5); // left shoulder/sleeve
+                    ctx.closePath();
+
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+                    ctx.shadowBlur = 10;
+                    ctx.fill();
+
+                    // Simple collar/details
+                    ctx.beginPath();
+                    ctx.moveTo(-5, -15);
+                    ctx.lineTo(0, -5);
+                    ctx.lineTo(5, -15);
+                    ctx.strokeStyle = '#e2e8f0';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.restore();
+                });
+
+                // Draw bubbles and sparkles
+                bubbles.forEach(b => {
+                    b.y -= b.speed;
+                    b.w += 0.05;
+                    const bx = b.x + Math.sin(b.w) * 20;
+                    if (b.y < -10) { b.y = H + 10; b.x = Math.random() * W; }
+
+                    if (b.isSparkle) {
+                        // Draw a star/sparkle
+                        ctx.save();
+                        ctx.translate(bx, b.y);
+                        ctx.rotate(t * 2);
+                        ctx.beginPath();
+                        for (let i = 0; i < 4; i++) {
+                            ctx.lineTo(0, -b.size * 1.5);
+                            ctx.lineTo(b.size * 0.3, -b.size * 0.3);
+                            ctx.rotate(Math.PI / 2);
+                        }
+                        ctx.closePath();
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        ctx.shadowColor = '#fff';
+                        ctx.shadowBlur = 8;
+                        ctx.fill();
+                        ctx.restore();
+                    } else {
+                        // Draw a bubble
+                        ctx.beginPath();
+                        ctx.arc(bx, b.y, b.size, 0, Math.PI * 2);
+                        ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                        ctx.fill();
+
+                        // Bubble shine
+                        ctx.beginPath();
+                        ctx.arc(bx - b.size * 0.3, b.y - b.size * 0.3, b.size * 0.25, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                        ctx.fill();
+                    }
+                });
+            }
+
+            // Hover: spin faster
+            const cycloneLink = tornadoCanvas.closest('.nav-link');
+            if (cycloneLink) {
+                cycloneLink.addEventListener('mouseenter', () => { window._tornadoSpeed = 0.06; });
+                cycloneLink.addEventListener('mouseleave', () => { window._tornadoSpeed = 0.02; });
+            }
+
+            // Use dynamic speed
+            (function reAnimate() {
+                time += (window._tornadoSpeed || 0.02);
+                drawTornado(time);
+                requestAnimationFrame(reAnimate);
+            })();
+        }
+    </script>
 </body>
 
 </html>
