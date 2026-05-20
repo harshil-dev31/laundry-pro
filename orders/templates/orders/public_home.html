@@ -320,7 +320,7 @@
             border-top: none;
             box-shadow: none;
             transition: all 0.3s ease;
-            position: fixed !important;
+            position: sticky !important;
             width: 100%;
             top: 0 !important;
             z-index: 1030 !important;
@@ -4893,9 +4893,9 @@
             document.body.appendChild(scrollTopBtn);
 
             const handleScroll = () => {
-                if (window.scrollY > 50) {
+                if (window.scrollY > 150) {
                     navbar.classList.add('scrolled');
-                } else {
+                } else if (window.scrollY < 20) {
                     navbar.classList.remove('scrolled');
                 }
 
